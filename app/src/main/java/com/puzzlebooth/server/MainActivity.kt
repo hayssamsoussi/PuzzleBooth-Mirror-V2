@@ -498,11 +498,11 @@ class MainActivity : ConnectionsActivity() {
         if (getState() == State.CONNECTED) {
             setState(State.SEARCHING)
             findNavController(R.id.nav_host_fragment).setGraph(
-                R.navigation.nav_graph_remote
+                R.navigation.nav_graph
             )
             return
         }
-        findNavController(R.id.nav_host_fragment).setGraph(R.navigation.nav_graph_remote)
+        findNavController(R.id.nav_host_fragment).setGraph(R.navigation.nav_graph)
         super.onBackPressed()
     }
 

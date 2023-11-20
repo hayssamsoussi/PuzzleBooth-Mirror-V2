@@ -171,7 +171,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         }
 
         binding.btnCancel.setOnClickListener {
-            findNavController().setGraph(R.navigation.nav_graph_remote)
+            findNavController().setGraph(R.navigation.nav_graph)
         }
 
         binding.btnRetake.setOnClickListener {
