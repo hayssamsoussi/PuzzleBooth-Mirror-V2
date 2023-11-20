@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/FirstFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AlbumFragment" />
+    <fragment
+        android:id="@+id/FirstFragment"
+        android:name="com.puzzlebooth.remote.home.HomeFragment"
+        android:label="First Fragment"
+        tools:layout="@layout/fragment_home_remote">
+
+        <action
+            android:id="@+id/action_FirstFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_firstFragment_to_printerFragment"
+            app:destination="@id/PrinterFragment" />
+        <action
+            android:id="@+id/action_firstFragment_to_cameraFragment"
+            app:destination="@id/CameraFragment" />
+        <action
+            android:id="@+id/action_firstFragment_to_albumFragment"
+            app:destination="@id/AlbumFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/SecondFragment"
+        android:name="com.puzzlebooth.remote.second.SecondFragment"
+        android:label="Second Fragment"
+        tools:layout="@layout/fragment_second">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/PrinterFragment"
+        android:name="com.puzzlebooth.remote.printer.RemotePrinterFragment"
+        android:label="Printer Fragment"
+        tools:layout="@layout/fragment_printer_remote">
+
+
+    </fragment>
+    <fragment
+        android:id="@+id/CameraFragment"
+        android:name="com.puzzlebooth.remote.camera.RemoteCameraFragment"
+        android:label="Camera Fragment"
+        tools:layout="@layout/fragment_camera_remote">
+
+
+    </fragment>
+    <fragment
+        android:id="@+id/AlbumFragment"
+        android:name="com.puzzlebooth.remote.album.RemoteAlbumFragment"
+        android:label="Album Fragment"
+        tools:layout="@layout/fragment_album_remote">
+
+
+    </fragment>
+</navigation>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:iconTint="@color/white"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/navigation_printer"
+        android:icon="@drawable/ic_printer"
+        android:iconTint="@color/white"
+        android:visible="false"
+        android:title="Printer" />
+
+    <item
+        android:id="@+id/navigation_camera"
+        android:icon="@drawable/ic_camera"
+        android:iconTint="@color/white"
+        android:title="Camera" />
+
+    <item
+        android:id="@+id/navigation_album"
+        android:icon="@drawable/ic_album"
+        android:iconTint="@color/white"
+        android:title="Album" />
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/baseline_settings_24"
+        android:iconTint="@color/white"
+        android:title="Settings" />
+
+</menu>

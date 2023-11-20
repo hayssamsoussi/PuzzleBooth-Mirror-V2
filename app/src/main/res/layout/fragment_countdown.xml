@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context="com.puzzlebooth.server.CountdownFragment">
+
+    <com.otaliastudios.cameraview.CameraView
+        android:id="@+id/camera"
+        android:layout_width="600dp"
+        android:layout_height="400dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:cameraGestureTap="autoFocus"
+        app:cameraGesturePinch="zoom"
+        app:cameraGestureScrollVertical="exposureCorrection"
+        app:cameraEngine="camera2"
+        app:cameraPreview="surface"
+        app:cameraPreviewFrameRateExact="true"
+        app:cameraFacing="back"
+        app:cameraHdr="on"
+        app:cameraPictureSizeBiggest="true"
+        app:cameraPictureSizeMaxHeight="2000"
+        app:cameraFlash="off"
+        app:cameraPictureSizeAspectRatio="16:9"
+        app:cameraUseDeviceOrientation="false"
+        app:cameraWhiteBalance="auto"
+        app:cameraMode="picture"
+        app:cameraPlaySounds="true"
+        app:cameraPictureMetering="false"
+        app:cameraPictureSnapshotMetering="false"
+        app:cameraPictureFormat="jpeg"
+        app:cameraRequestPermissions="true"
+        app:cameraExperimental="false">
+    </com.otaliastudios.cameraview.CameraView>
+
+    <TextView
+        android:id="@+id/textDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:text="Countdown animation" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/black"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".fragments.FirstFragment">
+
+    <LinearLayout
+        android:id="@+id/adminButtonsContainer"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/cameraControllerButton"
+            android:padding="10dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_camera"
+                app:tint="@color/white" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/printerControllerButton"
+            android:padding="10dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_printer"
+                app:tint="@color/white" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/albumButton"
+            android:padding="10dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_album"
+                app:tint="@color/white" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:drawableEnd="@drawable/ic_baseline_not_started_24"
+        android:drawableTint="@color/white"
+        android:text="1" />
+
+    <Button
+        android:id="@+id/btnStart2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:drawableEnd="@drawable/ic_baseline_not_started_24"
+        android:drawableTint="@color/white"
+        android:text="2" />
+
+
+    <Button
+        android:id="@+id/btnContinue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:drawableEnd="@drawable/ic_baseline_print_24"
+        android:drawableTint="@color/white"
+        android:text="Print" />
+
+    <Button
+        android:id="@+id/btnContinueWithoutPrint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:drawableEnd="@drawable/ic_baseline_print_24"
+        android:drawableTint="@color/white"
+        android:text="No Print" />
+
+    <Button
+        android:id="@+id/btnPrintLastCopy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:drawableEnd="@drawable/ic_baseline_file_copy_24"
+        android:drawableTint="@color/white"
+        android:text="Print last copy" />
+
+
+    <Button
+        android:id="@+id/btnRetry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:drawableEnd="@drawable/ic_baseline_refresh_24"
+        android:drawableTint="@color/white"
+        android:text="Retake" />
+
+    <Button
+        android:id="@+id/btnReset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="50dp"
+        android:backgroundTint="#9E0606"
+        android:drawableEnd="@drawable/ic_baseline_refresh_24"
+        android:drawableTint="@color/white"
+        android:text="Refresh" />
+
+</LinearLayout>

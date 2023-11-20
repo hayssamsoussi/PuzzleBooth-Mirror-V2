@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/black"
+    tools:context=".fragments.CameraFragment">
+
+    <Button
+        android:id="@+id/btnShowSecretMenu"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="40dp"
+        android:backgroundTint="#002091"
+        android:text="Show Secret Menu" />
+
+    <Button
+        android:id="@+id/btnBrightnessUp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="40dp"
+        android:backgroundTint="#002091"
+        android:text="Brightness +" />
+
+    <Button
+        android:id="@+id/btnBrightnessDown"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="40dp"
+        android:backgroundTint="#002091"
+        android:text="Brightness -" />
+
+    <Button
+        android:id="@+id/btnZoomIn"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="40dp"
+        android:backgroundTint="#002091"
+        android:text="Zoom +" />
+
+    <Button
+        android:id="@+id/btnZoomOut"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="40dp"
+        android:backgroundTint="#002091"
+        android:text="Zoom -" />
+
+    <Button
+        android:id="@+id/btnTestPicture"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="40dp"
+        android:backgroundTint="#002091"
+        android:text="Test Picture" />
+
+    <Button
+        android:id="@+id/btnResetSecretMenu"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="40dp"
+        android:backgroundTint="#002091"
+        android:text="Reset Secret Menu" />
+
+    <Button
+        android:id="@+id/btnCloseSecretMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="40dp"
+        android:backgroundTint="#980012"
+        android:text="X" />
+
+</LinearLayout>

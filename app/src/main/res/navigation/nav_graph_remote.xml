@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/startFragment"
+    android:id="@+id/nav_graph_remote">
+
+    <fragment
+        android:id="@+id/startFragment"
+        android:name="com.puzzlebooth.server.StartFragment"
+        android:label="Start Fragment"
+        tools:layout="@layout/fragment_start" >
+
+        <action
+            android:id="@+id/action_startFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_countdownFragment"
+            app:destination="@id/countdownFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_albumFragment"
+            app:destination="@id/albumFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_layoutFragment"
+            app:destination="@id/layoutsFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_themeFragmentt"
+            app:destination="@id/themeFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/countdownFragment"
+        android:name="com.puzzlebooth.server.CountdownFragment"
+        android:label="Countdown Fragment"
+        tools:layout="@layout/fragment_countdown" >
+        <action
+            android:id="@+id/action_countdownFragment_to_previewFragment"
+            app:popUpTo="@id/startFragment"
+            app:destination="@id/previewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/printFragment"
+        android:name="com.puzzlebooth.server.PrintFragment"
+        android:label="Print Fragment"
+        tools:layout="@layout/fragment_print" >
+        <action
+            android:id="@+id/action_printFragment_to_startFragment"
+            app:destination="@id/startFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.puzzlebooth.server.settings.SettingsFragment"
+        android:label="Settings Fragment"
+        tools:layout="@layout/fragment_settings" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/albumFragment"
+        android:name="com.puzzlebooth.server.album.AlbumFragment"
+        android:label="Album Fragment"
+        tools:layout="@layout/fragment_album" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/layoutsFragment"
+        android:name="com.puzzlebooth.server.layout.LayoutFragment"
+        android:label="Layout Fragment"
+        tools:layout="@layout/fragment_layout" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/themeFragment"
+        android:name="com.puzzlebooth.server.theme.ThemeFragment"
+        android:label="Theme Fragment"
+        tools:layout="@layout/fragment_theme" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/previewFragment"
+        android:name="com.puzzlebooth.server.PreviewFragment"
+        android:label="Preview Fragment"
+        tools:layout="@layout/fragment_preview" >
+        <action
+            android:id="@+id/action_previewFragment_to_printFragment"
+            app:destination="@id/printFragment" />
+        <action
+            android:id="@+id/action_previewFragment_to_countdownFragment"
+            app:destination="@id/countdownFragment" />
+    </fragment>
+
+
+</navigation>
