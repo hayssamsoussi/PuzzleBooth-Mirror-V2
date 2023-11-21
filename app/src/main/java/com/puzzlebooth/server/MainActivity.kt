@@ -36,29 +36,6 @@ import java.util.Random
 
 class MainActivity : BaseNearbyActivity() {
 
-
-//    /** Listens to holding/releasing the volume rocker.  */
-//    private val mGestureDetector: GestureDetector =
-//        object : GestureDetector(KeyEvent.KEYCODE_VOLUME_DOWN, KeyEvent.KEYCODE_VOLUME_UP) {
-//            protected fun onHold() {
-//                logV("onHold")
-//                startRecording()
-//            }
-//
-//            protected fun onRelease() {
-//                logV("onRelease")
-//                stopRecording()
-//            }
-//        }
-//
-//    /** For recording audio as the user speaks.  */
-//    private val mRecorder: AudioRecorder? = null
-//
-//    /** For playing audio from other users nearby.  */
-//    private val mAudioPlayer: AudioPlayer? = null
-
-    //private val mOriginalVolume = 0
-    
     lateinit var sharedPreferences: SharedPreferences
     
     companion object {
