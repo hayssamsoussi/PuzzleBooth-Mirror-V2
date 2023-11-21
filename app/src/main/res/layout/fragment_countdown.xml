@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context="com.puzzlebooth.server.CountdownFragment">
+    tools:context="com.puzzlebooth.main.CountdownFragment">
 
     <com.otaliastudios.cameraview.CameraView
         android:id="@+id/camera"

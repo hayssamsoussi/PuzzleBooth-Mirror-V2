@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     android:padding="10dp"
     android:background="@color/black"
-    tools:context="com.puzzlebooth.server.CountdownFragment">
+    tools:context="com.puzzlebooth.main.CountdownFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp"
-        tools:context="com.puzzlebooth.server.MainActivity">
+        tools:context=".MainActivity">
 
         <LinearLayout
             android:id="@+id/previewContainer"

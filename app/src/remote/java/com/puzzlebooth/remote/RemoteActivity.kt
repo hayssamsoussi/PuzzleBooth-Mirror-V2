@@ -5,14 +5,14 @@ import android.os.Handler
 import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.puzzlebooth.server.BaseNearbyActivity
+import com.puzzlebooth.main.BaseNearbyActivity
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.ActivityRemoteBinding
+
 class RemoteActivity : BaseNearbyActivity() {
 
 

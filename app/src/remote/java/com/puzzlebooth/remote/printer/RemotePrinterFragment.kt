@@ -3,8 +3,8 @@ package com.puzzlebooth.remote.printer
 import android.os.Bundle
 import android.view.View
 import com.puzzlebooth.remote.home.mainActivity
+import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.server.R
-import com.puzzlebooth.server.base.BaseFragment
 import com.puzzlebooth.server.databinding.FragmentPrinterRemoteBinding
 
 class RemotePrinterFragment : BaseFragment<FragmentPrinterRemoteBinding>(R.layout.fragment_printer_remote) {

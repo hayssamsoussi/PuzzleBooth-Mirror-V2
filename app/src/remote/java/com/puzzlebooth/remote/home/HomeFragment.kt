@@ -3,10 +3,9 @@ package com.puzzlebooth.remote.home
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.puzzlebooth.remote.RemoteActivity
+import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.server.R
-import com.puzzlebooth.server.base.BaseFragment
 import com.puzzlebooth.server.databinding.FragmentHomeRemoteBinding
 
 class HomeFragment : BaseFragment<FragmentHomeRemoteBinding>(R.layout.fragment_home_remote) {

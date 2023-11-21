@@ -2,9 +2,9 @@ package com.puzzlebooth.remote.album
 
 import android.os.Bundle
 import android.view.View
+import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.remote.home.mainActivity
 import com.puzzlebooth.server.R
-import com.puzzlebooth.server.base.BaseFragment
 import com.puzzlebooth.server.databinding.FragmentAlbumRemoteBinding
 
 class RemoteAlbumFragment : BaseFragment<FragmentAlbumRemoteBinding>(R.layout.fragment_album_remote) {

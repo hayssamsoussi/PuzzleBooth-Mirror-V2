@@ -5,8 +5,8 @@
     <application>
 
         <activity
-            android:name="com.puzzlebooth.remote.RemoteActivity"
-            android:label="PB Remote V2"
+            android:name=".MainActivity"
+            android:label="PB Server V2"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

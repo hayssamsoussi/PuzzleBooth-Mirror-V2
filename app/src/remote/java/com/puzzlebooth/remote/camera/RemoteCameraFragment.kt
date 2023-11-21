@@ -3,9 +3,9 @@ package com.puzzlebooth.remote.camera
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.remote.home.mainActivity
 import com.puzzlebooth.server.R
-import com.puzzlebooth.server.base.BaseFragment
 import com.puzzlebooth.server.databinding.FragmentCameraRemoteBinding
 
 /**
