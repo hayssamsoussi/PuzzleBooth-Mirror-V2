@@ -42,13 +42,13 @@ class HomeFragment : BaseFragment<FragmentHomeRemoteBinding>(R.layout.fragment_h
         binding.btnRetry.setOnClickListener { mainActivity()?.sendThroughDelay("retry") }
 
         binding.printerControllerButton.setOnClickListener {
-            findNavController().navigate(R.id.action_firstFragment_to_printerFragment)
+            //findNavController().navigate(R.id.action_)
         }
         binding.cameraControllerButton.setOnClickListener {
-            findNavController().navigate(R.id.action_firstFragment_to_cameraFragment)
+            //findNavController().navigate(R.id.action_firstFragment_to_cameraFragment)
         }
         binding.albumButton.setOnClickListener {
-            findNavController().navigate(R.id.action_firstFragment_to_albumFragment)
+            //indNavController().navigate(R.id.action_firstFragment_to_albumFragment)
         }
     }
 }
