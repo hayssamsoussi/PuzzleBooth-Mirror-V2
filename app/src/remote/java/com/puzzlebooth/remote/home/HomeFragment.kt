@@ -27,8 +27,8 @@ class HomeFragment : BaseFragment<FragmentHomeRemoteBinding>(R.layout.fragment_h
 
         binding.btnStart.setOnClickListener { mainActivity()?.sendThroughDelay("start") }
         binding.btnStart2.setOnClickListener { mainActivity()?.sendThroughDelay("start2") }
-        binding.btnReset.setOnClickListener { mainActivity()?.sendThroughDelay("reset") }
-        binding.btnContinue.setOnClickListener { mainActivity()?.sendThroughDelay("continue") }
+        binding.btnReset.setOnClickListener { mainActivity()?.sendThroughDelay("cancel") }
+        binding.btnContinue.setOnClickListener { mainActivity()?.sendThroughDelay("print") }
 
         // haflet nour and mahdi in la salle date n night trend
         if(System.currentTimeMillis() < 1694003066919) {
@@ -39,7 +39,7 @@ class HomeFragment : BaseFragment<FragmentHomeRemoteBinding>(R.layout.fragment_h
 
         binding.btnPrintLastCopy.setOnClickListener { mainActivity()?.sendThroughDelay("printlastcopy") }
         binding.btnPrintLastCopy.visibility = View.GONE
-        binding.btnRetry.setOnClickListener { mainActivity()?.sendThroughDelay("retry") }
+        binding.btnRetry.setOnClickListener { mainActivity()?.sendThroughDelay("retake") }
 
         binding.printerControllerButton.setOnClickListener {
             //findNavController().navigate(R.id.action_)
