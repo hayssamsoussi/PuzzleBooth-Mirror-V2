@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.method.ScrollingMovementMethod
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -31,6 +33,14 @@ class RemoteActivity : BaseNearbyActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRemoteBinding.inflate(layoutInflater)
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+
 
         setContentView(binding.root)
 

@@ -41,11 +41,11 @@
 
 
     <TextView
-        android:id="@+id/layouts"
+        android:id="@+id/camera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Layouts"
+        android:text="Camera"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />

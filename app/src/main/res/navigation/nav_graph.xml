@@ -24,9 +24,18 @@
             android:id="@+id/action_startFragment_to_layoutFragment"
             app:destination="@id/layoutsFragment" />
         <action
-            android:id="@+id/action_startFragment_to_themeFragmentt"
+            android:id="@+id/action_startFragment_to_themeFragment"
             app:destination="@id/themeFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.puzzlebooth.server.camera.CameraFragment"
+        android:label="Camera Fragment"
+        tools:layout="@layout/fragment_camera" >
     </fragment>
 
     <fragment

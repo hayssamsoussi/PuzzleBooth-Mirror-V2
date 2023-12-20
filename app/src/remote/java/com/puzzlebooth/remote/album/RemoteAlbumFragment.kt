@@ -21,6 +21,6 @@ class RemoteAlbumFragment : BaseFragment<FragmentAlbumRemoteBinding>(R.layout.fr
         binding.btnAlbumNext.setOnClickListener { mainActivity()?.send("albumNext") }
         binding.btnAlbumPrevious.setOnClickListener { mainActivity()?.send("albumPrevious") }
         binding.btnALbumPrint.setOnClickListener { mainActivity()?.send("albumPrint") }
-        binding.btnAlbumQR.setOnClickListener { mainActivity()?.send("albumQR") }
+        //binding.btnAlbumQR.setOnClickListener { mainActivity()?.send("albumQR") }
     }
 }

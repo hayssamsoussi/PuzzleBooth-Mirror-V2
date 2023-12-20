@@ -1,7 +1,8 @@
-package com.puzzlebooth.main.utils
+package com.puzzlebooth.server.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.puzzlebooth.server.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -19,6 +20,7 @@ class UdpBroadcastListener (val context: Context, private val sharedPreferences:
             isListening = true
             GlobalScope.launch(Dispatchers.IO) {
                 println("hhh UDP Broadcast Listener started")
+                println("hhh packageName: ${context.packageName}")
                 listenForMessages()
             }
         }
@@ -64,7 +66,9 @@ class UdpBroadcastListener (val context: Context, private val sharedPreferences:
                     //port = ""
                 }
             }
-            //MainActivity.lastTimePrinterConnectionReceived = System.currentTimeMillis()
+
+
+            MainActivity.lastTimePrinterConnectionReceived = System.currentTimeMillis()
             println("Received message from $senderAddress:$senderPort: $message")
         }
     }

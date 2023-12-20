@@ -127,6 +127,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     }
 
     private fun initViews() {
+        binding.buttonsContainer.visibility = if(sharedPreferences.getBoolean("settings:touchMode", false)) View.VISIBLE else View.GONE
         binding.btnPrint.setOnClickListener {
             val selectedLayout = sharedPreferences.getString("selectedLayout", "")
 

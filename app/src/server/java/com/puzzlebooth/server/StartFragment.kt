@@ -21,7 +21,6 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { permissionGranted ->
             if (permissionGranted) {
                 Toast.makeText(requireContext(), "Permission granted!", Toast.LENGTH_SHORT).show()
-                //Handler().postDelayed(Runnable { takePhoto() }, 2000)
             } else {
                 Toast.makeText(requireContext(), "Permission needed!", Toast.LENGTH_SHORT).show()
             }
@@ -70,13 +69,20 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
             findNavController().navigate(R.id.action_startFragment_to_albumFragment)
         }
 
-        binding.layouts.setOnClickListener {
-            val activity = requireActivity()
-            if(activity is MainActivity) {
-                activity.send(Payload.fromBytes("test".toByteArray()))
-            }
-            //findNavController().navigate(R.id.action_startFragment_to_layoutFragment)
+        binding.theme.setOnClickListener {
+            findNavController().navigate(R.id.action_startFragment_to_themeFragment)
         }
+
+        binding.camera.setOnClickListener {
+            findNavController().navigate(R.id.action_startFragment_to_cameraFragment)
+        }
+//        binding.layouts.setOnClickListener {
+//            val activity = requireActivity()
+//            if(activity is MainActivity) {
+//                activity.send(Payload.fromBytes("test".toByteArray()))
+//            }
+//            //findNavController().navigate(R.id.action_startFragment_to_layoutFragment)
+//        }
 
         binding.bluetooth.setOnClickListener {
             ///findNavController().navigate(R.id.action_startFragment_to_bluetoothFragmentt)
@@ -126,8 +132,8 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
     fun onMessageEvent(event: MessageEvent?) {
         when(event?.text) {
             "start" -> binding.textDisplay.performClick()
-            "album" -> binding.album.performClick()
-            "layouts" -> binding.layouts.performClick()
+            "showAlbum" -> binding.album.performClick()
+            "showsecretmenu" -> binding.camera.performClick()
             "theme" -> binding.theme.performClick()
             "bluetooth" -> binding.bluetooth.performClick()
         }

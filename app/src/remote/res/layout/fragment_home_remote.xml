@@ -7,125 +7,182 @@
     tools:background="@color/black"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".fragments.FirstFragment">
+    android:padding="30dp"
+    tools:context="com.puzzlebooth.remote.RemoteActivity">
 
-    <LinearLayout
-        android:id="@+id/adminButtonsContainer"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="horizontal">
-
-        <FrameLayout
-            android:id="@+id/cameraControllerButton"
-            android:padding="10dp"
-            android:layout_width="100dp"
-            android:layout_height="100dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_camera"
-                app:tint="@color/white" />
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/printerControllerButton"
-            android:padding="10dp"
-            android:layout_width="100dp"
-            android:layout_height="100dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_printer"
-                app:tint="@color/white" />
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/albumButton"
-            android:padding="10dp"
-            android:layout_width="100dp"
-            android:layout_height="100dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_album"
-                app:tint="@color/white" />
-
-        </FrameLayout>
-
-    </LinearLayout>
-
-    <Button
+    <androidx.cardview.widget.CardView
         android:id="@+id/btnStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:drawableEnd="@drawable/ic_baseline_not_started_24"
-        android:drawableTint="@color/white"
-        android:text="1" />
+        android:layout_weight="1"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#202020"
+        app:cardElevation="10dp">
 
-    <Button
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:tint="@color/white"
+                android:src="@drawable/ic_baseline_not_started_24"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white"
+                android:text="Start"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/btnStart2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:drawableEnd="@drawable/ic_baseline_not_started_24"
-        android:drawableTint="@color/white"
-        android:text="2" />
+        android:layout_weight="1"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#202020"
+        app:cardElevation="10dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <Button
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                app:tint="@color/white"
+                android:src="@drawable/ic_camera"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white"
+                android:text="Take picture"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/btnContinue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:drawableEnd="@drawable/ic_baseline_print_24"
-        android:drawableTint="@color/white"
-        android:text="Print" />
+        android:layout_weight="1"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#202020"
+        app:cardElevation="10dp">
 
-    <Button
-        android:id="@+id/btnContinueWithoutPrint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:drawableEnd="@drawable/ic_baseline_print_24"
-        android:drawableTint="@color/white"
-        android:text="No Print" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnPrintLastCopy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:drawableEnd="@drawable/ic_baseline_file_copy_24"
-        android:drawableTint="@color/white"
-        android:text="Print last copy" />
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                app:tint="@color/white"
+                android:src="@drawable/baseline_print_24"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white"
+                android:text="Print"/>
 
-    <Button
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/btnRetry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:drawableEnd="@drawable/ic_baseline_refresh_24"
-        android:drawableTint="@color/white"
-        android:text="Retake" />
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#202020"
+        app:cardElevation="10dp">
 
-    <Button
-        android:id="@+id/btnReset"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                app:tint="@color/white"
+                android:src="@drawable/ic_baseline_refresh_24"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white"
+                android:text="Retake"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/btnRefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="50dp"
-        android:backgroundTint="#9E0606"
-        android:drawableEnd="@drawable/ic_baseline_refresh_24"
-        android:drawableTint="@color/white"
-        android:text="Refresh" />
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#980012"
+        app:cardElevation="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                app:tint="@color/white"
+                android:visibility="gone"
+                android:src="@drawable/ic_baseline_refresh_24"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="X"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

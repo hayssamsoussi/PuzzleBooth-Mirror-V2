@@ -78,6 +78,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             toggleQuality()
             updateViews()
         }
+
+        binding.btnTouchMode.setOnClickListener {
+            toggleTouchMode()
+            updateViews()
+        }
     }
 
     override fun onResume() {
@@ -106,6 +111,14 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
 
         val edit = sharedPreferences.edit()
         edit.putBoolean("settings:tower", !current)
+        edit.apply()
+    }
+
+    fun toggleTouchMode() {
+        val current = sharedPreferences.getBoolean("settings:touchMode", false)
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("settings:touchMode", !current)
         edit.apply()
     }
 

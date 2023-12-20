@@ -26,8 +26,8 @@ class RemoteCameraFragment : BaseFragment<FragmentCameraRemoteBinding>(R.layout.
         binding.btnZoomOut.setOnClickListener { mainActivity()?.send("zoomOut") }
         binding.btnBrightnessUp.setOnClickListener { mainActivity()?.send("brightnessUp") }
         binding.btnBrightnessDown.setOnClickListener { mainActivity()?.send("brightnessDown") }
-        binding.btnTestPicture.setOnClickListener { mainActivity()?.send("testTakePicture") }
-        binding.btnResetSecretMenu.setOnClickListener { mainActivity()?.send("resetTestMenu") }
+        //binding.btnTestPicture.setOnClickListener { mainActivity()?.send("testTakePicture") }
+        //binding.btnResetSecretMenu.setOnClickListener { mainActivity()?.send("resetTestMenu") }
     }
 
     override fun onPause() {

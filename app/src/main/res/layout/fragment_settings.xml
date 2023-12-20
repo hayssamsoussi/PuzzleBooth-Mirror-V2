@@ -33,6 +33,13 @@
         android:text="Auto Photo: " />
 
     <Button
+        android:id="@+id/btnTouchMode"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="40dp"
+        android:text="Touch Mode: " />
+
+    <Button
         android:id="@+id/btnPrintSlow"
         android:layout_width="match_parent"
         android:layout_height="60dp"

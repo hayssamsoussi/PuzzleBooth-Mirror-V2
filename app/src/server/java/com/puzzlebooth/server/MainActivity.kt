@@ -11,7 +11,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.puzzlebooth.main.BaseNearbyActivity
-import com.puzzlebooth.main.utils.UdpBroadcastListener
+import com.puzzlebooth.server.utils.UdpBroadcastListener
 
 class MainActivity : BaseNearbyActivity() {
 
@@ -25,6 +25,7 @@ class MainActivity : BaseNearbyActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         sharedPreferences = getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
 
@@ -62,11 +63,6 @@ class MainActivity : BaseNearbyActivity() {
             }
         })
     }
-
-
-
-
-
 
 
     override fun toggleRemoteDot(isOnline: Boolean) {
