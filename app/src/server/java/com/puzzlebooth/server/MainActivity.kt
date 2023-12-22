@@ -65,8 +65,8 @@ class MainActivity : BaseNearbyActivity() {
     }
 
 
-    override fun toggleRemoteDot(isOnline: Boolean) {
-        if(isOnline) {
+    override fun toggleRemoteDot(state: State) {
+        if(state == State.CONNECTED) {
             findViewById<ImageView>(R.id.dotStatusRemote).setColorFilter(Color.parseColor("#0da002"), android.graphics.PorterDuff.Mode.SRC_IN);
         } else {
             findViewById<ImageView>(R.id.dotStatusRemote).setColorFilter(Color.parseColor("#d40000"), android.graphics.PorterDuff.Mode.SRC_IN);
