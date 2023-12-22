@@ -6,17 +6,12 @@
     android:background="@color/black"
     tools:context=".StartFragment">
 
-    <FrameLayout
+    <ImageView
+        android:id="@+id/overlayAnimation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:translationZ="10dp">
-
-        <ImageView
-            android:id="@+id/overlayAnimation"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="1" />
-
-    </FrameLayout>
+        android:translationZ="10dp"
+        android:scaleType="fitCenter"
+        android:alpha="1"/>
 
 </FrameLayout>

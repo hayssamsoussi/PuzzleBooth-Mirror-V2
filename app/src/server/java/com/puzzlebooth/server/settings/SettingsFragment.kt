@@ -144,12 +144,13 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         val currentAutoPhoto = if(sharedPreferences.getBoolean("settings:autoPhoto", false)) "ON" else "OFF"
         val currentPrintSlow = if(sharedPreferences.getBoolean("settings:printingSlow", false)) "ON" else "OFF"
         val currentPrintQuality = if(sharedPreferences.getBoolean("settings:printingQuality", false)) "HQ" else "LQ"
-
+        val currentTouchMode = if(sharedPreferences.getBoolean("settings:touchMode", false)) "ON" else "OFF"
 
         binding.btnFlash.text = "Flash: ${currentFlash}"
         binding.btnTower.text = "Tower: ${currentTower}"
         binding.btnAutoPhoto.text = "Auto Photo: ${currentAutoPhoto}"
         binding.btnPrintSlow.text = "Printing Slow: ${currentPrintSlow}"
         binding.btnQualtiy.text = "Printing Quality: ${currentPrintQuality}"
+        binding.btnTouchMode.text = "Touch Mode: ${currentTouchMode}"
     }
 }

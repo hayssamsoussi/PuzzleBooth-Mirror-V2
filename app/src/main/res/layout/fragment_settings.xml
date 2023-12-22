@@ -6,112 +6,115 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/settingsList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <Button
-        android:id="@+id/btnTower"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="40dp"
-        android:text="Tower: " />
-
-    <Button
-        android:id="@+id/btnFlash"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="40dp"
-        android:text="Flash: " />
-
-    <Button
-        android:id="@+id/btnAutoPhoto"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="40dp"
-        android:text="Auto Photo: " />
-
-    <Button
-        android:id="@+id/btnTouchMode"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="40dp"
-        android:text="Touch Mode: " />
-
-    <Button
-        android:id="@+id/btnPrintSlow"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="40dp"
-        android:text="Print Slow: " />
-
-
-    <Button
-        android:id="@+id/btnQualtiy"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginHorizontal="40dp"
-        android:text="Print quality: " />
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:rotation="270">
 
-        <ToggleButton
-            android:id="@+id/toggleLQ"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textOn="LQ"
-            android:textOff="LQ" />
+        <Button
+            android:id="@+id/btnTower"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="Tower: " />
 
-        <ToggleButton
-            android:id="@+id/toggleMQ"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textOn="MQ"
-            android:textOff="MQ" />
+        <Button
+            android:id="@+id/btnFlash"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="Flash: " />
 
-        <ToggleButton
-            android:id="@+id/toggleHQ"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textOn="HQ"
-            android:textOff="HQ" />
+        <Button
+            android:id="@+id/btnAutoPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="Auto Photo: " />
 
-        <ToggleButton
-            android:id="@+id/toggleUHQ"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <Button
+            android:id="@+id/btnTouchMode"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="Touch Mode: " />
+
+        <Button
+            android:id="@+id/btnPrintSlow"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="Print Slow: " />
+
+
+        <Button
+            android:id="@+id/btnQualtiy"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="Print quality: " />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textOn="UHQ"
-            android:textOff="UHQ" />
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <ToggleButton
+                android:id="@+id/toggleLQ"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textOn="LQ"
+                android:textOff="LQ" />
+
+            <ToggleButton
+                android:id="@+id/toggleMQ"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textOn="MQ"
+                android:textOff="MQ" />
+
+            <ToggleButton
+                android:id="@+id/toggleHQ"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textOn="HQ"
+                android:textOff="HQ" />
+
+            <ToggleButton
+                android:id="@+id/toggleUHQ"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textOn="UHQ"
+                android:textOff="UHQ" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="test"/>
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="test"/>
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="test"/>
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
     </LinearLayout>
-
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:layout_width="match_parent"
-        android:layout_height="100dp">
-
-        <ToggleButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="test"/>
-
-        <ToggleButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="test"/>
-
-        <ToggleButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="test"/>
-
-    </com.google.android.material.button.MaterialButtonToggleGroup>
 
 </LinearLayout>

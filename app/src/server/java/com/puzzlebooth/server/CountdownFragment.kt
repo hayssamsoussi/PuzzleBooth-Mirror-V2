@@ -66,7 +66,7 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
     private fun initViews() {
         Glide.with(this)
             .load(AnimationsManager.countdown)
-            //.transform(RotateTransformation(requireContext(), 270f))
+            .transform(RotateTransformation(requireContext(), 270f))
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,

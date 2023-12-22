@@ -1,11 +1,13 @@
 package com.puzzlebooth.remote
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -18,14 +20,31 @@ import com.puzzlebooth.server.databinding.ActivityRemoteBinding
 class RemoteActivity : BaseNearbyActivity() {
 
 
-    override fun togglePrinterDot(isOnline: Boolean) {
-        super.togglePrinterDot(isOnline)
-        println("hhh togglePrinterDot $isOnline")
+    override fun toggleRemoteDot(state: State) {
+        when(state) {
+            State.SEARCHING -> {
+                binding.connectionStatusContainer.setCardBackgroundColor(Color.parseColor("#1E1E1E"))
+                binding.progressBar.visibility = View.VISIBLE
+            }
+
+            State.CONNECTED -> {
+                binding.connectionStatusContainer.setCardBackgroundColor(Color.parseColor("#0da002"))
+                binding.progressBar.visibility = View.INVISIBLE
+            }
+
+            State.UNKNOWN -> {
+                binding.connectionStatusContainer.setCardBackgroundColor(Color.parseColor("#d40000"))
+                binding.progressBar.visibility = View.INVISIBLE
+            }
+        }
     }
 
-    override fun toggleRemoteDot(isOnline: Boolean) {
-        super.toggleRemoteDot(isOnline)
-        println("hhh toggleRemoteDot $isOnline")
+    override fun togglePrinterDot(isOnline: Boolean) {
+//        if(isOnline) {
+//            findViewById<ImageView>(R.id.dotStatusPrinter).setColorFilter(Color.parseColor("#0da002"), android.graphics.PorterDuff.Mode.SRC_IN);
+//        } else {
+//            findViewById<ImageView>(R.id.dotStatusPrinter).setColorFilter(Color.parseColor("#d40000"), android.graphics.PorterDuff.Mode.SRC_IN);
+//        }
     }
 
     private lateinit var binding: ActivityRemoteBinding

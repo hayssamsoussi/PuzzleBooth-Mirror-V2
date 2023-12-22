@@ -213,7 +213,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
         stringBuilder.appendLine("ID: ${event.id}")
         stringBuilder.appendLine("Names: ${event.names}")
         stringBuilder.appendLine("Location: ${event.location}")
-        binding.tvEventDescription.text = stringBuilder.toString()
+        //binding.tvEventDescription.text = stringBuilder.toString()
 
         downloadLayout(Design("", event.design_url.substringAfterLast("/").removeSuffix(".png"), event.design_url))
     }
@@ -225,7 +225,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
             .subscribeOn(Schedulers.io())
             .doOnSubscribe {
                 Glide.with(requireContext()).clear(binding.ivLayout)
-                binding.tvEventDescription.text = ""
+                //binding.tvEventDescription.text = ""
                 binding.progressBar.show()
             }
             .doOnError {

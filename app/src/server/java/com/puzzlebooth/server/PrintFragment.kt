@@ -11,6 +11,7 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.puzzlebooth.main.base.BaseFragment
+import com.puzzlebooth.main.utils.RotateTransformation
 import com.puzzlebooth.server.databinding.FragmentPrintBinding
 import com.puzzlebooth.server.utils.AnimationsManager
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +37,7 @@ class PrintFragment : BaseFragment<FragmentPrintBinding>(R.layout.fragment_print
         Glide.with(this)
             .load(AnimationsManager.printing)
             //.transform(RotateTransformation(requireContext(), 270f))
+            .transform(RotateTransformation(requireContext(), 270f))
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,

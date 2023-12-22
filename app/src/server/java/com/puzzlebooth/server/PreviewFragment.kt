@@ -96,10 +96,11 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         val baseBitmap = com.puzzlebooth.server.CountdownFragment.capturedPhoto ?: return null
         val layoutName = sharedPreferences.getString("selectedLayout", "")
         val layoutPath = "${requireContext().cacheDir}/layouts/${layoutName}"
-        val overlayBitmap = if(layoutName.isNullOrEmpty()) drawableToBitmap(ContextCompat.getDrawable(requireContext(), R.drawable.blank)) else BitmapFactory.decodeFile(layoutPath)
+        var overlayBitmap = if(layoutName.isNullOrEmpty()) drawableToBitmap(ContextCompat.getDrawable(requireContext(), R.drawable.blank)) else BitmapFactory.decodeFile(layoutPath)
 
         if(overlayBitmap != null) {
             // Scale the overlay bitmap to fit the height of the base bitmap
+            overlayBitmap = overlayBitmap.rotate(270F)
             val scaledOverlayWidth = baseBitmap.height * overlayBitmap.width / overlayBitmap.height
             val scaledOverlayBitmap = Bitmap.createScaledBitmap(overlayBitmap, scaledOverlayWidth, baseBitmap.height, true)
 
@@ -173,7 +174,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         }
 
         binding.btnCancel.setOnClickListener {
-            findNavController().setGraph(R.navigation.nav_graph)
+            findNavController().navigate(R.id.action_previewFragment_to_startFragment)
         }
 
         binding.btnRetake.setOnClickListener {

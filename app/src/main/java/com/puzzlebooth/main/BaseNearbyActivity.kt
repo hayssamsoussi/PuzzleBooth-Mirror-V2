@@ -148,7 +148,8 @@ open class BaseNearbyActivity: ConnectionsActivity() {
      * @param state The new state.
      */
     private fun setState(state: State) {
-        toggleRemoteDot(state == State.CONNECTED)
+        println("hhh state ${state.name}")
+        toggleRemoteDot(state)
         EventBus.getDefault().post(MessageEvent(state.name))
         if (mState == state) {
             logW("State set to $state but already in that state")
@@ -447,7 +448,7 @@ open class BaseNearbyActivity: ConnectionsActivity() {
 
     }
 
-    open fun toggleRemoteDot(isOnline: Boolean) {
+    open fun toggleRemoteDot(state: State) {
 
     }
 }

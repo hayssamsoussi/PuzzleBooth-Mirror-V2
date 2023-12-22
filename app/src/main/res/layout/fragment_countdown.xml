@@ -6,23 +6,18 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <FrameLayout
+    <ImageView
+        android:id="@+id/overlayAnimation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:translationZ="10dp">
-
-        <ImageView
-            android:id="@+id/overlayAnimation"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.5" />
-
-    </FrameLayout>
+        android:translationZ="10dp"
+        android:scaleType="fitCenter"
+        android:alpha="0.5" />
 
     <com.otaliastudios.cameraview.CameraView
         android:id="@+id/camera"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="600dp"
+        android:layout_height="400dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
