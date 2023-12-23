@@ -5,11 +5,15 @@ import android.os.Environment
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.nearby.connection.Payload
 import com.puzzlebooth.main.base.BaseFragment
+import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
+import com.puzzlebooth.server.MainActivity
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.album.listing.AlbumAdapter
 import com.puzzlebooth.server.album.listing.LocalImage
 import com.puzzlebooth.server.databinding.FragmentAlbumBinding
+import java.io.File
 
 class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album) {
 
@@ -41,8 +45,7 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
 
     private fun initData() {
         localFiles.clear()
-        val file = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_DOWNLOADS)
+        val file = File(requireContext().getCurrentEventPhotosPath())
 
         val twodaysmillis = 172800000
         val monthmillis = 172800000

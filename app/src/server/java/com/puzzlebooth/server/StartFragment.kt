@@ -1,7 +1,10 @@
 package com.puzzlebooth.server
 
+import android.app.Activity
+import android.content.Context.BATTERY_SERVICE
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.os.BatteryManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -18,11 +21,13 @@ import com.google.android.gms.nearby.connection.Payload
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
+import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.databinding.FragmentStartBinding
 import com.puzzlebooth.server.utils.AnimationsManager
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.File
 
 class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start) {
 
@@ -58,6 +63,8 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
             "showsecretmenu" -> binding.camera.performClick()
             "theme" -> binding.theme.performClick()
             "bluetooth" -> binding.bluetooth.performClick()
+            "reset" -> requireActivity().getMainActivity()?.sendStatus()
+            "request_print_count" -> requireActivity().getMainActivity()?.sendStatus()
         }
     }
 
@@ -70,4 +77,13 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
         super.onStop()
         EventBus.getDefault().unregister(this)
     }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().getMainActivity()?.sendStatus()
+    }
+}
+
+fun Activity.getMainActivity(): MainActivity? {
+    return (this as? MainActivity)
 }

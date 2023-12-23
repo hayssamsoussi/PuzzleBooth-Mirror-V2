@@ -2,6 +2,7 @@ package com.puzzlebooth.server
 
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.os.BatteryManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,8 +11,11 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.nearby.connection.Payload
 import com.puzzlebooth.main.BaseNearbyActivity
+import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.utils.UdpBroadcastListener
+import java.io.File
 
 class MainActivity : BaseNearbyActivity() {
 
@@ -21,6 +25,13 @@ class MainActivity : BaseNearbyActivity() {
     companion object {
         var lastTimePrinterConnectionReceived: Long = System.currentTimeMillis() - (600000)
         var mosaic = false
+    }
+
+    fun sendStatus() {
+        val bm = getSystemService(BATTERY_SERVICE) as BatteryManager
+        val batteryLevel =  bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        val printCount = File(getCurrentEventPhotosPath()).listFiles()?.size
+        send(Payload.fromBytes("battery:$batteryLevel%;print_count:$printCount".toByteArray()))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +66,6 @@ class MainActivity : BaseNearbyActivity() {
 
         mainHandler.post(object : Runnable {
             override fun run() {
-                //sendUdpBroadcast("this is the app here", 11791)
                 val now = System.currentTimeMillis()
                 val lastReceivedMsAgo = now - lastTimePrinterConnectionReceived
                 togglePrinterDot(lastReceivedMsAgo < 10000)

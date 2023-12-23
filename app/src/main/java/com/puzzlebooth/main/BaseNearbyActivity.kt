@@ -330,6 +330,7 @@ open class BaseNearbyActivity: ConnectionsActivity() {
     /** {@see ConnectionsActivity#onReceive(Endpoint, Payload)}  */
     override fun onReceive(endpoint: Endpoint?, payload: Payload?) {
         val event = payload?.asBytes()?.let { String(it) }
+        println("hhh event ${event}")
         if(!event.isNullOrEmpty())
             EventBus.getDefault().post(MessageEvent(event))
     }

@@ -15,6 +15,7 @@ import com.bumptech.glide.request.target.Target
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.PictureResult
 import com.puzzlebooth.main.base.BaseFragment
+import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
 import com.puzzlebooth.server.databinding.FragmentCountdownBinding
 import com.puzzlebooth.server.utils.AnimationsManager
@@ -22,8 +23,28 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragment_countdown) {
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: MessageEvent?) {
+        when(event?.text) {
+            "start2" -> binding.camera.takePicture()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 
     companion object {
         var capturedPhoto: Bitmap? = null
@@ -107,16 +128,21 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
 
             var countdownSeconds = 3
             while (countdownSeconds > 0) {
-                binding.textDisplay.text = countdownSeconds.toString()
+                //binding.textDisplay.text = countdownSeconds.toString()
                 delay(1000) // delay for 1 second
                 countdownSeconds--
             }
             measureTimeForPictureCapture = System.currentTimeMillis()
-            binding.camera.takePicture()
+            val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", false)
+
+            if(currentAutoPhoto) {
+                binding.camera.takePicture()
+            }
+
 
             //binding.btnPrint.visibility = View.VISIBLE
             //binding.btnRetake.visibility = View.VISIBLE
-            binding.textDisplay.text = "Done!"
+            //binding.textDisplay.text = "Done!"
         }
     }
 }

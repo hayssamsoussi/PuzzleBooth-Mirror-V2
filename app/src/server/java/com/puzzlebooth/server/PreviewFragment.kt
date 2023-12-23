@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.FileClientLegacy
+import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.databinding.FragmentPreviewBinding
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -135,7 +136,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
             val timeFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
             val timeFormatDate = SimpleDateFormat("yyyyMMdd", Locale.US)
             val timeStampDate: String = timeFormatDate.format(Date())
-            val path = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/${timeStampDate}-${selectedLayout}/"
+            val path = requireContext().getCurrentEventPhotosPath()
             File(path).mkdirs()
             val timeStamp: String = timeFormat.format(Date())
             val fileName = "${timeStamp}_$selectedLayout.jpeg"

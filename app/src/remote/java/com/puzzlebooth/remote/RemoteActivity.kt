@@ -8,7 +8,9 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.nearby.connection.Payload
@@ -19,6 +21,32 @@ import com.puzzlebooth.server.databinding.ActivityRemoteBinding
 
 class RemoteActivity : BaseNearbyActivity() {
 
+    override fun onReceive(endpoint: Endpoint?, payload: Payload?) {
+        val event = payload?.asBytes()?.let { String(it) }
+        if (event != null) {
+            processEvent(event)
+        }
+        println("hhh received ${event}")
+    }
+
+    fun processEvent(event: String) {
+        if(event.startsWith("battery")) {
+            event
+                .split(";")
+                .forEach {
+                    when {
+                        it.startsWith("battery") -> {
+                            val value = it.substringAfter(":")
+                            binding.header1.text = "Battery: ${value}"
+                        }
+                        it.startsWith("print_count") -> {
+                            val value = it.substringAfter(":")
+                            binding.header2.text = "Prints: ${value}"
+                        }
+                    }
+                }
+        }
+    }
 
     override fun toggleRemoteDot(state: State) {
         when(state) {
@@ -83,6 +111,10 @@ class RemoteActivity : BaseNearbyActivity() {
         mDebugLogView?.movementMethod = ScrollingMovementMethod()
 
         mName = generateRandomName()
+
+        (findViewById<CardView>(R.id.header_container)).setOnClickListener {
+            send("request_print_count")
+        }
 
         (findViewById<TextView>(R.id.name))?.text = mName
     }
