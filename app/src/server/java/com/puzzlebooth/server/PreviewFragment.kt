@@ -107,7 +107,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
         if(overlayBitmap != null) {
             // Scale the overlay bitmap to fit the height of the base bitmap
-            overlayBitmap = overlayBitmap.rotate(270F)
+            //overlayBitmap = overlayBitmap.rotate(270F)
             val scaledOverlayWidth = baseBitmap.height * overlayBitmap.width / overlayBitmap.height
             val scaledOverlayBitmap = Bitmap.createScaledBitmap(overlayBitmap, scaledOverlayWidth, baseBitmap.height, true)
 
