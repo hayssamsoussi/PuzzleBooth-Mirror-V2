@@ -37,7 +37,7 @@ class PrintFragment : BaseFragment<FragmentPrintBinding>(R.layout.fragment_print
         Glide.with(this)
             .load(AnimationsManager.printing)
             //.transform(RotateTransformation(requireContext(), 270f))
-            .transform(RotateTransformation(requireContext(), 270f))
+            //.transform(RotateTransformation(requireContext(), 270f))
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,

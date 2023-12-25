@@ -46,7 +46,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
 
         Glide.with(this)
             .load(AnimationsManager.start)
-            .transform(RotateTransformation(requireContext(), 270f))
+            //.transform(RotateTransformation(requireContext(), 270f))
             .into(binding.startAnimation)
 
 

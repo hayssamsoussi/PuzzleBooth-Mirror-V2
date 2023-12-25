@@ -9,8 +9,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:rotation="270">
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/btnTower"

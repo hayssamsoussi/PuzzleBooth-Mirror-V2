@@ -53,12 +53,12 @@ class AlbumAdapter(private val mList: List<LocalImage>, val action: (String) -> 
             .load(file.file.path)
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .transform(
-                RotateTransformation(
-                    holder.itemView.context,
-                    270f
-                )
-            )
+//            .transform(
+//                RotateTransformation(
+//                    holder.itemView.context,
+//                    270f
+//                )
+//            )
             .into(holder.imageView)
 
         if(position == currentPosition) {

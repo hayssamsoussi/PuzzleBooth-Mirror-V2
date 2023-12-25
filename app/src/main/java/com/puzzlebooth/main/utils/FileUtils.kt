@@ -14,5 +14,10 @@ fun Context.getCurrentEventPhotosPath(): String {
     val selectedLayout = sharedPreferences.getString("selectedLayout", "")
     return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/${timeStampDate}-${selectedLayout}/"
 }
+
+fun Context.draftPath(): String {
+    return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts/"
+}
+
 class FileUtils {
 }

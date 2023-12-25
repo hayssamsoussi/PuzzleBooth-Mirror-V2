@@ -72,12 +72,12 @@ class LayoutFragment : BaseFragment<FragmentLayoutBinding>(R.layout.fragment_lay
                     .load(layoutFile)
                     .skipMemoryCache(true)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .transform(
-                        RotateTransformation(
-                            requireContext(),
-                            270f
-                        )
-                    )
+//                    .transform(
+//                        RotateTransformation(
+//                            requireContext(),
+//                            270f
+//                        )
+//                    )
                     .into(binding.layoutIv)
             }
         }

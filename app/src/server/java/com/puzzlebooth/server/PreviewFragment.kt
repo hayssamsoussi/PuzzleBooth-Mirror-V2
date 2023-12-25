@@ -8,20 +8,28 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
+import com.puzzlebooth.main.utils.ConnectivityUtils
+import com.puzzlebooth.main.utils.FileADBCopy
 import com.puzzlebooth.main.utils.FileClientLegacy
+import com.puzzlebooth.main.utils.draftPath
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.databinding.FragmentPreviewBinding
+import okio.Path.Companion.toPath
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.CopyOption
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -137,37 +145,49 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
             val timeFormatDate = SimpleDateFormat("yyyyMMdd", Locale.US)
             val timeStampDate: String = timeFormatDate.format(Date())
             val path = requireContext().getCurrentEventPhotosPath()
+            val draftPath = requireContext().draftPath()
             File(path).mkdirs()
+            File(draftPath).mkdirs()
             val timeStamp: String = timeFormat.format(Date())
             val fileName = "${timeStamp}_$selectedLayout.jpeg"
             var file = FileOutputStream("$path$fileName")
-
             var quality = if(sharedPreferences.getBoolean("settings:printingQuality", false) ) 100 else 70
             resultBitmap?.rotate(90F)?.compress(Bitmap.CompressFormat.JPEG, quality, file)
+            Handler().postDelayed(Runnable {
+                File("$path$fileName").copyTo(File("${requireContext().draftPath()}/$fileName"), true)
+            }, 1000)
 
-            val pathFile = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS)
-            val filesList = pathFile.list()
-            val todaysFiles = filesList.filter { it.startsWith(timeStampDate) }
+//            val pathFile = Environment.getExternalStoragePublicDirectory(
+//                Environment.DIRECTORY_DOWNLOADS)
+//            val filesList = pathFile.list()
+//            val todaysFiles = filesList.filter { it.startsWith(timeStampDate) }
 
-            val thread = Thread {
-                try {
-                    val ip = sharedPreferences.getString("ip", "") ?: return@Thread
-                    val port = sharedPreferences.getString("port", "") ?: return@Thread
-                    val portNumber = port?.toIntOrNull() ?: return@Thread
-                    FileClientLegacy(
-                        ip,
-                        13456,
-                        "$path$fileName"
-                    )
-                //FileClient(ip, 13456).execute(pathFile)
-                    //FileClient(sharedPreferences.getString("ip", "192.168.43.1"), sharedPreferences.getString("port", "13456")?.toIntOrNull() ?: 0, pathFile.path + "/" + todaysFiles.last())
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
+//            if (ConnectivityUtils.isUsbConnected(requireContext())) {
+//                // USB is connected, initiate file transfer
+//                initiateFileTransfer("$path$fileName")
+//            } else {
+//                // USB is not connected, show a message or take appropriate action
+//            }
 
-            thread.start()
+            //FileADBCopy().copyFileToDevice("$path$fileName", "~/Desktop/")
+//            val thread = Thread {
+//                try {
+//                    val ip = sharedPreferences.getString("ip", "") ?: return@Thread
+//                    val port = sharedPreferences.getString("port", "") ?: return@Thread
+//                    val portNumber = port?.toIntOrNull() ?: return@Thread
+//                    FileClientLegacy(
+//                        ip,
+//                        13456,
+//                        "$path$fileName"
+//                    )
+//                //FileClient(ip, 13456).execute(pathFile)
+//                    //FileClient(sharedPreferences.getString("ip", "192.168.43.1"), sharedPreferences.getString("port", "13456")?.toIntOrNull() ?: 0, pathFile.path + "/" + todaysFiles.last())
+//                } catch (e: Exception) {
+//                    e.printStackTrace()
+//                }
+//            }
+
+            //thread.start()
 
             //sendToTarget("printCount:${todaysFiles.size}", ServerService.lastReceiverAddress)
 
