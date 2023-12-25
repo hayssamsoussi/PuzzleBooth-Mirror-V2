@@ -76,7 +76,6 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        controlPanel = binding.controls
 
         binding.camera.setLifecycleOwner(this)
         binding.camera.addCameraListener(Listener())
