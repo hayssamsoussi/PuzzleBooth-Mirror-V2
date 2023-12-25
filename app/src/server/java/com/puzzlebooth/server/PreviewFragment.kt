@@ -15,8 +15,6 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
-import com.puzzlebooth.main.utils.ConnectivityUtils
-import com.puzzlebooth.main.utils.FileADBCopy
 import com.puzzlebooth.main.utils.FileClientLegacy
 import com.puzzlebooth.main.utils.draftPath
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
