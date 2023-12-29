@@ -34,9 +34,11 @@ class PrintFragment : BaseFragment<FragmentPrintBinding>(R.layout.fragment_print
     }
 
     private fun startCountdown() {
+        val landscape = sharedPreferences.getBoolean("settings:landscape", false)
+
         Glide.with(this)
             .load(AnimationsManager.printing)
-            //.transform(RotateTransformation(requireContext(), 270f))
+            .transform(RotateTransformation(requireContext(), if(landscape) 270f else 0F))
             //.transform(RotateTransformation(requireContext(), 270f))
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
@@ -66,7 +68,11 @@ class PrintFragment : BaseFragment<FragmentPrintBinding>(R.layout.fragment_print
         coroutineScope.launch {
             var countdownSeconds = 5
             delay(9000)
-            findNavController().navigate(R.id.action_printFragment_to_startFragment)
+
+            if(isVisible) {
+                findNavController().navigate(R.id.action_printFragment_to_startFragment)
+            }
+
             //binding.textDisplay.text = "Done!"
         }
     }

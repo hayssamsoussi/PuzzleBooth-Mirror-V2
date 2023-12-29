@@ -97,11 +97,17 @@ open class BaseNearbyActivity: ConnectionsActivity() {
     var mDebugLogView: TextView? = null
 
     override fun onStart() {
+        println("hhh onStart ${getState().name}")
         super.onStart()
-        setState(State.SEARCHING)
+        if(getState() != State.CONNECTED) {
+            setState(State.SEARCHING)
+        }
     }
 
-    override fun onStop() {
+    override fun onDestroy() {
+        super.onDestroy()
+
+        println("hhh onDestroy")
         // After our Activity stops, we disconnect from Nearby Connections.
         setState(State.UNKNOWN)
         if (mCurrentAnimator != null && mCurrentAnimator!!.isRunning) {
@@ -109,10 +115,14 @@ open class BaseNearbyActivity: ConnectionsActivity() {
         }
         super.onStop()
     }
+
     override fun onEndpointDiscovered(endpoint: Endpoint?) {
         // We found an advertiser!
-        stopDiscovering()
-        connectToEndpoint(endpoint)
+        println("hhh foundAdvertiser ${endpoint?.id}")
+        if(endpoint?.name == "PBR") {
+            stopDiscovering()
+            connectToEndpoint(endpoint)
+        }
     }
 
     override fun onConnectionInitiated(endpoint: Endpoint?, connectionInfo: ConnectionInfo?) {
@@ -148,7 +158,6 @@ open class BaseNearbyActivity: ConnectionsActivity() {
      * @param state The new state.
      */
     private fun setState(state: State) {
-        println("hhh state ${state.name}")
         toggleRemoteDot(state)
         EventBus.getDefault().post(MessageEvent(state.name))
         if (mState == state) {

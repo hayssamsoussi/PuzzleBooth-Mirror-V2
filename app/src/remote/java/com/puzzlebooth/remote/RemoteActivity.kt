@@ -110,8 +110,8 @@ class RemoteActivity : BaseNearbyActivity() {
         mDebugLogView?.visibility = if (DEBUG) View.VISIBLE else View.GONE
         mDebugLogView?.movementMethod = ScrollingMovementMethod()
 
-        mName = generateRandomName()
-
+        mName = "PBR"
+        binding.header3.text = "Name: ${mName}"
         (findViewById<CardView>(R.id.header_container)).setOnClickListener {
             send("request_print_count")
         }

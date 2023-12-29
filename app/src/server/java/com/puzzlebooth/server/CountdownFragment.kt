@@ -1,11 +1,15 @@
 package com.puzzlebooth.server
 
+import android.R.attr
+import android.R.attr.duration
+import android.R.attr.resource
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -19,20 +23,22 @@ import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
 import com.puzzlebooth.server.databinding.FragmentCountdownBinding
 import com.puzzlebooth.server.utils.AnimationsManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
+
 class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragment_countdown) {
+
+    var countdownRunning = true
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent?) {
+        println("hhh received ${event?.text}")
         when(event?.text) {
-            "start2" -> binding.camera.takePicture()
+            "start2" -> binding.btnStart2.performClick()
         }
     }
 
@@ -48,21 +54,17 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
 
     companion object {
         var capturedPhoto: Bitmap? = null
-        var measureTimeForPictureCapture: Long = 0
     }
 
     private inner class Listener : CameraListener() {
         override fun onPictureTaken(result: PictureResult) {
             super.onPictureTaken(result)
-            measureTimeForPictureCapture = System.currentTimeMillis() - measureTimeForPictureCapture
             result.toBitmap() {
                 if (it != null) {
                     println("hhh picture taken!")
                     binding.camera.close()
-                    com.puzzlebooth.server.CountdownFragment.Companion.capturedPhoto = it
+                    capturedPhoto = it
                     findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
-                    println("hhh measureTime ${measureTimeForPictureCapture}")
-                    //showPreview(it)
                 }
             }
         }
@@ -72,8 +74,6 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
         return FragmentCountdownBinding.bind(view)
     }
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -81,68 +81,95 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
         binding.camera.addCameraListener(Listener())
 
         initViews()
-        startCountdown()
+        //startCountdown()
     }
 
     private fun initViews() {
-        Glide.with(this)
+
+        binding.btnStart2.setOnClickListener {
+            if(!countdownRunning) {
+                binding.camera.takePicture()
+            }
+        }
+
+        val landscape = sharedPreferences.getBoolean("settings:landscape", false)
+
+        countdownRunning = true
+        binding.camera.open()
+        val zoom = sharedPreferences.getFloat("camera:zoom", binding.camera.exposureCorrection)
+        binding.camera.zoom = zoom
+        val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", false)
+
+        Glide
+            .with(this)
+            .asGif()
             .load(AnimationsManager.countdown)
-            //.transform(RotateTransformation(requireContext(), 270f))
-            .listener(object : RequestListener<Drawable> {
+            .transform(RotateTransformation(requireContext(), if(landscape)
+                270f
+            else
+                0f))
+            .listener(object: RequestListener<GifDrawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
                     model: Any?,
-                    target: Target<Drawable>,
+                    target: Target<GifDrawable>,
                     isFirstResource: Boolean
                 ): Boolean {
                     return false
                 }
 
                 override fun onResourceReady(
-                    resource: Drawable,
+                    resource: GifDrawable,
                     model: Any,
-                    target: Target<Drawable>?,
+                    target: Target<GifDrawable>?,
                     dataSource: DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
-                    if (resource is GifDrawable) {
-                        (resource).setLoopCount(1)
-                    }
+                    resource.setLoopCount(1)
+                    resource.registerAnimationCallback(object :
+                        Animatable2Compat.AnimationCallback() {
+                        override fun onAnimationEnd(drawable: Drawable) {
+                            // This code will be executed when the GIF ends
+                            // Do your desired actions here
+                            countdownRunning = false
+                            if(currentAutoPhoto) {
+                                println("hhh capture photo")
+                                binding.btnStart2.performClick()
+                                //binding.camera.takePicture()
+                            }
+                            println("hhh anbimation end")
+                        }
+                    })
+
                     return false
                 }
+
             })
             .into(binding.overlayAnimation)
     }
 
     private fun startCountdown() {
+        countdownRunning = true
+
         lifecycleScope.launch {
             binding.camera.open()
-            val exposure = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
-            println("hhh settings the exposure as ${exposure}")
-            binding.camera.exposureCorrection = 1.0F
-            binding.camera.exposureCorrection = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
+//            val exposure = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
+//            binding.camera.exposureCorrection = 1.0F
+//            binding.camera.exposureCorrection = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
+//
             val zoom = sharedPreferences.getFloat("camera:zoom", binding.camera.exposureCorrection)
             binding.camera.zoom = zoom
-            //binding.btnPrint.visibility = View.GONE
-            //binding.btnRetake.visibility = View.GONE
 
-            var countdownSeconds = 3
-            while (countdownSeconds > 0) {
-                //binding.textDisplay.text = countdownSeconds.toString()
-                delay(1000) // delay for 1 second
-                countdownSeconds--
-            }
-            measureTimeForPictureCapture = System.currentTimeMillis()
+
             val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", false)
 
+
+
             if(currentAutoPhoto) {
-                binding.camera.takePicture()
+                println("hhh capture photo")
+                //binding.btnStart2.performClick()
+                //binding.camera.takePicture()
             }
-
-
-            //binding.btnPrint.visibility = View.VISIBLE
-            //binding.btnRetake.visibility = View.VISIBLE
-            //binding.textDisplay.text = "Done!"
         }
     }
 }

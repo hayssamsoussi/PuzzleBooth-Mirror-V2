@@ -29,6 +29,21 @@
         <action
             android:id="@+id/action_mainFragment_to_cameraFragment"
             app:destination="@id/cameraFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_mosaicFragment"
+            app:destination="@id/mosaicFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/mosaicFragment"
+        android:name="com.puzzlebooth.server.mosaic.MosaicFragment"
+        android:label="Mosaic Fragment"
+        tools:layout="@layout/fragment_mosaic" >
+
+        <action
+            android:id="@+id/action_startFragment_to_countdownFragment"
+            app:destination="@id/countdownFragment" />
 
     </fragment>
 

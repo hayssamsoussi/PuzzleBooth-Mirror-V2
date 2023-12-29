@@ -14,6 +14,7 @@ import com.github.kittinunf.fuel.Fuel
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.FragmentThemeBinding
+import com.puzzlebooth.server.mosaic.MosaicManager
 import com.puzzlebooth.server.network.Design
 import com.puzzlebooth.server.network.Event
 import com.puzzlebooth.server.theme.listing.DesignsAdapter
@@ -122,6 +123,49 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
         edit.apply()
     }
 
+    private fun downloadMosaic(url: String) {
+        if (!File("${requireContext().cacheDir}/layouts/").exists()) {
+            File("${requireContext().cacheDir}/layouts/").mkdirs()
+        }
+
+        val file = File("${requireContext().cacheDir}/layouts/mosaic.jpg")
+        if (file.exists()) {
+            file.delete()
+        }
+
+        val outputStream = FileOutputStream(file)
+
+        Fuel.download(url)
+            .streamDestination { response, _ ->
+                Pair(
+                    outputStream
+                ) { response.body().toStream() }
+            }
+            .fileDestination { _, _ ->
+                file
+            }
+            .progress { readBytes, totalBytes ->
+                val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
+                println("hhh progress ${progress}")
+            }
+            .response { result ->
+                result.fold(
+                    success = {
+                        //storeSelectedLayout(.filename)
+
+                        requireActivity().runOnUiThread {
+                            MosaicManager.cropAndSaveImages("${requireContext().cacheDir}/layouts/mosaic.jpg")
+                        }
+                    },
+                    failure = {
+                        it.printStackTrace()
+                        Toast.makeText(requireContext(), "Error downloading file!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                )
+            }
+    }
+
     private fun downloadLayout(design: Design) {
         val locallayouts = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/"
 
@@ -202,8 +246,8 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
             scanQrCodeLauncher.launch(null)
         }
 
-        binding.noDesignButton.setOnClickListener {
-            storeSelectedLayout("")
+        binding.mosaicButton?.setOnClickListener {
+            downloadMosaic("https://www.puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/layouts1/aaaa.jpg")
             showLayout()
         }
     }

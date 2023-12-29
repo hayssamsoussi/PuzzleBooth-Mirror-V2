@@ -1,26 +1,34 @@
 package com.puzzlebooth.server
 
 import android.content.SharedPreferences
+import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.BatteryManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.KeyEvent
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
 import com.google.android.gms.nearby.connection.Payload
 import com.puzzlebooth.main.BaseNearbyActivity
+import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
+import com.puzzlebooth.server.mosaic.MosaicManager
 import com.puzzlebooth.server.utils.UdpBroadcastListener
+import org.greenrobot.eventbus.EventBus
 import java.io.File
 
 class MainActivity : BaseNearbyActivity() {
 
-    lateinit var udpBroadcastListener: UdpBroadcastListener
-    lateinit var sharedPreferences: SharedPreferences
+    var udpBroadcastListener: UdpBroadcastListener? = null
+    var sharedPreferences: SharedPreferences? = null
     
     companion object {
         var lastTimePrinterConnectionReceived: Long = System.currentTimeMillis() - (600000)
@@ -36,31 +44,61 @@ class MainActivity : BaseNearbyActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         sharedPreferences = getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
+        val isLandscape = false
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+        if((isLandscape == true) && requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        } else {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        udpBroadcastListener = UdpBroadcastListener(this, sharedPreferences, 11791)
+            MosaicManager.startMosaic(this)
 
-        // Start listening
-        udpBroadcastListener.startListening()
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
 
-        preriodicallyCheckPrinterStatus()
+            println("hhh udpBroadcastListener init")
+            udpBroadcastListener = UdpBroadcastListener(this, sharedPreferences!!, 11791)
 
-        setContentView(R.layout.activity_main)
+            // Start listening
+            udpBroadcastListener?.startListening()
+
+            preriodicallyCheckPrinterStatus()
+
+            setContentView(R.layout.activity_main)
+
+            val landscape = sharedPreferences?.getBoolean("settings:landscape", false)
+            findViewById<ImageView>(R.id.dotStatusPrinter).visibility = if(landscape == true) View.VISIBLE else View.GONE
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        // Check for volume button press
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            println("hhh volumne iup pressed")
+            // Notify the fragment about the volume button press
+            EventBus.getDefault().post(MessageEvent("start2"))
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        udpBroadcastListener.stopListening()
+        println("hhh udpBroadcastListener.stopListening()")
+        udpBroadcastListener?.stopListening()
     }
+
+    override fun onEndpointConnected(endpoint: Endpoint?) {
+        super.onEndpointConnected(endpoint)
+        findViewById<TextView>(R.id.nameTv).text = endpoint?.name ?: "N/A"
+    }
+
     private fun preriodicallyCheckPrinterStatus() {
         val mainHandler = Handler(Looper.getMainLooper())
 
@@ -76,18 +114,25 @@ class MainActivity : BaseNearbyActivity() {
 
 
     override fun toggleRemoteDot(state: State) {
+        val landscape = sharedPreferences?.getBoolean("settings:landscape", false)
+
         if(state == State.CONNECTED) {
-            findViewById<ImageView>(R.id.dotStatusRemote).setColorFilter(Color.parseColor("#0da002"), android.graphics.PorterDuff.Mode.SRC_IN);
+            findViewById<ImageView>(R.id.dotStatusRemote)?.setColorFilter(Color.parseColor("#0da002"), android.graphics.PorterDuff.Mode.SRC_IN)
+            findViewById<LinearLayout>(R.id.dotStatusRemoteContainer)?.alpha = 0.3F
         } else {
-            findViewById<ImageView>(R.id.dotStatusRemote).setColorFilter(Color.parseColor("#d40000"), android.graphics.PorterDuff.Mode.SRC_IN);
+            findViewById<ImageView>(R.id.dotStatusRemote)?.setColorFilter(Color.parseColor("#d40000"), android.graphics.PorterDuff.Mode.SRC_IN)
+            findViewById<LinearLayout>(R.id.dotStatusRemoteContainer)?.alpha = 1F
         }
     }
 
     override fun togglePrinterDot(isOnline: Boolean) {
+
         if(isOnline) {
-            findViewById<ImageView>(R.id.dotStatusPrinter).setColorFilter(Color.parseColor("#0da002"), android.graphics.PorterDuff.Mode.SRC_IN);
+            findViewById<ImageView>(R.id.dotStatusPrinter)?.setColorFilter(Color.parseColor("#0da002"), android.graphics.PorterDuff.Mode.SRC_IN)
+            findViewById<ImageView>(R.id.dotStatusPrinter)?.alpha = 0.5F
         } else {
-            findViewById<ImageView>(R.id.dotStatusPrinter).setColorFilter(Color.parseColor("#d40000"), android.graphics.PorterDuff.Mode.SRC_IN);
+            findViewById<ImageView>(R.id.dotStatusPrinter)?.setColorFilter(Color.parseColor("#d40000"), android.graphics.PorterDuff.Mode.SRC_IN)
+            findViewById<ImageView>(R.id.dotStatusPrinter)?.alpha = 1F
         }
     }
 }

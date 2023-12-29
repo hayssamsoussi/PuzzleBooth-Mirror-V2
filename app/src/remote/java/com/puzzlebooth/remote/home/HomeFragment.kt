@@ -24,6 +24,7 @@ class HomeFragment : BaseFragment<FragmentHomeRemoteBinding>(R.layout.fragment_h
         binding.btnStart.setOnClickListener { mainActivity()?.sendThroughDelay("start") }
         binding.btnStart2.setOnClickListener { mainActivity()?.sendThroughDelay("start2") }
         binding.btnRefresh.setOnClickListener { mainActivity()?.sendThroughDelay("cancel") }
+        binding.btnSave.setOnClickListener { mainActivity()?.sendThroughDelay("save") }
         binding.btnContinue.setOnClickListener { mainActivity()?.sendThroughDelay("print") }
         binding.btnRetry.setOnClickListener { mainActivity()?.sendThroughDelay("retake") }
     }

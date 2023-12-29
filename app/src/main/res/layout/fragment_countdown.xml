@@ -1,34 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
 
+    <Button
+        android:id="@+id/btnStart2"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:translationZ="10dp"
+        android:layout_weight="1"
+        app:backgroundTint="#1C1C1C"
+        app:tint="@color/white"
+        android:src="@drawable/baseline_navigate_next_24"
+        android:background="@drawable/button_background"
+        android:textSize="10dp"
+        android:layout_margin="5dp"
+        android:text="Take Picture" />
+
     <ImageView
         android:id="@+id/overlayAnimation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:translationZ="10dp"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         android:alpha="0.5" />
 
     <com.otaliastudios.cameraview.CameraView
         android:id="@+id/camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_marginBottom="88dp"
         android:keepScreenOn="true"
         app:cameraExperimental="true"
         app:cameraEngine="camera2"
         app:cameraPreview="glSurface"
-        app:cameraPlaySounds="true"
+        app:cameraPlaySounds="false"
         app:cameraGrid="off"
-        app:cameraFlash="auto"
-        app:cameraAudio="on"
+        app:cameraPictureSizeMaxHeight="3000"
+        app:cameraPictureSizeAspectRatio="6:4"
+        app:cameraPictureSizeBiggest="true"
+        app:cameraFlash="off"
+        app:cameraAudio="off"
         app:cameraFacing="back"
+        app:cameraHdr="on"
         app:cameraGestureTap="autoFocus"
         app:cameraGestureLongTap="none"
         app:cameraGesturePinch="zoom"
@@ -36,6 +54,7 @@
         app:cameraGestureScrollVertical="exposureCorrection"
         app:cameraMode="picture"
         app:cameraAutoFocusMarker="@string/cameraview_default_autofocus_marker">
+
     </com.otaliastudios.cameraview.CameraView>
 
     <TextView
@@ -49,4 +68,4 @@
         android:textColor="@color/white"
         android:text="Countdown animation" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

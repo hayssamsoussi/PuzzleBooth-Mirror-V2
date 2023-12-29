@@ -1,6 +1,7 @@
 package com.puzzlebooth.server.settings
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.server.R
@@ -83,6 +84,15 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             toggleTouchMode()
             updateViews()
         }
+
+        binding.btnLandscape.setOnClickListener {
+            toggleLandscape()
+            updateViews()
+
+            Handler().postDelayed(Runnable {
+                activity?.recreate()
+            }, 2000)
+        }
     }
 
     override fun onResume() {
@@ -122,6 +132,14 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         edit.apply()
     }
 
+    fun toggleLandscape() {
+        val current = sharedPreferences.getBoolean("settings:landscape", false)
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("settings:landscape", !current)
+        edit.apply()
+    }
+
     fun togglePrintingSlow() {
         val current = sharedPreferences.getBoolean("settings:printingSlow", false)
 
@@ -145,6 +163,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         val currentPrintSlow = if(sharedPreferences.getBoolean("settings:printingSlow", false)) "ON" else "OFF"
         val currentPrintQuality = if(sharedPreferences.getBoolean("settings:printingQuality", false)) "HQ" else "LQ"
         val currentTouchMode = if(sharedPreferences.getBoolean("settings:touchMode", false)) "ON" else "OFF"
+        val currentLandscape = if(sharedPreferences.getBoolean("settings:landscape", false)) "ON" else "OFF"
 
         binding.btnFlash.text = "Flash: ${currentFlash}"
         binding.btnTower.text = "Tower: ${currentTower}"
@@ -152,5 +171,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         binding.btnPrintSlow.text = "Printing Slow: ${currentPrintSlow}"
         binding.btnQualtiy.text = "Printing Quality: ${currentPrintQuality}"
         binding.btnTouchMode.text = "Touch Mode: ${currentTouchMode}"
+        binding.btnLandscape.text = "Landscape: ${currentLandscape}"
+
     }
 }

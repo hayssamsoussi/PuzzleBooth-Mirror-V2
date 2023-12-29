@@ -68,14 +68,16 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/bluetooth"
+            android:id="@+id/mosaic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Bluetooth"
+            android:text="Mosaic"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
+
+
 
         <TextView
             android:id="@+id/camera_permission"
@@ -91,7 +93,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:textColor="@color/white"
-            android:text="Storage permission"/>
+            android:text="Read/Write Storage permission"/>
+
+        <TextView
+            android:id="@+id/manage_storage_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:text="Manage Storage permission"/>
 
     </LinearLayout>
 

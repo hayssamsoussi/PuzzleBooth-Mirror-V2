@@ -3,6 +3,7 @@ package com.puzzlebooth.main.utils
 import android.content.Context
 import android.os.Environment
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -19,5 +20,7 @@ fun Context.draftPath(): String {
     return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts/"
 }
 
-class FileUtils {
+fun Context.mosaicDraftPath(): String {
+    val current = this.getCurrentEventPhotosPath()
+    return "${current}mosaic/draft"
 }

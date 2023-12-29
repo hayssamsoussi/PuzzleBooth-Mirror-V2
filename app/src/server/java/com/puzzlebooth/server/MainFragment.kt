@@ -1,31 +1,36 @@
 package com.puzzlebooth.server
 
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.gif.GifDrawable
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
-import com.google.android.gms.nearby.connection.Payload
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
-import com.puzzlebooth.main.utils.RotateTransformation
 import com.puzzlebooth.server.databinding.FragmentMainBinding
-import com.puzzlebooth.server.databinding.FragmentStartBinding
-import com.puzzlebooth.server.utils.AnimationsManager
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
+
 class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
+
+    private val manageStorageResult =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { permissionGranted ->
+            if (permissionGranted) {
+                Toast.makeText(requireContext(), "Permission granted!", Toast.LENGTH_SHORT).show()
+            } else {
+                askForPermissions()
+                Toast.makeText(requireContext(), "Permission needed!", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     private val externalStorageResult =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { permissionGranted ->
@@ -35,6 +40,17 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 Toast.makeText(requireContext(), "Permission needed!", Toast.LENGTH_SHORT).show()
             }
         }
+
+    fun askForPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                startActivity(intent)
+                return
+            }
+            //createDir()
+        }
+    }
 
     private val readExternalStorageResult =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { permissionGranted ->
@@ -95,11 +111,12 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 //            //findNavController().navigate(R.id.action_startFragment_to_layoutFragment)
 //        }
 
-        binding.bluetooth.setOnClickListener {
-            ///findNavController().navigate(R.id.action_startFragment_to_bluetoothFragmentt)
+        binding.mosaic.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_mosaicFragment)
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun checkPermissions() {
         binding.cameraPermission.apply {
             val isAllowed = (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
@@ -132,10 +149,28 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             if(!isAllowed)
                 setOnClickListener {
                     readExternalStorageResult.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
-                    //externalStorageResult.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             else
                 setOnClickListener(null)
+        }
+
+        binding.manageStoragePermission.apply {
+            val isAllowed = Environment.isExternalStorageManager() == true
+
+            setTextColor(
+                if(isAllowed) {
+                    ContextCompat.getColor(requireContext(), R.color.white)
+                } else {
+                    ContextCompat.getColor(requireContext(), R.color.red)
+                })
+
+            if(!isAllowed)
+                setOnClickListener {
+                    manageStorageResult.launch(android.Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+                }
+            else
+                setOnClickListener(null)
+
         }
     }
 
@@ -146,7 +181,7 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             "showAlbum" -> binding.album.performClick()
             "showsecretmenu" -> binding.camera.performClick()
             "theme" -> binding.theme.performClick()
-            "bluetooth" -> binding.bluetooth.performClick()
+            "mosaic" -> binding.mosaic.performClick()
         }
     }
 

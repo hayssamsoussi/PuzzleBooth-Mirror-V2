@@ -18,7 +18,9 @@ import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.FileClientLegacy
 import com.puzzlebooth.main.utils.draftPath
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
+import com.puzzlebooth.main.utils.mosaicDraftPath
 import com.puzzlebooth.server.databinding.FragmentPreviewBinding
+import com.puzzlebooth.server.mosaic.MosaicManager
 import okio.Path.Companion.toPath
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -40,7 +42,9 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     fun onMessageEvent(event: MessageEvent?) {
         when(event?.text) {
             "cancel" -> binding.btnCancel.performClick()
+            "printWithMosaic" -> binding.btnPrint.performClick()
             "print" -> binding.btnPrint.performClick()
+            "save" -> binding.btnSave.performClick()
             "retake" -> binding.btnRetake.performClick()
         }
     }
@@ -100,6 +104,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     }
 
     private fun processPhoto(): Bitmap? {
+        val landscape = sharedPreferences.getBoolean("settings:landscape", false)
         val baseBitmap = com.puzzlebooth.server.CountdownFragment.capturedPhoto ?: return null
         val layoutName = sharedPreferences.getString("selectedLayout", "")
         val layoutPath = "${requireContext().cacheDir}/layouts/${layoutName}"
@@ -107,7 +112,9 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
         if(overlayBitmap != null) {
             // Scale the overlay bitmap to fit the height of the base bitmap
-            //overlayBitmap = overlayBitmap.rotate(270F)
+            if(landscape)
+                overlayBitmap = overlayBitmap.rotate(270F)
+
             val scaledOverlayWidth = baseBitmap.height * overlayBitmap.width / overlayBitmap.height
             val scaledOverlayBitmap = Bitmap.createScaledBitmap(overlayBitmap, scaledOverlayWidth, baseBitmap.height, true)
 
@@ -135,59 +142,37 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     }
 
     private fun initViews() {
+        val landscape = sharedPreferences.getBoolean("settings:landscape", false)
+
+        binding.btnPrintWithMosaic.visibility = if(MosaicManager.isRunning()) View.VISIBLE else View.GONE
         binding.buttonsContainer.visibility = if(sharedPreferences.getBoolean("settings:touchMode", false)) View.VISIBLE else View.GONE
         binding.btnPrint.setOnClickListener {
-            val selectedLayout = sharedPreferences.getString("selectedLayout", "")
 
-            val timeFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
-            val timeFormatDate = SimpleDateFormat("yyyyMMdd", Locale.US)
-            val timeStampDate: String = timeFormatDate.format(Date())
-            val path = requireContext().getCurrentEventPhotosPath()
-            val draftPath = requireContext().draftPath()
-            File(path).mkdirs()
-            File(draftPath).mkdirs()
-            val timeStamp: String = timeFormat.format(Date())
-            val fileName = "${timeStamp}_$selectedLayout.jpeg"
-            var file = FileOutputStream("$path$fileName")
-            var quality = if(sharedPreferences.getBoolean("settings:printingQuality", false) ) 100 else 70
-            resultBitmap?.rotate(90F)?.compress(Bitmap.CompressFormat.JPEG, quality, file)
-            Handler().postDelayed(Runnable {
-                File("$path$fileName").copyTo(File("${requireContext().draftPath()}/$fileName"), true)
-            }, 1000)
+            val pair = saveFileToDrafts()
+            val fileName = pair.first
+            val normalPath = pair.second
 
-//            val pathFile = Environment.getExternalStoragePublicDirectory(
-//                Environment.DIRECTORY_DOWNLOADS)
-//            val filesList = pathFile.list()
-//            val todaysFiles = filesList.filter { it.startsWith(timeStampDate) }
+            if(landscape) {
+                val thread = Thread {
+                    try {
+                        val ip = sharedPreferences.getString("ip", "") ?: return@Thread
+                        val port = sharedPreferences.getString("port", "") ?: return@Thread
+                        port.toIntOrNull() ?: return@Thread
 
-//            if (ConnectivityUtils.isUsbConnected(requireContext())) {
-//                // USB is connected, initiate file transfer
-//                initiateFileTransfer("$path$fileName")
-//            } else {
-//                // USB is not connected, show a message or take appropriate action
-//            }
+                        FileClientLegacy(
+                            ip,
+                            13456,
+                            "$normalPath$fileName"
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
 
-            //FileADBCopy().copyFileToDevice("$path$fileName", "~/Desktop/")
-//            val thread = Thread {
-//                try {
-//                    val ip = sharedPreferences.getString("ip", "") ?: return@Thread
-//                    val port = sharedPreferences.getString("port", "") ?: return@Thread
-//                    val portNumber = port?.toIntOrNull() ?: return@Thread
-//                    FileClientLegacy(
-//                        ip,
-//                        13456,
-//                        "$path$fileName"
-//                    )
-//                //FileClient(ip, 13456).execute(pathFile)
-//                    //FileClient(sharedPreferences.getString("ip", "192.168.43.1"), sharedPreferences.getString("port", "13456")?.toIntOrNull() ?: 0, pathFile.path + "/" + todaysFiles.last())
-//                } catch (e: Exception) {
-//                    e.printStackTrace()
-//                }
-//            }
-
-            //thread.start()
-
-            //sendToTarget("printCount:${todaysFiles.size}", ServerService.lastReceiverAddress)
+                thread.start()
+            } else {
+                File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}$fileName"), true)
+            }
 
             findNavController().navigate(R.id.action_previewFragment_to_printFragment)
         }
@@ -199,6 +184,50 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         binding.btnRetake.setOnClickListener {
             findNavController().navigate(R.id.action_previewFragment_to_countdownFragment)
         }
+
+        binding.btnSave.setOnClickListener {
+            saveFileToDrafts()
+            findNavController().navigate(R.id.action_previewFragment_to_printFragment)
+        }
+
+        binding.btnPrintWithMosaic.setOnClickListener {
+            val mosaicPath = requireContext().mosaicDraftPath()
+            File(mosaicPath).mkdirs()
+
+            val pair = saveFileToDrafts()
+            val fileName = pair.first
+            val normalPath = pair.second
+
+            if(MosaicManager.original) {
+                File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}/$fileName"), true)
+            }
+
+            File("$normalPath$fileName").copyTo(File("${requireContext().mosaicDraftPath()}/$fileName"), true)
+
+            findNavController().navigate(R.id.action_previewFragment_to_printFragment)
+        }
+    }
+
+    fun saveFileToDrafts(): Pair<String, String> {
+        val landscape = sharedPreferences.getBoolean("settings:landscape", false)
+        val selectedLayout = sharedPreferences.getString("selectedLayout", "")
+        val quality = if(sharedPreferences.getBoolean("settings:printingQuality", false) ) 100 else 70
+
+        val timeFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+        val timeStamp: String = timeFormat.format(Date())
+        val fileName = "${timeStamp}_$selectedLayout.jpeg"
+
+        val normalPath = requireContext().getCurrentEventPhotosPath()
+        val draftPath = requireContext().draftPath()
+
+
+        File(normalPath).mkdirs()
+        File(draftPath).mkdirs()
+
+        val file = FileOutputStream("$normalPath$fileName")
+        resultBitmap?.rotate(if(landscape) 90F else 0F)?.compress(Bitmap.CompressFormat.JPEG, quality, file)
+
+        return Pair(fileName, normalPath)
     }
 }
 

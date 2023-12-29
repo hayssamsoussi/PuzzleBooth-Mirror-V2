@@ -1,18 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    tools:context=".StartFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/btnPrevious"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            app:backgroundTint="#1C1C1C"
+            app:tint="@color/white"
+            android:src="@drawable/baseline_navigate_next_24"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:layout_margin="10dp"
+            android:text="Prev" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAlbum"
-        android:background="@color/black"
+        <ImageButton
+            android:id="@+id/btnNext"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:translationZ="10dp"
+            android:textSize="10dp"
+            android:src="@drawable/baseline_navigate_next_24"
+            android:layout_margin="10dp"
+            app:tint="@color/white"
+            app:backgroundTint="#1C1C1C"
+            android:background="@drawable/button_background"
+            android:text="Next" />
+
+        <ImageButton
+            android:id="@+id/btnPrint"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:src="@drawable/baseline_print_24"
+            app:tint="@color/white"
+            app:backgroundTint="#1C1C1C"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:text="Print" />
+
+
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/photoGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/card_file_item"/>
+        android:numColumns="auto_fit"
+        android:padding="30dp"
+        android:gravity="center"
+        android:layout_below="@id/buttonContainer"
+        android:horizontalSpacing="5dp"
+        android:verticalSpacing="5dp" />
 
-
-</FrameLayout>
+</RelativeLayout>

@@ -7,14 +7,69 @@
     android:background="@color/black"
     tools:context="com.puzzlebooth.server.MainActivity">
 
+    <LinearLayout
+        android:id="@+id/btnContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/camera"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/upButton"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            app:backgroundTint="#1C1C1C"
+            app:tint="@color/white"
+            android:src="@drawable/baseline_navigate_next_24"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:layout_margin="10dp"
+            android:text="+" />
+
+
+        <Button
+            android:id="@+id/downButton"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:translationZ="10dp"
+            android:textSize="10dp"
+            android:src="@drawable/baseline_navigate_next_24"
+            android:layout_margin="10dp"
+            app:tint="@color/white"
+            app:backgroundTint="#1C1C1C"
+            android:background="@drawable/button_background"
+            android:text="-" />
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:src="@drawable/baseline_print_24"
+            app:tint="@color/white"
+            app:backgroundTint="#1C1C1C"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:text="Submit" />
+
+    </LinearLayout>
+
     <com.otaliastudios.cameraview.CameraView
         android:id="@+id/camera"
-        android:layout_width="600dp"
-        android:layout_height="400dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnContainer"
         app:cameraGestureTap="autoFocus"
         app:cameraGesturePinch="zoom"
         app:cameraGestureScrollVertical="exposureCorrection"
@@ -38,43 +93,5 @@
         app:cameraExperimental="false">
 
     </com.otaliastudios.cameraview.CameraView>
-
-    <LinearLayout
-        android:id="@+id/btnContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/camera"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/upButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:labelFor="@id/textInputLayout"
-            android:text="+" />
-
-        <Button
-            android:id="@+id/downButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:labelFor="@id/textInputLayout"
-            android:text="-" />
-
-        <Button
-            android:id="@+id/btnSubmit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:labelFor="@id/textInputLayout"
-            android:text="Submit" />
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,21 +1,35 @@
 package com.puzzlebooth.server.album
 
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.nearby.connection.Payload
+import androidx.navigation.fragment.findNavController
 import com.puzzlebooth.main.base.BaseFragment
+import com.puzzlebooth.main.base.MessageEvent
+import com.puzzlebooth.main.utils.FileClientLegacy
+import com.puzzlebooth.main.utils.draftPath
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
-import com.puzzlebooth.server.MainActivity
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.album.listing.AlbumAdapter
 import com.puzzlebooth.server.album.listing.LocalImage
+import com.puzzlebooth.server.album.listing.PhotosAdapter
 import com.puzzlebooth.server.databinding.FragmentAlbumBinding
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 
 class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album) {
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: MessageEvent?) {
+        when(event?.text) {
+            "albumNext" -> binding.btnNext.performClick()
+            "albumPrevious" -> binding.btnPrevious.performClick()
+            "albumPrint" -> binding.btnPrint.performClick()
+            "reset" -> findNavController().popBackStack()
+        }
+    }
+
+    private var currentPosition = 0
 
     override fun initViewBinding(view: View): FragmentAlbumBinding {
         return FragmentAlbumBinding.bind(view)
@@ -33,14 +47,67 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
     }
 
     private fun initViews() {
-        albumAdapter = AlbumAdapter(localFiles.toList()) {
-            println("hhh action $it")
+        val adapter = PhotosAdapter(requireContext(), localFiles.toList())
+        binding.photoGrid.adapter = adapter
+
+        binding.photoGrid.setOnItemClickListener { _, view, position, _ ->
+            // Handle item click
+            currentPosition = position
+            adapter.setSelectedPosition(position)
         }
 
-        binding.rvAlbum.apply {
-            adapter = albumAdapter
-            layoutManager = GridLayoutManager(requireContext(), 2, RecyclerView.HORIZONTAL, false)
+        binding.btnPrevious.setOnClickListener {
+            if (currentPosition > 0) {
+                currentPosition--
+                binding.photoGrid.setSelection(currentPosition)
+                adapter.setSelectedPosition(currentPosition)
+            }
         }
+
+        binding.btnNext.setOnClickListener {
+            if (currentPosition < localFiles.size - 1) {
+                currentPosition++
+                binding.photoGrid.setSelection(currentPosition)
+                adapter.setSelectedPosition(currentPosition)
+            }
+        }
+
+        binding.btnPrint.setOnClickListener {
+            val landscape = sharedPreferences.getBoolean("settings:landscape", false)
+            if(landscape) {
+                val thread = Thread {
+                    try {
+                        val ip = sharedPreferences.getString("ip", "") ?: return@Thread
+                        val port = sharedPreferences.getString("port", "") ?: return@Thread
+                        port.toIntOrNull() ?: return@Thread
+
+                        FileClientLegacy(
+                            ip,
+                            13456,
+                            localFiles[currentPosition].file.path
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
+                thread.start()
+            } else {
+                println("hhh printing ${localFiles[currentPosition].file.path}")
+                File(localFiles[currentPosition].file.path).copyTo(File("${requireContext().draftPath()}${localFiles[currentPosition].file.name}"), true)
+            }
+        }
+
+
+
+//        albumAdapter = AlbumAdapter(localFiles.toList()) {
+//            println("hhh action $it")
+//        }
+//
+//        binding.rvAlbum.apply {
+//            adapter = albumAdapter
+//            layoutManager = GridLayoutManager(requireContext(), 2, RecyclerView.VERTICAL, false)
+//        }
     }
 
     private fun initData() {

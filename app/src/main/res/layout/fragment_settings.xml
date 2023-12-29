@@ -54,6 +54,13 @@
             android:layout_marginHorizontal="40dp"
             android:text="Print quality: " />
 
+        <Button
+            android:id="@+id/btnLandscape"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="Landscape: " />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
