@@ -7,6 +7,7 @@
     tools:context=".StartFragment">
 
     <LinearLayout
+        android:id="@+id/summariesContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -45,10 +46,9 @@
 
     </LinearLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMosaic"
-        android:layout_below="@id/mosaicSummary"
+        android:layout_below="@id/summariesContainer"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_height="0dp"/>

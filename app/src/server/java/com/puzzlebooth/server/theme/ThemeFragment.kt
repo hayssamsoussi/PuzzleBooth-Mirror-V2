@@ -152,9 +152,8 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
                 result.fold(
                     success = {
                         //storeSelectedLayout(.filename)
-
                         requireActivity().runOnUiThread {
-                            MosaicManager.cropAndSaveImages("${requireContext().cacheDir}/layouts/mosaic.jpg")
+                            MosaicManager.splitBitmap("${requireContext().cacheDir}/layouts/mosaic.jpg", 8, 11)
                         }
                     },
                     failure = {

@@ -10,6 +10,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Typeface
+import android.util.TypedValue
 import androidx.core.graphics.scale
 import com.puzzlebooth.main.utils.draftPath
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
@@ -22,7 +23,7 @@ import java.util.Timer
 import java.util.TimerTask
 import kotlin.concurrent.timerTask
 
-
+//https://www.imgonline.com.ua/eng/cut-photo-into-pieces.php
 object MosaicManager {
     var mosaic = true
     var original = true
@@ -110,6 +111,13 @@ object MosaicManager {
                 }
             }
         }, 0, 3000)
+    }
+
+    fun deleteImageAtIndex(index: Int) {
+        val imageName = "${index}".padStart(3, '0') + ".jpg"
+        val mosaicImages = mosaic_images
+        val file = File("${mosaicImages.path}/$imageName")
+        file.delete()
     }
 
     fun getRandomImageIndex(): Int? {
@@ -402,6 +410,7 @@ object MosaicManager {
             if(doesImageExist) {
                 map.add(MosaicItem(it, File(mosaic_images.path + "/" + image), false))
             } else {
+                println("hhh imagedoesntexist ${image}")
                 map.add(MosaicItem(it, File(mosaic_originals.path + "/" + image), true))
             }
         }
@@ -409,45 +418,83 @@ object MosaicManager {
         return map
     }
 
-    fun cropAndSaveImages(inputImagePath: String) {
-        val inputBitmapOld = BitmapFactory.decodeFile(inputImagePath)
+    fun splitBitmap(inputImagePath: String, columns: Int, rows: Int): List<Bitmap> {
+        val bitmap = BitmapFactory.decodeFile(inputImagePath)
+        println("hhh downloaded the image and the width is ${bitmap.width} height is ${bitmap.height}")
+        println("hhh we need to generate 8 x 11 so each box will be of width ${bitmap.width/8} and height ${bitmap.height/11}")
 
         val outputFolder = MosaicManager.mosaic_originals
         if (!outputFolder.exists()) {
             outputFolder.mkdirs()
         }
 
-        val squareSize = 5 // in cm
-        val imageWidth = 40 // in cm
-        val imageHeight = 55 // in cm
-        val numberOfSquaresWidth = imageWidth / squareSize
-        val numberOfSquaresHeight = imageHeight / squareSize
+        val boxWidth = bitmap.width / columns
+        val boxHeight = bitmap.height / rows
+        val bitmaps = mutableListOf<Bitmap>()
 
-        val inputBitmap = resizeFirstBitmap(inputBitmapOld, 400)
-        val outputBitmapSize = squareSize * 10 // 5 cm to px (1 cm = 10 px)
+        for (row in 0 until rows) {
+            for (col in 0 until columns) {
+                val x = col * boxWidth
+                val y = row * boxHeight
 
-        for (i in 0 until numberOfSquaresHeight) {
-            for (j in 0 until numberOfSquaresWidth) {
-                val outputBitmap = Bitmap.createBitmap(outputBitmapSize, outputBitmapSize, Bitmap.Config.ARGB_8888)
-                val canvas = Canvas(outputBitmap)
-
-                val sourceRect = Rect(j * outputBitmapSize, i * outputBitmapSize, (j + 1) * outputBitmapSize, (i + 1) * outputBitmapSize)
-                val destinationRect = Rect(0, 0, outputBitmapSize, outputBitmapSize)
-
-                canvas.drawBitmap(inputBitmap, sourceRect, destinationRect, null)
-
-                val outputFilePath = File(outputFolder, "${i * numberOfSquaresWidth + j}".padStart(3, '0') + ".jpg")
-
-                try {
-                    val outputStream = FileOutputStream(outputFilePath)
-                    outputBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                    outputStream.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
+                val boxBitmap = Bitmap.createBitmap(bitmap, x, y, boxWidth, boxHeight)
+                bitmaps.add(boxBitmap)
             }
         }
+
+        bitmaps.forEachIndexed { index, item ->
+            val outputFilePath = File(outputFolder, "${index+1}".padStart(3, '0') + ".jpg")
+            try {
+                val outputStream = FileOutputStream(outputFilePath)
+                item.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                outputStream.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return bitmaps
     }
+
+//    fun cropAndSaveImages(context: Context, inputImagePath: String) {
+//        val inputBitmapOld = BitmapFactory.decodeFile(inputImagePath)
+//        println("hhh downloaded the image and the width is ${inputBitmapOld.width} height is ${inputBitmapOld.height}")
+//        println("hhh we need to generate 8 x 11 so each box will be of width ${inputBitmapOld.width/8} and height ${inputBitmapOld.height/11}")
+//
+//        val outputFolder = MosaicManager.mosaic_originals
+//        if (!outputFolder.exists()) {
+//            outputFolder.mkdirs()
+//        }
+//
+//        //val squareSize = 5 // in cm
+//        var x = 8
+//        var y = 11
+//        val imageWidth = inputBitmapOld.width // in cm
+//        val imageHeight = inputBitmapOld.height // in cm
+//        val squareWidth = imageWidth / x
+//        val squareHeight = imageHeight / y
+//
+//        for (i in 0 until y) {
+//            for (j in 0 until x) {
+//                val outputBitmap = Bitmap.createBitmap(squareWidth, squareHeight, Bitmap.Config.ARGB_8888)
+//                val canvas = Canvas(outputBitmap)
+//
+//                val sourceRect = Rect(j * squareWidth, i * squareHeight, (j + 1) * outputBitmapSize, (i + 1) * outputBitmapSize)
+//                val destinationRect = Rect(0, 0, outputBitmapSize, outputBitmapSize)
+//
+//                canvas.drawBitmap(inputBitmap, sourceRect, destinationRect, null)
+//
+//                val outputFilePath = File(outputFolder, "${i * numberOfSquaresWidth + j}".padStart(3, '0') + ".jpg")
+//
+//                try {
+//                    val outputStream = FileOutputStream(outputFilePath)
+//                    outputBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+//                    outputStream.close()
+//                } catch (e: IOException) {
+//                    e.printStackTrace()
+//                }
+//            }
+//        }
+//    }
 }
 
 data class MosaicItem(
@@ -455,3 +502,8 @@ data class MosaicItem(
     val file: File,
     val original: Boolean
 )
+
+fun Context.pxToCm(px: Float): Float {
+    val dm = resources.displayMetrics
+    return px / TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, 10f, dm)
+}

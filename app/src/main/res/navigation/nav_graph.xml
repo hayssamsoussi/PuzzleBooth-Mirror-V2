@@ -44,6 +44,17 @@
         <action
             android:id="@+id/action_startFragment_to_countdownFragment"
             app:destination="@id/countdownFragment" />
+        <action
+            android:id="@+id/action_mosaicFragment_to_mosaicDetailFragment"
+            app:destination="@id/mosaicDetailFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/mosaicDetailFragment"
+        android:name="com.puzzlebooth.server.mosaic.MosaicPhotoDetailFragment"
+        android:label="Mosaic Detail Fragment"
+        tools:layout="@layout/fragment_mosaic_detail" >
 
     </fragment>
 

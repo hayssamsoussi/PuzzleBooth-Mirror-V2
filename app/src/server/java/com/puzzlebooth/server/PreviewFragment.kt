@@ -204,7 +204,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
             File("$normalPath$fileName").copyTo(File("${requireContext().mosaicDraftPath()}/$fileName"), true)
 
-            findNavController().navigate(R.id.action_previewFragment_to_printFragment)
+            //findNavController().navigate(R.id.action_previewFragment_to_printFragment)
         }
     }
 

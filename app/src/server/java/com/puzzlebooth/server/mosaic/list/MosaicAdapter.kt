@@ -10,7 +10,7 @@ import com.puzzlebooth.server.mosaic.MosaicItem
 import com.puzzlebooth.server.network.Design
 import java.io.File
 
-class MosaicAdapter (val list: List<MosaicItem>, val clicked: (File) -> Unit) : RecyclerView.Adapter<MosaicAdapter.ViewHolder>() {
+class MosaicAdapter (val list: List<MosaicItem>, val clicked: (MosaicItem) -> Unit) : RecyclerView.Adapter<MosaicAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemBinding = ListItemMosaicBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -31,6 +31,9 @@ class MosaicAdapter (val list: List<MosaicItem>, val clicked: (File) -> Unit) : 
             Glide.with(itemBinding.root.context).load(item.file).into(itemBinding.ivMosaic)
             itemBinding.tvPosition.text = item.position.toString()
             itemBinding.ivMosaic.alpha = if(item.original) 0.2F else 0.8F
+            itemBinding.root.setOnClickListener {
+                clicked.invoke(item)
+            }
             //Gli.with(itemBinding.root.context).load(item.url).into(itemBinding.ivDesign)
 //            val fileName = if(item.isLocal) {
 //                "[LOCAL] ${item.filename}"

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
@@ -79,11 +80,23 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         val mosaicViews = MosaicManager.generateMosaicViews()
 
         adapter = MosaicAdapter(mosaicViews.toList()) {
-
+            val bundle = Bundle()
+            bundle.putString("filePath", it.file.path)
+            bundle.putInt("position", it.position)
+            findNavController().navigate(R.id.action_mosaicFragment_to_mosaicDetailFragment, bundle)
         }
 
         binding.rvMosaic.layoutManager = GridLayoutManager(requireContext(), 8)
         binding.rvMosaic.adapter = adapter
+
+        binding.btnSendToPrint.lockButtonAfterClickFor(2000) {
+            println("hhh clicked!!!")
+            MosaicManager.moveToPrintsToMerge(requireContext())
+            updateViews()
+        }
+    }
+
+    fun updateViews() {
 
         val stringBuilder = StringBuilder()
         stringBuilder.appendLine("Originals: ${MosaicManager.mosaic_originals.listFiles()?.size}")
@@ -96,15 +109,7 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
 
         binding.mosaicSummary.text = stringBuilder.toString()
 
-        binding.btnSendToPrint.lockButtonAfterClickFor(2000) {
-            println("hhh clicked!!!")
-            MosaicManager.moveToPrintsToMerge(requireContext())
-            updateViews()
-        }
-    }
-
-    fun updateViews() {
-        binding.btnSendToPrint?.text = "${MosaicManager.mosaic_toPrint.list()?.size}/${MosaicManager.countMosaic}"
+        binding.btnSendToPrint.text = "${MosaicManager.mosaic_toPrint.list()?.size}/${MosaicManager.countMosaic}"
     }
 }
 

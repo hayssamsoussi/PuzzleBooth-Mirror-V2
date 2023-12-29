@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black"
+    tools:context=".StartFragment">
+
+    <LinearLayout
+        android:id="@+id/buttons_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/btnPrint"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            app:backgroundTint="#1C1C1C"
+            app:tint="@color/white"
+            android:textColor="@color/white"
+            android:src="@drawable/baseline_navigate_next_24"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:layout_margin="5dp"
+            android:text="Print" />
+
+        <Button
+            android:id="@+id/btnDeletee"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            app:backgroundTint="#1C1C1C"
+            app:tint="@color/white"
+            android:textColor="@color/white"
+            android:src="@drawable/baseline_navigate_next_24"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:layout_margin="5dp"
+            android:text="Delete" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/mosaicIv"
+        android:layout_below="@id/buttons_container"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="0dp"/>
+
+</RelativeLayout>
