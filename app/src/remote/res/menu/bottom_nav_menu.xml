@@ -27,10 +27,10 @@
         android:title="Album" />
 
     <item
-        android:id="@+id/navigation_settings"
-        android:visible="false"
-        android:icon="@drawable/baseline_settings_24"
+        android:id="@+id/navigation_mosaic"
+        android:visible="true"
+        android:icon="@drawable/ic_printer"
         android:iconTint="@color/white"
-        android:title="Settings" />
+        android:title="Mosaic" />
 
 </menu>

@@ -1,7 +1,11 @@
 package com.puzzlebooth.server.album
 
+import android.content.Context
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.View
+import android.view.WindowManager
 import androidx.navigation.fragment.findNavController
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
@@ -13,6 +17,7 @@ import com.puzzlebooth.server.album.listing.AlbumAdapter
 import com.puzzlebooth.server.album.listing.LocalImage
 import com.puzzlebooth.server.album.listing.PhotosAdapter
 import com.puzzlebooth.server.databinding.FragmentAlbumBinding
+import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
@@ -31,6 +36,7 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
 
     private var currentPosition = 0
 
+    
     override fun initViewBinding(view: View): FragmentAlbumBinding {
         return FragmentAlbumBinding.bind(view)
     }
@@ -59,6 +65,8 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
         binding.btnPrevious.setOnClickListener {
             if (currentPosition > 0) {
                 currentPosition--
+                if(currentPosition%2==0)
+                    binding.photoGrid.scrollListBy((requireContext().getScreenHeight() - 100f.dpToPx(requireContext())).toInt()/3)
                 binding.photoGrid.setSelection(currentPosition)
                 adapter.setSelectedPosition(currentPosition)
             }
@@ -67,6 +75,8 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
         binding.btnNext.setOnClickListener {
             if (currentPosition < localFiles.size - 1) {
                 currentPosition++
+                if(currentPosition%2==0)
+                    binding.photoGrid.scrollListBy((requireContext().getScreenHeight() - 100f.dpToPx(requireContext())).toInt()/3)
                 binding.photoGrid.setSelection(currentPosition)
                 adapter.setSelectedPosition(currentPosition)
             }
@@ -110,6 +120,16 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
 //        }
     }
 
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
     private fun initData() {
         localFiles.clear()
         val file = File(requireContext().getCurrentEventPhotosPath())
@@ -128,4 +148,29 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
             }
         }
     }
+}
+
+
+fun Context.getScreenHeight(): Int {
+    val displayMetrics = DisplayMetrics()
+    val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    windowManager.defaultDisplay.getMetrics(displayMetrics)
+    return displayMetrics.heightPixels
+}
+
+fun Context.getScreenWidth(): Int {
+    val displayMetrics = DisplayMetrics()
+    val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    windowManager.defaultDisplay.getMetrics(displayMetrics)
+    return displayMetrics.widthPixels
+}
+
+fun Int.pxToDp(context: Context): Float {
+    val displayMetrics = context.resources.displayMetrics
+    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, this.toFloat(), displayMetrics)
+}
+
+fun Float.dpToPx(context: Context): Float {
+    val displayMetrics = context.resources.displayMetrics
+    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, displayMetrics)
 }

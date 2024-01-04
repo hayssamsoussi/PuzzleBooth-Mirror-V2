@@ -16,10 +16,16 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.puzzlebooth.main.BaseNearbyActivity
+import com.puzzlebooth.main.models.MosaicInfo
+import com.puzzlebooth.main.models.ServerStatus
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.ActivityRemoteBinding
+import kotlinx.serialization.json.Json
 
 class RemoteActivity : BaseNearbyActivity() {
+
+    var mosaicOn = false
+    var lastMosaicUpdates: MosaicInfo? = null
 
     override fun onReceive(endpoint: Endpoint?, payload: Payload?) {
         val event = payload?.asBytes()?.let { String(it) }
@@ -30,21 +36,14 @@ class RemoteActivity : BaseNearbyActivity() {
     }
 
     fun processEvent(event: String) {
-        if(event.startsWith("battery")) {
-            event
-                .split(";")
-                .forEach {
-                    when {
-                        it.startsWith("battery") -> {
-                            val value = it.substringAfter(":")
-                            binding.header1.text = "Battery: ${value}"
-                        }
-                        it.startsWith("print_count") -> {
-                            val value = it.substringAfter(":")
-                            binding.header2.text = "Prints: ${value}"
-                        }
-                    }
-                }
+        if(event.contains("battery")) {
+            val serverStatus = Json.decodeFromString<ServerStatus>(event)
+            binding.header1.text = "Battery: ${serverStatus.battery}"
+            binding.header2.text = "Prints: ${serverStatus.printCount}"
+            mosaicOn = serverStatus.mosaicOn
+        } else if(event.contains("originals")) {
+            val mosaicInfo = Json.decodeFromString<MosaicInfo>(event)
+            lastMosaicUpdates = mosaicInfo
         }
     }
 
@@ -114,6 +113,10 @@ class RemoteActivity : BaseNearbyActivity() {
         binding.header3.text = "Name: ${mName}"
         (findViewById<CardView>(R.id.header_container)).setOnClickListener {
             send("request_print_count")
+        }
+
+        findViewById<CardView>(R.id.connection_status_container).setOnClickListener {
+            setState(State.SEARCHING)
         }
 
         (findViewById<TextView>(R.id.name))?.text = mName

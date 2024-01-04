@@ -105,15 +105,13 @@ open class BaseNearbyActivity: ConnectionsActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-
         println("hhh onDestroy")
         // After our Activity stops, we disconnect from Nearby Connections.
         setState(State.UNKNOWN)
         if (mCurrentAnimator != null && mCurrentAnimator!!.isRunning) {
             mCurrentAnimator!!.cancel()
         }
-        super.onStop()
+        super.onDestroy()
     }
 
     override fun onEndpointDiscovered(endpoint: Endpoint?) {
@@ -157,7 +155,7 @@ open class BaseNearbyActivity: ConnectionsActivity() {
      *
      * @param state The new state.
      */
-    private fun setState(state: State) {
+    fun setState(state: State) {
         toggleRemoteDot(state)
         EventBus.getDefault().post(MessageEvent(state.name))
         if (mState == state) {

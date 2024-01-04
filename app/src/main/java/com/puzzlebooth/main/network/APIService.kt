@@ -59,6 +59,9 @@ interface APIService {
 
     @GET("list-designs.php")
     fun listDesigns(): Observable<List<Design>>
+
+    @GET("list-mosaic.php")
+    fun listMosaic(): Observable<List<Design>>
 }
 
 object RetrofitInstance {

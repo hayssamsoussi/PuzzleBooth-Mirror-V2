@@ -12,6 +12,7 @@ import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
 import com.puzzlebooth.server.databinding.FragmentStartBinding
+import com.puzzlebooth.server.mosaic.MosaicManager
 import com.puzzlebooth.server.utils.AnimationsManager
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -51,15 +52,21 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
             ))
             .into(binding.startAnimation)
 
-        binding.startAnimation.setOnClickListener {
+        binding.clickable.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_countdownFragment)
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent?) {
-        when(event?.text) {
-            "start" -> binding.startAnimation.performClick()
+        when {
+            event?.text == "start" -> binding.clickable.performClick()
+            event?.text == "showAlbum" -> findNavController().navigate(R.id.action_startFragment_to_albumFragment)
+            event?.text == "showsecretmenu" -> findNavController().navigate(R.id.action_startFragment_to_cameraFragment)
+            event?.text == "request_print_count" -> requireActivity().getMainActivity()?.sendStatus()
+            event?.text?.contains("mosaic", true) == true -> {
+                MosaicManager.processMosaicEvent(requireContext(), event.text)
+            }
         }
     }
 

@@ -19,9 +19,13 @@ import androidx.navigation.findNavController
 import com.google.android.gms.nearby.connection.Payload
 import com.puzzlebooth.main.BaseNearbyActivity
 import com.puzzlebooth.main.base.MessageEvent
+import com.puzzlebooth.main.models.ServerStatus
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.mosaic.MosaicManager
 import com.puzzlebooth.server.utils.UdpBroadcastListener
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.greenrobot.eventbus.EventBus
 import java.io.File
 
@@ -36,14 +40,22 @@ class MainActivity : BaseNearbyActivity() {
     }
 
     fun sendStatus() {
-        val bm = getSystemService(BATTERY_SERVICE) as BatteryManager
-        val batteryLevel =  bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-        val printCount = File(getCurrentEventPhotosPath()).listFiles()?.size
-        send(Payload.fromBytes("battery:$batteryLevel%;print_count:$printCount".toByteArray()))
+        Handler().postDelayed(Runnable {
+            val bm = getSystemService(BATTERY_SERVICE) as BatteryManager
+            val batteryLevel =  bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+            val printCount = File(getCurrentEventPhotosPath()).listFiles()?.size
+            val serverStatus = ServerStatus(
+                batteryLevel.toString(), printCount.toString(), MosaicManager.isRunning()
+            )
+
+            send(Payload.fromBytes(Json.encodeToString(serverStatus).toByteArray()))
+        }, 1000)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        mName = "PBS"
 
         sharedPreferences = getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
         val isLandscape = false
@@ -53,7 +65,9 @@ class MainActivity : BaseNearbyActivity() {
         } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-            MosaicManager.startMosaic(this)
+            MosaicManager.startMosaic(this) {
+                sendMosaicStatus()
+            }
 
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -75,6 +89,13 @@ class MainActivity : BaseNearbyActivity() {
             val landscape = sharedPreferences?.getBoolean("settings:landscape", false)
             findViewById<ImageView>(R.id.dotStatusPrinter).visibility = if(landscape == true) View.VISIBLE else View.GONE
         }
+    }
+
+    fun sendMosaicStatus() {
+        val mosaicInfo = MosaicManager.getMosaicInfo()
+        val decoded = Json.encodeToString(mosaicInfo)
+        println("hhh send mosaic status")
+        send(Payload.fromBytes(decoded.toByteArray()))
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

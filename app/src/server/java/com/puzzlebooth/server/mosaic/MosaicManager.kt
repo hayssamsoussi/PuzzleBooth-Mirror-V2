@@ -10,10 +10,16 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Typeface
+import android.os.Bundle
 import android.util.TypedValue
 import androidx.core.graphics.scale
+import androidx.navigation.fragment.findNavController
+import com.puzzlebooth.main.MosaicItem
+import com.puzzlebooth.main.models.MosaicBox
+import com.puzzlebooth.main.models.MosaicInfo
 import com.puzzlebooth.main.utils.draftPath
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
+import com.puzzlebooth.server.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -24,11 +30,16 @@ import java.util.TimerTask
 import kotlin.concurrent.timerTask
 
 //https://www.imgonline.com.ua/eng/cut-photo-into-pieces.php
+// TODO album scroll when navigating
+// TODO Fix status from phone
+// TODO start mosaic on download
 object MosaicManager {
-    var mosaic = true
+    private var mosaic = true
     var original = true
-    var mosaicFirst = true
+    private var mosaicFirst = true
     var countMosaic = 6
+    var timer1: Timer? = null
+    var timer2: Timer? = null
 
     lateinit var mosaic_originals: File
     lateinit var mosaic_images: File
@@ -45,7 +56,53 @@ object MosaicManager {
         return (originalsExist)
     }
 
-    fun startMosaic(context: Context) {
+    fun getMosaicFileAt(position: Int): MosaicItem {
+        val mosaicViews = generateMosaicViews()
+        return mosaicViews[position - 1]
+    }
+
+    fun processMosaicEvent(context: Context, event: String?) {
+        if(event == null) return
+
+        val mosaicPosition = event.substringAfter(":")
+        val position = mosaicPosition.toIntOrNull() ?: return
+
+        when {
+            event.startsWith("deleteMosaic") ->  deleteImageAtIndex(position)
+            event.startsWith("printMosaic") ->  MosaicManager.copyImagesToPrintableMosaic(context, position)
+        }
+    }
+
+    fun getMosaicInfo(): MosaicInfo? {
+        if(!isRunning()) {
+            return null
+        }
+
+        val map = mutableListOf<MosaicBox>()
+        if(mosaic_originals.exists()) {
+            val size = mosaic_originals.listFiles().size
+            if(size > 0) {
+                (1..size).forEach {
+                    val image = "$it".padStart(3, '0') + ".jpg"
+                    val doesImageExist = mosaic_images.list { dir, name -> name == image }?.isNotEmpty() == true
+                    map.add(MosaicBox(it, doesImageExist))
+                }
+            }
+        }
+
+        return MosaicInfo(
+            originals = mosaic_originals.listFiles().size,
+            images = mosaic_images.listFiles().size,
+            drafts = mosaic_draft.listFiles().size,
+            toPrint = mosaic_toPrint.listFiles().size,
+            merge = mosaic_merge.listFiles().size,
+            mosaicPrint = mosaic_print.listFiles().size,
+            done = mosaic_done.listFiles().size,
+            boxes = map
+        )
+    }
+
+    fun startMosaic(context: Context, timerTik: () -> Unit) {
         mosaic_originals = File(context.getCurrentEventPhotosPath() + "mosaic/originals")
         mosaic_images = File(context.getCurrentEventPhotosPath() + "mosaic/images")
         mosaic_working = File(context.getCurrentEventPhotosPath() + "mosaic/working")
@@ -54,9 +111,6 @@ object MosaicManager {
         mosaic_merge = File(context.getCurrentEventPhotosPath() + "mosaic/merge")
         mosaic_print = File(context.getCurrentEventPhotosPath() + "mosaicPrint")
         mosaic_done = File(context.getCurrentEventPhotosPath() + "mosaic/done")
-
-        val timer1: Timer = Timer()
-        val timer2: Timer = Timer()
 
         if(!mosaic_originals.exists()) { mosaic_originals.mkdirs() }
         if(!mosaic_images.exists()) { mosaic_images.mkdirs() }
@@ -71,11 +125,16 @@ object MosaicManager {
             return
         }
 
+        if(timer1 != null && timer2 != null) {
+            return
+        }
+
         if(!File("${context.getCurrentEventPhotosPath()}mosaic/settings").exists()) {
             File("${context.getCurrentEventPhotosPath()}mosaic/settings").writeText("mosaic=off\noriginal=off\nisMosaicFirst=off\ncountMosaic=6")
         }
 
-        timer1.schedule(timerTask {
+        timer1 = Timer()
+        timer1?.schedule(timerTask {
             val mergeDir = File("${context.getCurrentEventPhotosPath()}mosaic/merge")
             println("hhh timer1 mergeDir:${mergeDir.listFiles()?.size}")
             mergeDir.listFiles()?.takeLast(countMosaic).let {
@@ -86,7 +145,9 @@ object MosaicManager {
             }
         }, 0, 4000)
 
-        timer2.schedule(timerTask {
+        timer2 = Timer()
+        timer2?.schedule(timerTask {
+            timerTik.invoke()
             if(mosaic_draft.listFiles()?.isNotEmpty() == true) {
                 println("hhh timer2 mosaic_draft is not empty")
 
@@ -111,6 +172,14 @@ object MosaicManager {
                 }
             }
         }, 0, 3000)
+    }
+
+    fun forcePrintImage() {
+
+    }
+
+    fun deleteAll() {
+        mosaic_originals.deleteRecursively()
     }
 
     fun deleteImageAtIndex(index: Int) {
@@ -370,6 +439,12 @@ object MosaicManager {
         }
     }
 
+    fun copyImagesToPrintableMosaic(context: Context, position: Int): File? {
+        val mosaicItem = MosaicManager.getMosaicFileAt(position)
+        val file = mosaicItem.file
+        return copyImagesToPrintableMosaic(context, file)
+    }
+
     fun copyImagesToPrintableMosaic(context: Context, file: File): File? {
         val draft = File("${context.getCurrentEventPhotosPath()}mosaic/images/${file.name}")
         val destFile = File("${context.getCurrentEventPhotosPath()}mosaic/toPrint/${file.name}")
@@ -402,16 +477,19 @@ object MosaicManager {
 
     fun generateMosaicViews(): List<MosaicItem> {
         val map = mutableListOf<MosaicItem>()
-        val size = mosaic_originals.listFiles().size
-        (1..size).forEach {
-            val image = "$it".padStart(3, '0') + ".jpg"
-            val doesImageExist = mosaic_images.list { dir, name -> name == image }?.isNotEmpty() == true
+        if(mosaic_originals.exists()) {
+            val size = mosaic_originals.listFiles().size
+            if(size > 0) {
+                (1..size).forEach {
+                    val image = "$it".padStart(3, '0') + ".jpg"
+                    val doesImageExist = mosaic_images.list { dir, name -> name == image }?.isNotEmpty() == true
 
-            if(doesImageExist) {
-                map.add(MosaicItem(it, File(mosaic_images.path + "/" + image), false))
-            } else {
-                println("hhh imagedoesntexist ${image}")
-                map.add(MosaicItem(it, File(mosaic_originals.path + "/" + image), true))
+                    if(doesImageExist) {
+                        map.add(MosaicItem(it, File(mosaic_images.path + "/" + image), false))
+                    } else {
+                        map.add(MosaicItem(it, File(mosaic_originals.path + "/" + image), true))
+                    }
+                }
             }
         }
 
@@ -454,56 +532,4 @@ object MosaicManager {
         }
         return bitmaps
     }
-
-//    fun cropAndSaveImages(context: Context, inputImagePath: String) {
-//        val inputBitmapOld = BitmapFactory.decodeFile(inputImagePath)
-//        println("hhh downloaded the image and the width is ${inputBitmapOld.width} height is ${inputBitmapOld.height}")
-//        println("hhh we need to generate 8 x 11 so each box will be of width ${inputBitmapOld.width/8} and height ${inputBitmapOld.height/11}")
-//
-//        val outputFolder = MosaicManager.mosaic_originals
-//        if (!outputFolder.exists()) {
-//            outputFolder.mkdirs()
-//        }
-//
-//        //val squareSize = 5 // in cm
-//        var x = 8
-//        var y = 11
-//        val imageWidth = inputBitmapOld.width // in cm
-//        val imageHeight = inputBitmapOld.height // in cm
-//        val squareWidth = imageWidth / x
-//        val squareHeight = imageHeight / y
-//
-//        for (i in 0 until y) {
-//            for (j in 0 until x) {
-//                val outputBitmap = Bitmap.createBitmap(squareWidth, squareHeight, Bitmap.Config.ARGB_8888)
-//                val canvas = Canvas(outputBitmap)
-//
-//                val sourceRect = Rect(j * squareWidth, i * squareHeight, (j + 1) * outputBitmapSize, (i + 1) * outputBitmapSize)
-//                val destinationRect = Rect(0, 0, outputBitmapSize, outputBitmapSize)
-//
-//                canvas.drawBitmap(inputBitmap, sourceRect, destinationRect, null)
-//
-//                val outputFilePath = File(outputFolder, "${i * numberOfSquaresWidth + j}".padStart(3, '0') + ".jpg")
-//
-//                try {
-//                    val outputStream = FileOutputStream(outputFilePath)
-//                    outputBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-//                    outputStream.close()
-//                } catch (e: IOException) {
-//                    e.printStackTrace()
-//                }
-//            }
-//        }
-//    }
-}
-
-data class MosaicItem(
-    val position: Int,
-    val file: File,
-    val original: Boolean
-)
-
-fun Context.pxToCm(px: Float): Float {
-    val dm = resources.displayMetrics
-    return px / TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, 10f, dm)
 }

@@ -47,6 +47,9 @@
         <action
             android:id="@+id/action_mosaicFragment_to_mosaicDetailFragment"
             app:destination="@id/mosaicDetailFragment" />
+        <action
+            android:id="@+id/action_mosaicFragment_to_mosaicDownloadFragment"
+            app:destination="@id/mosaicDownloadFragment" />
 
     </fragment>
 
@@ -59,11 +62,28 @@
     </fragment>
 
     <fragment
+        android:id="@+id/mosaicDownloadFragment"
+        android:name="com.puzzlebooth.server.mosaic.MosaicDownloadFragment"
+        android:label="Mosaic Download Fragment"
+        tools:layout="@layout/fragment_mosaic_download" >
+
+    </fragment>
+
+    <fragment
         android:id="@+id/startFragment"
         android:name="com.puzzlebooth.server.StartFragment"
         android:label="Start Fragment"
         tools:layout="@layout/fragment_start" >
 
+        <action
+            android:id="@+id/action_startFragment_to_mosaicDetailFragment"
+            app:destination="@id/mosaicDetailFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_albumFragment"
+            app:destination="@id/albumFragment" />
         <action
             android:id="@+id/action_startFragment_to_countdownFragment"
             app:destination="@id/countdownFragment" />

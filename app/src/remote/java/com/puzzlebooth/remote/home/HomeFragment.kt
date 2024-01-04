@@ -28,6 +28,11 @@ class HomeFragment : BaseFragment<FragmentHomeRemoteBinding>(R.layout.fragment_h
         binding.btnContinue.setOnClickListener { mainActivity()?.sendThroughDelay("print") }
         binding.btnRetry.setOnClickListener { mainActivity()?.sendThroughDelay("retake") }
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.btnContinueWithMosaic.visibility = if(mainActivity()?.mosaicOn == true) View.VISIBLE else View.GONE
+    }
 }
 
 fun Fragment.mainActivity(): RemoteActivity? {

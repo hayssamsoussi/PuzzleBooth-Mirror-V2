@@ -47,4 +47,11 @@
         android:label="Album"
         tools:layout="@layout/fragment_album" />
 
+
+    <fragment
+        android:id="@+id/navigation_mosaic"
+        android:name="com.puzzlebooth.remote.mosaic.RemoteMosaicFragment"
+        android:label="Mosaic"
+        tools:layout="@layout/fragment_mosaic_remote" />
+
 </navigation>

@@ -9,24 +9,24 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.puzzlebooth.main.MosaicAdapter
+import com.puzzlebooth.main.MosaicItem
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
-import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.FragmentMosaicBinding
-import com.puzzlebooth.server.getMainActivity
-import com.puzzlebooth.server.mosaic.list.MosaicAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.File
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
 
 class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mosaic) {
+
+    var mosaicViews = mutableListOf<MosaicItem>()
 
     val timer = Timer()
     override fun onStart() {
@@ -41,12 +41,21 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent?) {
-        when(event?.text) {
-            "sendToPrint" -> binding.btnSendToPrint.performClick()
+        when {
+            event?.text == "sendToPrint" -> binding.btnSendToPrint.performClick()
+            event?.text == "mosaicDownload" -> binding.btnSendToPrint.performClick()
+            event?.text?.startsWith("openMosaic") == true -> {
+                val mosaicPosition = event.text.substringAfter(":")
+                if(mosaicPosition.isNotEmpty()) {
+                    openMosaicDetails(MosaicManager.getMosaicFileAt(mosaicPosition.toInt()))
+                    //openMosaicDetails()
+                }
+            }
         }
     }
 
-    lateinit var adapter: MosaicAdapter
+    var adapter: MosaicAdapter? = null
+
     override fun initViewBinding(view: View): FragmentMosaicBinding {
         return FragmentMosaicBinding.bind(view)
     }
@@ -76,14 +85,23 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         }, 0, 2000)
     }
 
+    fun fetchMosaicViews() {
+        mosaicViews.clear()
+        mosaicViews.addAll(MosaicManager.generateMosaicViews())
+    }
+
+    fun openMosaicDetails(mosaicItem: MosaicItem) {
+        val bundle = Bundle()
+        bundle.putString("filePath", mosaicItem.file.path)
+        bundle.putInt("position", mosaicItem.position)
+        findNavController().navigate(R.id.action_mosaicFragment_to_mosaicDetailFragment, bundle)
+    }
+
     fun initViews() {
-        val mosaicViews = MosaicManager.generateMosaicViews()
+        fetchMosaicViews()
 
         adapter = MosaicAdapter(mosaicViews.toList()) {
-            val bundle = Bundle()
-            bundle.putString("filePath", it.file.path)
-            bundle.putInt("position", it.position)
-            findNavController().navigate(R.id.action_mosaicFragment_to_mosaicDetailFragment, bundle)
+            openMosaicDetails(it)
         }
 
         binding.rvMosaic.layoutManager = GridLayoutManager(requireContext(), 8)
@@ -93,6 +111,10 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
             println("hhh clicked!!!")
             MosaicManager.moveToPrintsToMerge(requireContext())
             updateViews()
+        }
+
+        binding.btnMosaicDownload.setOnClickListener {
+            findNavController().navigate(R.id.action_mosaicFragment_to_mosaicDownloadFragment)
         }
     }
 
@@ -110,6 +132,11 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         binding.mosaicSummary.text = stringBuilder.toString()
 
         binding.btnSendToPrint.text = "${MosaicManager.mosaic_toPrint.list()?.size}/${MosaicManager.countMosaic}"
+
+        fetchMosaicViews()
+        activity?.runOnUiThread {
+            adapter?.notifyDataSetChanged()
+        }
     }
 }
 
