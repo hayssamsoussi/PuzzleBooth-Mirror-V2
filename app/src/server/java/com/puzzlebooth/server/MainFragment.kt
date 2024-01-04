@@ -75,6 +75,7 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         return FragmentMainBinding.bind(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
