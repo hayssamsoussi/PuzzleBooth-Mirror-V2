@@ -14,6 +14,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Field
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 data class Design(
@@ -51,16 +52,16 @@ data class Event(
 interface APIService {
 
     companion object {
-        const val REMOTE_BASE_URL = "https://www.puzzleslb.com/puzzlebooth/api_v2/rest/"
+        const val REMOTE_BASE_URL = "https://www.puzzleslb.com/"
     }
 
-    @GET("list.php?endpoint=events")
-    fun getEvent(@Query("id") id: Int): Observable<List<Event>>
+    @GET("admin/public/api/events/{eventId}")
+    fun getEvent(@Path("eventId") id: Int): Observable<Event>
 
-    @GET("list-designs.php")
+    @GET("puzzlebooth/api_v2/rest/list-designs.php")
     fun listDesigns(): Observable<List<Design>>
 
-    @GET("list-mosaic.php")
+    @GET("puzzlebooth/api_v2/rest/list-mosaic.php")
     fun listMosaic(): Observable<List<Design>>
 }
 

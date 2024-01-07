@@ -42,7 +42,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     fun onMessageEvent(event: MessageEvent?) {
         when(event?.text) {
             "cancel" -> binding.btnCancel.performClick()
-            "printWithMosaic" -> binding.btnPrint.performClick()
+            "printWithMosaic" -> binding.btnPrintWithMosaic.performClick()
             "print" -> binding.btnPrint.performClick()
             "save" -> binding.btnSave.performClick()
             "retake" -> binding.btnRetake.performClick()

@@ -46,7 +46,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
                 val id = jsonObject.optInt("id")
 
                 fetchEventInfo(id).map {
-                    val event = it.firstOrNull() ?: return@map
+                    val event = it ?: return@map
                     updateEvent(event)
                 }.subscribe()
             }
@@ -151,10 +151,10 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
             .response { result ->
                 result.fold(
                     success = {
-                        //storeSelectedLayout(.filename)
-                        requireActivity().runOnUiThread {
-                            MosaicManager.splitBitmap("${requireContext().cacheDir}/layouts/mosaic.jpg", 8, 11)
-                        }
+                        //storeSelectedLayout()
+//                        requireActivity().runOnUiThread {
+//                            MosaicManager.splitBitmap("${requireContext().cacheDir}/layouts/mosaic.jpg", 8, 11)
+//                        }
                     },
                     failure = {
                         it.printStackTrace()
@@ -236,7 +236,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
         binding.updateButton.setOnClickListener {
             val eventId = binding.editText.text.toString().toIntOrNull() ?: return@setOnClickListener
             fetchEventInfo(eventId).map {
-                    val event = it.firstOrNull() ?: return@map
+                    val event = it ?: return@map
                     updateEvent(event)
                 }.subscribe()
         }
@@ -246,8 +246,8 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
         }
 
         binding.mosaicButton?.setOnClickListener {
-            downloadMosaic("https://www.puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/layouts1/aaaa.jpg")
-            showLayout()
+//            downloadMosaic("https://www.puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/layouts1/aaaa.jpg")
+//            showLayout()
         }
     }
 
@@ -261,7 +261,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
         downloadLayout(Design("", event.design_url.substringAfterLast("/").removeSuffix(".png"), event.design_url))
     }
 
-    private fun fetchEventInfo(eventId: Int): Observable<List<Event>> {
+    private fun fetchEventInfo(eventId: Int): Observable<Event> {
         return service
             .getEvent(eventId)
             .observeOn(AndroidSchedulers.mainThread())
