@@ -196,6 +196,7 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         EventBus.getDefault().unregister(this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onResume() {
         super.onResume()
         checkPermissions()
