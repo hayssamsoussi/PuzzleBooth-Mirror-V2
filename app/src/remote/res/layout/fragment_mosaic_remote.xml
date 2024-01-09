@@ -41,6 +41,13 @@
             android:orientation="vertical">
 
             <Button
+                android:id="@+id/btnRefresh"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Refresh" />
+
+            <Button
                 android:id="@+id/btnSendToPrint"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

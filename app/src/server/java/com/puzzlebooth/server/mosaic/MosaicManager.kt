@@ -266,7 +266,7 @@ object MosaicManager {
 
             // Set the transparency of the top image
             //val alpha = 0.25f
-            val alpha = 0.45f
+            val alpha = 0.25f
             val paint = Paint()
             paint.alpha = (alpha * 255).toInt()
 

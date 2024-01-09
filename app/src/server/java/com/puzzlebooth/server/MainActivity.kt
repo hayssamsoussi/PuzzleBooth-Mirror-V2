@@ -31,7 +31,7 @@ import java.io.File
 
 class MainActivity : BaseNearbyActivity() {
 
-    var udpBroadcastListener: UdpBroadcastListener? = null
+    //var udpBroadcastListener: UdpBroadcastListener? = null
     var sharedPreferences: SharedPreferences? = null
     
     companion object {
@@ -77,10 +77,11 @@ class MainActivity : BaseNearbyActivity() {
             window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
 
             println("hhh udpBroadcastListener init")
-            udpBroadcastListener = UdpBroadcastListener(this, sharedPreferences!!, 11791)
+            //com.puzzlebooth.main.UdpBroadcastListener.start(this, sharedPreferences!!)
+            //udpBroadcastListener = UdpBroadcastListener(this, sharedPreferences!!, 11791)
 
             // Start listening
-            udpBroadcastListener?.startListening()
+            //udpBroadcastListener?.startListening()
 
             preriodicallyCheckPrinterStatus()
 
@@ -111,8 +112,8 @@ class MainActivity : BaseNearbyActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        println("hhh udpBroadcastListener.stopListening()")
-        udpBroadcastListener?.stopListening()
+        //println("hhh udpBroadcastListener.stopListening()")
+        //com.puzzlebooth.main.UdpBroadcastListener.stop()
     }
 
     override fun onEndpointConnected(endpoint: Endpoint?) {

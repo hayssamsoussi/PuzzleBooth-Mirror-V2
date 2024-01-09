@@ -40,10 +40,10 @@ class RemoteActivity : BaseNearbyActivity() {
             val serverStatus = Json.decodeFromString<ServerStatus>(event)
             binding.header1.text = "Battery: ${serverStatus.battery}"
             binding.header2.text = "Prints: ${serverStatus.printCount}"
-            mosaicOn = serverStatus.mosaicOn
         } else if(event.contains("originals")) {
             val mosaicInfo = Json.decodeFromString<MosaicInfo>(event)
             lastMosaicUpdates = mosaicInfo
+            mosaicOn = true
         }
     }
 

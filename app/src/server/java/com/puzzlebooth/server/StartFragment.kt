@@ -2,6 +2,7 @@ package com.puzzlebooth.server
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,8 +43,14 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
         val landscape = sharedPreferences.getBoolean("settings:landscape", false)
         //binding.buttonsContainer.visibility = if(sharedPreferences.getBoolean("settings:touchMode", false)) View.VISIBLE else View.GONE
 
+        val animation = if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            AnimationsManager.startLandscape
+        } else {
+            AnimationsManager.start
+        }
+
         Glide.with(this)
-            .load(AnimationsManager.start)
+            .load(animation)
             .transform(RotateTransformation(requireContext(),
                 if(landscape)
                     270f
@@ -64,6 +71,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
             event?.text == "showAlbum" -> findNavController().navigate(R.id.action_startFragment_to_albumFragment)
             event?.text == "showsecretmenu" -> findNavController().navigate(R.id.action_startFragment_to_cameraFragment)
             event?.text == "request_print_count" -> requireActivity().getMainActivity()?.sendStatus()
+            event?.text == "sendToPrint" -> MosaicManager.moveToPrintsToMerge(requireContext())
             event?.text?.contains("mosaic", true) == true -> {
                 MosaicManager.processMosaicEvent(requireContext(), event.text)
             }

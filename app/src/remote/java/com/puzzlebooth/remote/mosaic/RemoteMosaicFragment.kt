@@ -34,14 +34,16 @@ class RemoteMosaicFragment : BaseFragment<FragmentMosaicRemoteBinding>(R.layout.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        startTimer()
+        //startTimer()
         initViews()
     }
 
     fun startTimer() {
         timer.schedule(timerTask {
             if(isVisible) {
-                updateViews()
+                activity?.runOnUiThread {
+                    updateViews()
+                }
             }
         }, 0, 2000)
     }
@@ -56,9 +58,9 @@ class RemoteMosaicFragment : BaseFragment<FragmentMosaicRemoteBinding>(R.layout.
         stringBuilder.appendLine("Merge: ${getMosaicInfo()?.merge}")
         stringBuilder.appendLine("MosaicPrint: ${getMosaicInfo()?.mosaicPrint}")
 
-        binding.mosaicSummary.text = stringBuilder.toString()
+        binding?.mosaicSummary?.text = stringBuilder.toString()
 
-        binding.btnSendToPrint.text = "${getMosaicInfo()?.toPrint}/6"
+        binding?.btnSendToPrint?.text = "${getMosaicInfo()?.toPrint}/6"
 
         fetchMosaicViews()
         activity?.runOnUiThread {
@@ -78,6 +80,14 @@ class RemoteMosaicFragment : BaseFragment<FragmentMosaicRemoteBinding>(R.layout.
 
 
     fun initViews() {
+        binding.btnRefresh.setOnClickListener {
+            updateViews()
+        }
+
+        binding.btnSendToPrint.setOnClickListener {
+            mainActivity()?.sendThroughDelay("sendToPrint")
+        }
+
         if(mainActivity()?.mosaicOn == true) {
             binding.rvMosaic.visibility = View.VISIBLE
             binding.summariesContainer.visibility = View.VISIBLE

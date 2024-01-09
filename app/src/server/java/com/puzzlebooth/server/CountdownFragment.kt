@@ -3,6 +3,7 @@ package com.puzzlebooth.server
 import android.R.attr
 import android.R.attr.duration
 import android.R.attr.resource
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -100,10 +101,16 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
         binding.camera.zoom = zoom
         val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", false)
 
+        val animation = if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            AnimationsManager.countdownLandscape
+        } else {
+            AnimationsManager.countdown
+        }
+
         Glide
             .with(this)
             .asGif()
-            .load(AnimationsManager.countdown)
+            .load(animation)
             .transform(RotateTransformation(requireContext(), if(landscape)
                 270f
             else
