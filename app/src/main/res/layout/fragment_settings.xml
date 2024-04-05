@@ -12,13 +12,6 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/btnTower"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Tower: " />
-
-        <Button
             android:id="@+id/btnFlash"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -60,6 +53,13 @@
             android:layout_height="60dp"
             android:layout_marginHorizontal="40dp"
             android:text="Landscape: " />
+
+        <Button
+            android:id="@+id/btnShowQR"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="Show QR: " />
 
         <LinearLayout
             android:layout_width="wrap_content"

@@ -23,7 +23,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:translationZ="10dp"
-        android:scaleType="fitCenter"
         android:alpha="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

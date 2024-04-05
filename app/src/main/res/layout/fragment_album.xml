@@ -57,6 +57,21 @@
             android:textSize="10dp"
             android:text="Print" />
 
+        <ImageButton
+            android:id="@+id/btnQR"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:src="@drawable/baseline_10k_24"
+            app:tint="@color/white"
+            app:backgroundTint="#1C1C1C"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:text="QR" />
+
+
 
     </LinearLayout>
 

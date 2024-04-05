@@ -79,6 +79,12 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
+    implementation("com.github.kittinunf.fuel:fuel:2.3.1")
+    implementation("com.github.kittinunf.fuel:fuel-gson:2.3.1")
+
+    implementation("io.github.pilgr:paperdb:2.7.2")
+    implementation("com.github.kenglxn.QRGen:android:3.0.1")
+
     // Testing Navigation
     androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
     implementation("com.github.kittinunf.fuel:fuel:2.3.1")

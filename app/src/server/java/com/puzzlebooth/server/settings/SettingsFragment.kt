@@ -65,11 +65,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             updateViews()
         }
 
-        binding.btnTower.setOnClickListener {
-            toggleTower()
-            updateViews()
-        }
-
         binding.btnAutoPhoto.setOnClickListener {
             toggleAutoPhoto()
             updateViews()
@@ -93,11 +88,24 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
                 activity?.recreate()
             }, 2000)
         }
+
+        binding.btnShowQR.setOnClickListener {
+            toggleShowQR()
+            updateViews()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         updateViews()
+    }
+
+    fun toggleShowQR() {
+        val current = sharedPreferences.getBoolean("settings:showQR", false)
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("settings:showQR", !current)
+        edit.apply()
     }
 
     fun toggleFlash() {
@@ -113,14 +121,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
 
         val edit = sharedPreferences.edit()
         edit.putBoolean("settings:autoPhoto", !current)
-        edit.apply()
-    }
-
-    fun toggleTower() {
-        val current = sharedPreferences.getBoolean("settings:tower", false)
-
-        val edit = sharedPreferences.edit()
-        edit.putBoolean("settings:tower", !current)
         edit.apply()
     }
 
@@ -157,16 +157,16 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
     }
 
     fun updateViews() {
-        val currentTower = if(sharedPreferences.getBoolean("settings:tower", false)) "ON" else "OFF"
         val currentFlash = if(sharedPreferences.getBoolean("settings:flash", false)) "ON" else "OFF"
         val currentAutoPhoto = if(sharedPreferences.getBoolean("settings:autoPhoto", false)) "ON" else "OFF"
         val currentPrintSlow = if(sharedPreferences.getBoolean("settings:printingSlow", false)) "ON" else "OFF"
-        val currentPrintQuality = if(sharedPreferences.getBoolean("settings:printingQuality", false)) "HQ" else "LQ"
+        val currentPrintQuality = if(sharedPreferences.getBoolean("settings:printingQuality", false)) "100%" else "40%"
         val currentTouchMode = if(sharedPreferences.getBoolean("settings:touchMode", false)) "ON" else "OFF"
         val currentLandscape = if(sharedPreferences.getBoolean("settings:landscape", false)) "ON" else "OFF"
+        val currentShowQR = if(sharedPreferences.getBoolean("settings:showQR", false)) "ON" else "OFF"
 
+        binding.btnShowQR.text = "Show QR: ${currentShowQR}"
         binding.btnFlash.text = "Flash: ${currentFlash}"
-        binding.btnTower.text = "Tower: ${currentTower}"
         binding.btnAutoPhoto.text = "Auto Photo: ${currentAutoPhoto}"
         binding.btnPrintSlow.text = "Printing Slow: ${currentPrintSlow}"
         binding.btnQualtiy.text = "Printing Quality: ${currentPrintQuality}"

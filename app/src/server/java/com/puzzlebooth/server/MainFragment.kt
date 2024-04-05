@@ -1,5 +1,7 @@
 package com.puzzlebooth.server
 
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -15,6 +17,8 @@ import androidx.navigation.fragment.findNavController
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.server.databinding.FragmentMainBinding
+import com.puzzlebooth.server.utils.Status
+import com.puzzlebooth.server.utils.SyncManager
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -101,6 +105,10 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             findNavController().navigate(R.id.action_mainFragment_to_themeFragment)
         }
 
+        binding.animations.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_animationsFragment)
+        }
+
         binding.camera.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_cameraFragment)
         }
@@ -114,6 +122,32 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
         binding.mosaic.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_mosaicFragment)
+        }
+
+        binding.sync.setOnClickListener {
+            sync()
+        }
+    }
+
+    fun sync() {
+        val progressDialog: ProgressDialog = ProgressDialog(requireContext())
+
+        SyncManager(requireContext()) {
+            requireActivity().runOnUiThread {
+                when(it) {
+                    Status.DONE -> {
+                        progressDialog.dismiss()
+                    }
+                    Status.SYNCING -> {
+                        progressDialog
+                            .setTitle("Syncing")
+                        progressDialog.show()
+                    }
+                    Status.ERROR -> {
+                        progressDialog.dismiss()
+                    }
+                }
+            }
         }
     }
 
@@ -182,7 +216,9 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             "showAlbum" -> binding.album.performClick()
             "showsecretmenu" -> binding.camera.performClick()
             "theme" -> binding.theme.performClick()
+            "animations" -> binding.animations.performClick()
             "mosaic" -> binding.mosaic.performClick()
+            "sync" -> binding.sync.performClick()
         }
     }
 

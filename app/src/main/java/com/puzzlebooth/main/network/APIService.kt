@@ -3,19 +3,28 @@ package com.puzzlebooth.server.network
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.puzzlebooth.main.models.RemotePhotoRequest
+import com.puzzlebooth.main.utils.RemoteFilesResponse
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.plugins.RxJavaPlugins
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 data class Design(
     val creation_date: String,
@@ -61,8 +70,20 @@ interface APIService {
     @GET("puzzlebooth/api_v2/rest/list-designs.php")
     fun listDesigns(): Observable<List<Design>>
 
+    @GET("puzzlebooth/api_v2/rest/list-animations.php")
+    fun listAnimations(): Observable<List<Design>>
+
     @GET("puzzlebooth/api_v2/rest/list-mosaic.php")
     fun listMosaic(): Observable<List<Design>>
+
+    @GET("puzzlebooth/uploads/mirror_booth_uploads/uploads/list.php")
+    fun listPhotos(): Observable<RemoteFilesResponse>
+
+    @POST("puzzlebooth/api_v2/photos.php")
+    fun uploadPhotoNumber(@Body photoRequest: RemotePhotoRequest): Observable<ResponseBody>
+
+    @POST("puzzlebooth/uploads/mirror_booth_uploads/upload.php")
+    fun uploadPhotoFile(@Body body: RequestBody): Observable<ResponseBody>
 }
 
 object RetrofitInstance {
@@ -111,6 +132,9 @@ object RetrofitInstance {
                     chain.proceed(chain.request().newBuilder().url(url).build())
                 })
                 .addInterceptor(interceptor!!)
+                .connectTimeout(30, TimeUnit.SECONDS) // connect timeout
+                .writeTimeout(30, TimeUnit.SECONDS) // write timeout
+                .readTimeout(30, TimeUnit.SECONDS) // read timeout
                 .build()
         }
 

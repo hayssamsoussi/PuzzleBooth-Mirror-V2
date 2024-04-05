@@ -9,14 +9,23 @@ import android.view.WindowManager
 import androidx.navigation.fragment.findNavController
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
+import com.puzzlebooth.main.models.RemotePhoto
+import com.puzzlebooth.main.models.RemotePhotoRequest
 import com.puzzlebooth.main.utils.FileClientLegacy
 import com.puzzlebooth.main.utils.draftPath
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
+import com.puzzlebooth.server.MainActivity
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.album.listing.AlbumAdapter
 import com.puzzlebooth.server.album.listing.LocalImage
 import com.puzzlebooth.server.album.listing.PhotosAdapter
 import com.puzzlebooth.server.databinding.FragmentAlbumBinding
+import io.paperdb.Paper
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -30,6 +39,7 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
             "albumNext" -> binding.btnNext.performClick()
             "albumPrevious" -> binding.btnPrevious.performClick()
             "albumPrint" -> binding.btnPrint.performClick()
+            "albumQR" -> binding.btnQR.performClick()
             "reset" -> findNavController().popBackStack()
         }
     }
@@ -51,6 +61,7 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
         initData()
         initViews()
     }
+
 
     private fun initViews() {
         val adapter = PhotosAdapter(requireContext(), localFiles.toList())
@@ -82,30 +93,43 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
             }
         }
 
-        binding.btnPrint.setOnClickListener {
-            val landscape = sharedPreferences.getBoolean("settings:landscape", false)
-            if(landscape) {
-                val thread = Thread {
-                    try {
-                        val ip = sharedPreferences.getString("ip", "") ?: return@Thread
-                        val port = sharedPreferences.getString("port", "") ?: return@Thread
-                        port.toIntOrNull() ?: return@Thread
+        binding.btnQR.setOnClickListener {
+            val fileName = localFiles[currentPosition].file.name
+            val filePath = localFiles[currentPosition].file.path
 
-                        FileClientLegacy(
-                            ip,
-                            13456,
-                            localFiles[currentPosition].file.path
-                        )
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-
-                thread.start()
+            if(sharedPreferences.getBoolean("settings:showQR", false)) {
+                processPrintingAction(fileName, filePath, "print:;;;")
             } else {
-                println("hhh printing ${localFiles[currentPosition].file.path}")
-                File(localFiles[currentPosition].file.path).copyTo(File("${requireContext().draftPath()}${localFiles[currentPosition].file.name}"), true)
+                processPrintingAction(fileName, filePath, "print")
             }
+        }
+
+        binding.btnPrint.setOnClickListener {
+            File(localFiles[currentPosition].file.path).copyTo(File("${requireContext().draftPath()}${localFiles[currentPosition].file.name}"), true)
+
+//            val landscape = sharedPreferences.getBoolean("settings:landscape", false)
+//            if(landscape) {
+//                val thread = Thread {
+//                    try {
+//                        val ip = sharedPreferences.getString("ip", "") ?: return@Thread
+//                        val port = sharedPreferences.getString("port", "") ?: return@Thread
+//                        port.toIntOrNull() ?: return@Thread
+//
+//                        FileClientLegacy(
+//                            ip,
+//                            13456,
+//                            localFiles[currentPosition].file.path
+//                        )
+//                    } catch (e: Exception) {
+//                        e.printStackTrace()
+//                    }
+//                }
+//
+//                thread.start()
+//            } else {
+//                println("hhh printing ${localFiles[currentPosition].file.path}")
+//                File(localFiles[currentPosition].file.path).copyTo(File("${requireContext().draftPath()}${localFiles[currentPosition].file.name}"), true)
+//            }
         }
 
 
@@ -118,6 +142,89 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
 //            adapter = albumAdapter
 //            layoutManager = GridLayoutManager(requireContext(), 2, RecyclerView.VERTICAL, false)
 //        }
+    }
+
+    fun processPrintingAction(fileName: String, normalPath: String, event: String) {
+        if(event.contains(":")) {
+            val substring = event.substringAfter(":") ?: ""
+            val array = substring.split(";")
+            val email = array[1]
+            val personName = array[0]
+            val phone = array[2]
+
+            if(email.isEmpty() && personName.isEmpty() && phone.isEmpty()) {
+                val requestBody: RequestBody = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart(
+                        "fileToUpload",
+                        fileName,
+                        RequestBody.create("image/jpeg".toMediaTypeOrNull(), File(normalPath))
+                    )
+                    .build()
+
+                // upload without db entry
+                service
+                    .uploadPhotoFile(requestBody)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError {
+                        it.printStackTrace()
+                    }
+                    .doOnNext {
+                        (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/uploads/${fileName}")
+                    }
+                    .subscribe()
+            } else {
+                val remotePhoto = RemotePhoto(
+                    name = fileName,
+                    phone = phone,
+                    personName = personName,
+                    email = email,
+                    sender = 0)
+
+                val request = RemotePhotoRequest(
+                    listOf(
+                        remotePhoto
+                    )
+                )
+
+                Paper.book().write(fileName, remotePhoto)
+
+                val requestBody: RequestBody = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart(
+                        "fileToUpload",
+                        fileName,
+                        RequestBody.create("image/jpeg".toMediaTypeOrNull(), File(normalPath))
+                    )
+                    .build()
+
+
+                val requests = listOf(service.uploadPhotoNumber(request), service.uploadPhotoFile(requestBody))
+
+                service
+                    .uploadPhotoNumber(request)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError {
+                        it.printStackTrace()
+                    }
+                    .doOnNext {
+                        service
+                            .uploadPhotoFile(requestBody)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnError {
+                                it.printStackTrace()
+                            }
+                            .doOnNext {
+                                (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/uploads/${fileName}")
+                            }
+                            .subscribe()
+                    }
+                    .subscribe()
+            }
+        }
     }
 
     override fun onStart() {

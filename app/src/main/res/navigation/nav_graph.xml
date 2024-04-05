@@ -24,6 +24,9 @@
             android:id="@+id/action_mainFragment_to_layoutFragment"
             app:destination="@id/layoutsFragment" />
         <action
+            android:id="@+id/action_mainFragment_to_animationsFragment"
+            app:destination="@id/animationsFragment" />
+        <action
             android:id="@+id/action_mainFragment_to_themeFragment"
             app:destination="@id/themeFragment" />
         <action
@@ -136,6 +139,14 @@
         android:id="@+id/layoutsFragment"
         android:name="com.puzzlebooth.server.layout.LayoutFragment"
         android:label="Layout Fragment"
+        tools:layout="@layout/fragment_layout" >
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/animationsFragment"
+        android:name="com.puzzlebooth.server.animations.AnimationsFragment"
+        android:label="Animations Fragment"
         tools:layout="@layout/fragment_layout" >
     </fragment>
 

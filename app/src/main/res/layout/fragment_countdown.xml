@@ -40,7 +40,6 @@
         app:cameraPreview="glSurface"
         app:cameraPlaySounds="false"
         app:cameraGrid="off"
-        app:cameraPictureSizeMaxHeight="3000"
         app:cameraPictureSizeBiggest="true"
         app:cameraFlash="off"
         app:cameraAudio="off"

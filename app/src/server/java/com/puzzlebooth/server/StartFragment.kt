@@ -19,20 +19,12 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-
 class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start) {
 
     override fun initViewBinding(view: View): FragmentStartBinding {
         return FragmentStartBinding.bind(view)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -40,24 +32,30 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
     }
 
     private fun initViews() {
-        val landscape = sharedPreferences.getBoolean("settings:landscape", false)
-        //binding.buttonsContainer.visibility = if(sharedPreferences.getBoolean("settings:touchMode", false)) View.VISIBLE else View.GONE
-
-        val animation = if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            AnimationsManager.startLandscape
+        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Glide.with(this)
+                .load(AnimationsManager.startLandscape)
+                .transform(RotateTransformation(requireContext(), 0f))
+                .into(binding.startAnimation)
         } else {
-            AnimationsManager.start
+            val layoutName = sharedPreferences.getString("selectedAnimation", "")
+            if(layoutName.isNullOrEmpty()) {
+                Glide.with(this)
+                    .load(R.drawable.start)
+                    .transform(RotateTransformation(requireContext(),
+                        0f
+                    ))
+                    .into(binding.startAnimation)
+            } else {
+                val layoutPath = "${requireContext().cacheDir}/animations/${layoutName}"
+                Glide.with(this)
+                    .load(layoutPath)
+                    .transform(RotateTransformation(requireContext(),
+                        0f
+                    ))
+                    .into(binding.startAnimation)
+            }
         }
-
-        Glide.with(this)
-            .load(animation)
-            .transform(RotateTransformation(requireContext(),
-                if(landscape)
-                    270f
-                else
-                    0f
-            ))
-            .into(binding.startAnimation)
 
         binding.clickable.setOnClickListener {
             findNavController().navigate(R.id.action_startFragment_to_countdownFragment)

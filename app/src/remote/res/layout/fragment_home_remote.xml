@@ -24,20 +24,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 app:tint="@color/white"
                 android:src="@drawable/ic_baseline_not_started_24"/>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:textStyle="bold"
-                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:layout_marginStart="10dp"
                 android:textColor="@color/white"
                 android:text="Start"/>
 
@@ -59,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="24dp"
@@ -70,9 +71,10 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:textStyle="bold"
-                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:layout_marginStart="10dp"
                 android:textColor="@color/white"
                 android:text="Take picture"/>
 
@@ -100,7 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -111,9 +113,10 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:textStyle="bold"
-                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:layout_marginStart="10dp"
                     android:textColor="@color/white"
                     android:text="Print"/>
 
@@ -173,7 +176,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="24dp"
@@ -184,9 +187,10 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:textStyle="bold"
-                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:layout_marginStart="10dp"
                 android:textColor="@color/white"
                 android:text="Save"/>
 
@@ -208,7 +212,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="24dp"
@@ -219,11 +223,48 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:textStyle="bold"
-                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:layout_marginStart="10dp"
                 android:textColor="@color/white"
                 android:text="Retake"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/btnQRCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#202020"
+        app:cardElevation="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                app:tint="@color/white"
+                android:src="@drawable/baseline_10k_24"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/white"
+                android:text="Show QR Code"/>
 
         </LinearLayout>
 

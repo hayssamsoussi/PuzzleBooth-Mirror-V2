@@ -7,29 +7,30 @@ import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Environment
-import android.os.Handler
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
-import com.puzzlebooth.main.utils.FileClientLegacy
+import com.puzzlebooth.main.models.RemotePhoto
+import com.puzzlebooth.main.models.RemotePhotoRequest
 import com.puzzlebooth.main.utils.draftPath
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.main.utils.mosaicDraftPath
 import com.puzzlebooth.server.databinding.FragmentPreviewBinding
 import com.puzzlebooth.server.mosaic.MosaicManager
-import okio.Path.Companion.toPath
+import io.paperdb.Paper
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 import java.io.FileOutputStream
-import java.nio.file.CopyOption
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -40,13 +41,135 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent?) {
-        when(event?.text) {
-            "cancel" -> binding.btnCancel.performClick()
-            "printWithMosaic" -> binding.btnPrintWithMosaic.performClick()
-            "print" -> binding.btnPrint.performClick()
-            "save" -> binding.btnSave.performClick()
-            "retake" -> binding.btnRetake.performClick()
+        when {
+            event?.text == "cancel" -> binding.btnCancel.performClick()
+            event?.text == "printWithMosaic" -> binding.btnPrintWithMosaic.performClick()
+            event?.text?.startsWith("print") == true -> {
+                if(sharedPreferences.getBoolean("settings:showQR", false)) {
+                    processPrintingAction(event.text)
+                } else {
+                    processPrintingAction("print")
+                }
+            }
+            event?.text == "save" -> binding.btnSave.performClick()
+            event?.text == "retake" -> binding.btnRetake.performClick()
         }
+    }
+
+    fun processPrintingAction(event: String) {
+        val pair = saveFileToDrafts()
+        val fileName = pair.first
+        val normalPath = pair.second
+
+        if(event.contains(":")) {
+            val substring = event.substringAfter(":") ?: ""
+            val array = substring.split(";")
+            val email = array[1]
+            val personName = array[0]
+            val phone = array[2]
+
+            if(email.isEmpty() && personName.isEmpty() && phone.isEmpty()) {
+                val requestBody: RequestBody = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart(
+                        "fileToUpload",
+                        fileName,
+                        RequestBody.create("image/jpeg".toMediaTypeOrNull(), File("$normalPath$fileName"))
+                    )
+                    .build()
+
+                // upload without db entry
+                service
+                    .uploadPhotoFile(requestBody)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError {
+                        it.printStackTrace()
+                    }
+                    .doOnNext {
+                        (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/uploads/${fileName}")
+                    }
+                    .subscribe()
+            } else {
+                val remotePhoto = RemotePhoto(
+                    name = fileName,
+                    phone = phone,
+                    personName = personName,
+                    email = email,
+                    sender = 0)
+
+                val request = RemotePhotoRequest(
+                    listOf(
+                        remotePhoto
+                    )
+                )
+
+                Paper.book().write(fileName, remotePhoto)
+
+                val requestBody: RequestBody = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart(
+                        "fileToUpload",
+                        fileName,
+                        RequestBody.create("image/jpeg".toMediaTypeOrNull(), File("$normalPath$fileName"))
+                    )
+                    .build()
+
+
+                val requests = listOf(service.uploadPhotoNumber(request), service.uploadPhotoFile(requestBody))
+
+                service
+                    .uploadPhotoNumber(request)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError {
+                        it.printStackTrace()
+                    }
+                    .doOnNext {
+                        service
+                            .uploadPhotoFile(requestBody)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnError {
+                                it.printStackTrace()
+                            }
+                            .doOnNext {
+                                (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/uploads/${fileName}")
+                            }
+                            .subscribe()
+                    }
+                    .subscribe()
+            }
+        }
+
+        File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}$fileName"), true)
+
+        findNavController().navigate(R.id.action_previewFragment_to_printFragment)
+
+        //val landscape = sharedPreferences.getBoolean("settings:landscape", false)
+
+
+//            if(landscape) {
+//                val thread = Thread {
+//                    try {
+//                        val ip = sharedPreferences.getString("ip", "") ?: return@Thread
+//                        val port = sharedPreferences.getString("port", "") ?: return@Thread
+//                        port.toIntOrNull() ?: return@Thread
+//
+//                        FileClientLegacy(
+//                            ip,
+//                            13456,
+//                            "$normalPath$fileName"
+//                        )
+//                    } catch (e: Exception) {
+//                        e.printStackTrace()
+//                    }
+//                }
+//
+//                thread.start()
+//            } else {
+//                File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}$fileName"), true)
+//            }
     }
 
     override fun onStart() {
@@ -142,39 +265,14 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     }
 
     private fun initViews() {
-        val landscape = sharedPreferences.getBoolean("settings:landscape", false)
-
         binding.btnPrintWithMosaic.visibility = if(MosaicManager.isRunning()) View.VISIBLE else View.GONE
         binding.buttonsContainer.visibility = if(sharedPreferences.getBoolean("settings:touchMode", false)) View.VISIBLE else View.GONE
         binding.btnPrint.setOnClickListener {
-
-            val pair = saveFileToDrafts()
-            val fileName = pair.first
-            val normalPath = pair.second
-
-            if(landscape) {
-                val thread = Thread {
-                    try {
-                        val ip = sharedPreferences.getString("ip", "") ?: return@Thread
-                        val port = sharedPreferences.getString("port", "") ?: return@Thread
-                        port.toIntOrNull() ?: return@Thread
-
-                        FileClientLegacy(
-                            ip,
-                            13456,
-                            "$normalPath$fileName"
-                        )
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-
-                thread.start()
+            if(sharedPreferences.getBoolean("settings:showQR", false)) {
+                processPrintingAction("print:;;;")
             } else {
-                File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}$fileName"), true)
+                processPrintingAction("print")
             }
-
-            findNavController().navigate(R.id.action_previewFragment_to_printFragment)
         }
 
         binding.btnCancel.setOnClickListener {
@@ -211,7 +309,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     fun saveFileToDrafts(): Pair<String, String> {
         val landscape = sharedPreferences.getBoolean("settings:landscape", false)
         val selectedLayout = sharedPreferences.getString("selectedLayout", "")
-        val quality = if(sharedPreferences.getBoolean("settings:printingQuality", false) ) 100 else 70
+        val quality = if(sharedPreferences.getBoolean("settings:printingQuality", false) ) 100 else 40
 
         val timeFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
         val timeStamp: String = timeFormat.format(Date())
@@ -225,7 +323,9 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         File(draftPath).mkdirs()
 
         val file = FileOutputStream("$normalPath$fileName")
+
         resultBitmap?.rotate(if(landscape) 90F else 0F)?.compress(Bitmap.CompressFormat.JPEG, quality, file)
+        println("hhh printing quality is ${quality} and the output is ${File("$normalPath$fileName").length()}")
 
         return Pair(fileName, normalPath)
     }

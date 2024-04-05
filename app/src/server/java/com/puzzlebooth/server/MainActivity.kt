@@ -8,21 +8,25 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.google.android.gms.nearby.connection.Payload
 import com.puzzlebooth.main.BaseNearbyActivity
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.models.ServerStatus
+import com.puzzlebooth.main.qr_code.QRCodeFragment
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.mosaic.MosaicManager
 import com.puzzlebooth.server.utils.UdpBroadcastListener
+import io.paperdb.Paper
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -33,7 +37,8 @@ class MainActivity : BaseNearbyActivity() {
 
     //var udpBroadcastListener: UdpBroadcastListener? = null
     var sharedPreferences: SharedPreferences? = null
-    
+    var showQRFragment: QRCodeFragment? = null
+
     companion object {
         var lastTimePrinterConnectionReceived: Long = System.currentTimeMillis() - (600000)
         var mosaic = false
@@ -54,6 +59,7 @@ class MainActivity : BaseNearbyActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Paper.init(this);
 
         mName = "PBS"
 
@@ -92,6 +98,20 @@ class MainActivity : BaseNearbyActivity() {
         }
     }
 
+    fun showQRCode(text: String) {
+        runOnUiThread {
+            showQRFragment = QRCodeFragment.newInstance(text)
+            showQRFragment?.show(supportFragmentManager, "")
+//            val bitmap = net.glxn.qrgen.android.QRCode.from(text).withSize(200,200).bitmap()
+//            alertDialogBuilder = AlertDialog.Builder(this)
+//            val factory: LayoutInflater = LayoutInflater.from(this)
+//            val view: View = factory.inflate(R.layout.alert_dialog_image, null)
+//            view.findViewById<ImageView>(R.id.dialog_imageview).setImageBitmap(bitmap)
+//            alertDialogBuilder?.setView(view)
+//            alertDialogBuilder?.show()
+        }
+    }
+
     fun sendMosaicStatus() {
         val mosaicInfo = MosaicManager.getMosaicInfo()
         val decoded = Json.encodeToString(mosaicInfo)
@@ -114,6 +134,14 @@ class MainActivity : BaseNearbyActivity() {
         super.onDestroy()
         //println("hhh udpBroadcastListener.stopListening()")
         //com.puzzlebooth.main.UdpBroadcastListener.stop()
+    }
+
+    override fun onReceive(endpoint: Endpoint?, payload: Payload?) {
+        super.onReceive(endpoint, payload)
+        val event = payload?.asBytes()?.let { String(it) }
+        if(event.equals("cancel")) {
+            showQRFragment?.dismissAllowingStateLoss()
+        }
     }
 
     override fun onEndpointConnected(endpoint: Endpoint?) {

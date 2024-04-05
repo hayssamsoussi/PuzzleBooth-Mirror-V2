@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context="com.puzzlebooth.main.CountdownFragment">
+
+    <LinearLayout
+        android:id="@+id/buttons_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/btnPrint"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            app:backgroundTint="#1C1C1C"
+            app:tint="@color/white"
+            android:textColor="@color/white"
+            android:src="@drawable/baseline_navigate_next_24"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:layout_margin="5dp"
+            android:text="Print" />
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            app:backgroundTint="#1C1C1C"
+            app:tint="@color/white"
+            android:textColor="@color/white"
+            android:src="@drawable/baseline_navigate_next_24"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:layout_margin="5dp"
+            android:text="Save" />
+        <Button
+            android:id="@+id/btnPrintWithMosaic"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            app:backgroundTint="#1C1C1C"
+            android:textColor="@color/white"
+            app:tint="@color/white"
+            android:src="@drawable/baseline_navigate_next_24"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:layout_margin="5dp"
+            android:text="M" />
+        <ImageButton
+            android:id="@+id/btnRetake"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            app:backgroundTint="#1C1C1C"
+            app:tint="@color/white"
+            android:src="@drawable/ic_baseline_refresh_24"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:layout_margin="5dp"
+            android:text="Retake" />
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            app:backgroundTint="#1C1C1C"
+            android:textColor="@color/white"
+            app:tint="@color/white"
+            android:src="@drawable/baseline_navigate_next_24"
+            android:background="@drawable/button_background"
+            android:textSize="10dp"
+            android:layout_margin="5dp"
+            android:text="X" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/photoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buttons_container">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@color/white"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

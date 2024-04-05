@@ -5,6 +5,9 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.puzzlebooth.remote.RemoteActivity
 import com.puzzlebooth.main.base.BaseFragment
+import com.puzzlebooth.main.qr_code.QRCodeFragment
+import com.puzzlebooth.remote.add_number.RemoteAddNumberFragment
+import com.puzzlebooth.remote.add_number.RemoteAddNumberListener
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.FragmentHomeRemoteBinding
 
@@ -26,8 +29,34 @@ class HomeFragment : BaseFragment<FragmentHomeRemoteBinding>(R.layout.fragment_h
         binding.btnRefresh.setOnClickListener { mainActivity()?.sendThroughDelay("cancel") }
         binding.btnSave.setOnClickListener { mainActivity()?.sendThroughDelay("save") }
         binding.btnContinueWithMosaic.setOnClickListener { mainActivity()?.sendThroughDelay("printWithMosaic") }
-        binding.btnContinue.setOnClickListener { mainActivity()?.sendThroughDelay("print") }
+        binding.btnContinue.setOnClickListener { printAction() }
+        binding.btnQRCode.setOnClickListener { showQRCodeRadisson() }
         binding.btnRetry.setOnClickListener { mainActivity()?.sendThroughDelay("retake") }
+    }
+
+    fun showQRCodeRadisson() {
+        val fragment = QRCodeFragment.newInstance("")
+        fragment.show(parentFragmentManager, "")
+    }
+
+    private fun printAction() {
+        mainActivity()?.sendThroughDelay("print:;;")
+//        val fragment = RemoteAddNumberFragment.newInstance()
+//        fragment.listener = object: RemoteAddNumberListener {
+//            override fun onSubmit(phone: String) {
+//                if(phone.isNotEmpty())
+//                    mainActivity()?.sendThroughDelay("print:${phone}")
+//                else
+//                    mainActivity()?.sendThroughDelay("print")
+//            }
+//
+//            override fun onSkip() {
+//                mainActivity()?.sendThroughDelay("print")
+//            }
+//
+//        }
+//
+//        fragment.show(parentFragmentManager, "")
     }
 
     override fun onResume() {

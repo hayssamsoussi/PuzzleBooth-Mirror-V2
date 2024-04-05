@@ -7,12 +7,12 @@
         android:iconTint="@color/white"
         android:title="Home" />
 
-    <item
-        android:id="@+id/navigation_printer"
-        android:icon="@drawable/ic_printer"
-        android:iconTint="@color/white"
-        android:visible="false"
-        android:title="Printer" />
+<!--    <item-->
+<!--        android:id="@+id/navigation_printer"-->
+<!--        android:icon="@drawable/ic_printer"-->
+<!--        android:iconTint="@color/white"-->
+<!--        android:visible="false"-->
+<!--        android:title="Printer" />-->
 
     <item
         android:id="@+id/navigation_camera"
@@ -28,9 +28,16 @@
 
     <item
         android:id="@+id/navigation_mosaic"
-        android:visible="true"
+        android:visible="false"
         android:icon="@drawable/ic_printer"
         android:iconTint="@color/white"
         android:title="Mosaic" />
+
+    <item
+        android:id="@+id/navigation_online_photos"
+        android:visible="true"
+        android:icon="@drawable/baseline_10k_24"
+        android:iconTint="@color/white"
+        android:title="Online Photos" />
 
 </menu>

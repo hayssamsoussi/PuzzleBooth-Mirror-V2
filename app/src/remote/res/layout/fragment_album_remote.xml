@@ -124,7 +124,7 @@
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/btnShowSecretMenu"
+        android:id="@+id/btnShowQR"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -152,7 +152,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:text="Show secret menu"/>
+                android:text="Show QR"/>
 
         </LinearLayout>
 

@@ -54,4 +54,10 @@
         android:label="Mosaic"
         tools:layout="@layout/fragment_mosaic_remote" />
 
+    <fragment
+        android:id="@+id/navigation_online_photos"
+        android:name="com.puzzlebooth.remote.online_photos.RemoteOnlinePhotosFragment"
+        android:label="Online Photos"
+        tools:layout="@layout/fragment_online_photos" />
+
 </navigation>
