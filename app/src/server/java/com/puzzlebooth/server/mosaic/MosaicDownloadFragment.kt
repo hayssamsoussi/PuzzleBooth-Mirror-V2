@@ -1,20 +1,27 @@
 package com.puzzlebooth.server.mosaic
 
 import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.DialogInterface.OnClickListener
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.github.kittinunf.fuel.Fuel
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.server.R
+import com.puzzlebooth.server.animations.hide
+import com.puzzlebooth.server.animations.show
 import com.puzzlebooth.server.databinding.FragmentMosaicDownloadBinding
 import com.puzzlebooth.server.network.Design
+import com.puzzlebooth.server.network.Event
 import com.puzzlebooth.server.theme.listing.DesignsAdapter
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -104,6 +111,8 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
                                 MosaicManager.splitBitmap("${requireContext().cacheDir}/mosaics/${design.filename}", columns, rows)
                                 MosaicManager.startMosaic(requireContext()) {}
                             }
+
+                            findNavController().popBackStack()
                         }
                     },
                     failure = {
@@ -116,19 +125,68 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
 
     }
 
+    private fun fetchEventInfo(eventId: Int): Observable<Event> {
+        return service
+            .getEvent(eventId)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .doOnSubscribe {
+                Glide.with(requireContext()).clear(binding.ivLayout)
+                //binding.tvEventDescription.text = ""
+                binding.progressBar.show()
+            }
+            .doOnError {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Error!")
+                    .setMessage(it.message)
+                    .show()
+                binding.progressBar.hide()
+            }
+            .doOnComplete {
+                binding.progressBar.hide()
+            }
+    }
+
+    private fun updateEvent(event: Event) {
+        currentDesign = Design("", event.mosaic_url.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url)
+        currentDesign?.let {
+            Glide.with(requireContext()).load(it.url).into(binding.ivLayout)
+        }
+        //downloadMosaic(Design("", event.mosaic_url.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url))
+    }
+
     fun initViews() {
         adapter = DesignsAdapter(designs) {
             currentDesign = it
             Glide.with(requireContext()).load(it.url).into(binding.ivLayout)
         }
 
+        binding.updateButton.setOnClickListener {
+            val eventId = binding.editText.text.toString().toIntOrNull() ?: return@setOnClickListener
+            fetchEventInfo(eventId).map {
+                val event = it ?: return@map
+                updateEvent(event)
+            }.subscribe()
+        }
 
         binding.downloadButton.setOnClickListener {
             currentDesign?.let { it1 -> downloadMosaic(it1) }
         }
 
         binding.deleteButton.setOnClickListener {
-            MosaicManager.deleteAll()
+            AlertDialog.Builder(requireContext())
+                .setMessage("Are you sure?")
+                .setPositiveButton("Yes", object: OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        MosaicManager.deleteAll()
+                    }
+                })
+                .setNegativeButton("No", object: OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        dialog?.dismiss()
+                    }
+
+                }).show()
         }
 
         binding.rvList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)

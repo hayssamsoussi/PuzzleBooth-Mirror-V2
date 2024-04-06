@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,13 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.ResponseDeserializable
-import com.github.kittinunf.fuel.httpGet
-import com.google.gson.Gson
 import com.puzzlebooth.main.base.BaseFragment
-import com.puzzlebooth.main.utils.RotateTransformation
 import com.puzzlebooth.server.R
-import com.puzzlebooth.server.databinding.FragmentLayoutBinding
 import com.puzzlebooth.server.databinding.FragmentThemeBinding
 import com.puzzlebooth.server.network.Design
 import com.puzzlebooth.server.network.Event
@@ -95,7 +89,7 @@ class AnimationsFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_
     }
 
     private fun getLocalLayouts(): List<Design> {
-        val list = File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/").listFiles()?.filter { it.name.endsWith(".png") }
+        val list = File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/").listFiles()?.filter { it.name.endsWith(".gif") }
             ?: return listOf()
 
         return list.map { file ->
@@ -185,6 +179,7 @@ class AnimationsFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_
     }
 
     private fun initViews() {
+
         adapter = DesignsAdapter(designs) {
             downloadLayout(it)
         }
@@ -196,32 +191,25 @@ class AnimationsFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_
         binding.rvList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         binding.rvList.adapter = adapter
 
-        binding.updateButton.setOnClickListener {
-            val eventId = binding.editText.text.toString().toIntOrNull() ?: return@setOnClickListener
+        binding.textInputLayout.setEndIconOnClickListener(View.OnClickListener {
+            scanQrCodeLauncher.launch(null)
+        });
+
+        binding.numericKeyboard?.keySpecialListener = View.OnClickListener {
+            val eventId = binding.editText.text.toString().toIntOrNull() ?: return@OnClickListener
             fetchEventInfo(eventId).map {
                 val event = it ?: return@map
                 updateEvent(event)
             }.subscribe()
         }
 
-        binding.scanButton.setOnClickListener {
-            scanQrCodeLauncher.launch(null)
-        }
 
-        binding.mosaicButton?.setOnClickListener {
-//            downloadMosaic("https://www.puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/layouts1/aaaa.jpg")
-//            showLayout()
-        }
+        binding.scanButton.visibility = View.GONE
+        binding.mosaicButton?.visibility = View.GONE
     }
 
     private fun updateEvent(event: Event) {
-        val stringBuilder = StringBuilder()
-        stringBuilder.appendLine("ID: ${event.id}")
-        stringBuilder.appendLine("Names: ${event.names}")
-        stringBuilder.appendLine("Location: ${event.location}")
-        //binding.tvEventDescription.text = stringBuilder.toString()
-
-        downloadLayout(Design("", event.design_url.substringAfterLast("/").removeSuffix(".gif"), event.design_url))
+        downloadLayout(Design("", event.animation_url.substringAfterLast("/").removeSuffix(".gif"), event.animation_url))
     }
 
     private fun fetchEventInfo(eventId: Int): Observable<Event> {

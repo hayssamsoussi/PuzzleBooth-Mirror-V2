@@ -76,11 +76,29 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
-            android:id="@+id/btnContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_below="@id/textInputLayout"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/updateButton"
+                android:labelFor="@id/textInputLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"
+                android:text="Update" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
             <Button

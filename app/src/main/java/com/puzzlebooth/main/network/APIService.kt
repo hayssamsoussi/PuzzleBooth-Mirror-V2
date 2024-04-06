@@ -51,7 +51,9 @@ data class Event(
     var departure_time: String,
     var prep_start_time: String,
     var jemle_customer: Int,
-    var design_url: String,
+    var design_url: String = "",
+    var animation_url: String = "",
+    var mosaic_url: String = "",
     var deposit_info: String,
     var status: Int, // 0 coming / 1 done / 2 cancelled
     var location_maps: String,

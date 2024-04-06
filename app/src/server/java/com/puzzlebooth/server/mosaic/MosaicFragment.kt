@@ -107,8 +107,9 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         binding.rvMosaic.layoutManager = GridLayoutManager(requireContext(), 8)
         binding.rvMosaic.adapter = adapter
 
-        binding.btnSendToPrint.lockButtonAfterClickFor(2000) {
+        binding.btnSendToPrint.setOnClickListener {
             println("hhh clicked!!!")
+            binding.btnSendToPrint.fadeOutAndDisable(2000)
             MosaicManager.moveToPrintsToMerge(requireContext())
             updateViews()
         }
@@ -140,6 +141,26 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
     }
 }
 
+fun Button.fadeOutAndDisable(duration: Long = 2000L) {
+    // Disable the button
+    this.isEnabled = false
+
+    // Fade out the button
+    this.animate()
+        .alpha(.5f)
+        .setDuration(duration)
+        .withEndAction {
+            // After the fade out animation, wait for 2 seconds and then restore the button
+            this.postDelayed({
+                // Enable the button
+                this.isEnabled = true
+
+                // Restore the button
+                this.alpha = 1f
+            }, 2000)
+        }
+}
+
 fun Button.lockButtonAfterClickFor(delay: Long, block: () -> Unit) {
     var isClickable = true
 
@@ -147,9 +168,7 @@ fun Button.lockButtonAfterClickFor(delay: Long, block: () -> Unit) {
         if (isClickable) {
             // Disable the button
             isClickable = false
-
             println("hhh clicked!")
-
             block.invoke()
         }
     }
@@ -159,6 +178,7 @@ fun Button.lockButtonAfterClickFor(delay: Long, block: () -> Unit) {
     this.invalidate()
 
     Handler(Looper.getMainLooper()).postDelayed(Runnable {
+        println("hhh clicked delayed done!")
         isClickable = true
         this.isClickable = true
         this.alpha = 1F

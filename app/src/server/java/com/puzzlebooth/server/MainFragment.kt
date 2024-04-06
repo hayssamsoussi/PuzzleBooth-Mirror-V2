@@ -101,6 +101,10 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             findNavController().navigate(R.id.action_mainFragment_to_albumFragment)
         }
 
+        binding.designs.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_designsFragment)
+        }
+
         binding.theme.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_themeFragment)
         }
@@ -155,12 +159,12 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private fun checkPermissions() {
         binding.cameraPermission.apply {
             val isAllowed = (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
-            setTextColor(
-                if(isAllowed) {
-                    ContextCompat.getColor(requireContext(), R.color.white)
-                } else {
-                    ContextCompat.getColor(requireContext(), R.color.red)
-                })
+            if(isAllowed) {
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                this.visibility = View.GONE
+            } else {
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+            }
 
             if(!isAllowed)
                 setOnClickListener {
@@ -174,12 +178,12 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             val isAllowed =
                 (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED)
 
-            setTextColor(
-                if(isAllowed) {
-                    ContextCompat.getColor(requireContext(), R.color.white)
-                } else {
-                    ContextCompat.getColor(requireContext(), R.color.red)
-                })
+            if(isAllowed) {
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                this.visibility = View.GONE
+            } else {
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+            }
 
             if(!isAllowed)
                 setOnClickListener {
@@ -192,12 +196,12 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         binding.manageStoragePermission.apply {
             val isAllowed = Environment.isExternalStorageManager() == true
 
-            setTextColor(
-                if(isAllowed) {
-                    ContextCompat.getColor(requireContext(), R.color.white)
-                } else {
-                    ContextCompat.getColor(requireContext(), R.color.red)
-                })
+            if(isAllowed) {
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                this.visibility = View.GONE
+            } else {
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+            }
 
             if(!isAllowed)
                 setOnClickListener {

@@ -52,7 +52,6 @@ object MosaicManager {
 
     fun isRunning(): Boolean {
         val originalsExist = mosaic_originals.list()?.isNotEmpty() == true
-        //val originalsNotEqualImages = (mosaic_originals.list()?.size) != (mosaic_images.list()?.size)
         return (originalsExist)
     }
 
@@ -185,8 +184,11 @@ object MosaicManager {
     fun deleteImageAtIndex(index: Int) {
         val imageName = "${index}".padStart(3, '0') + ".jpg"
         val mosaicImages = mosaic_images
+        val mosaicToPrint = mosaic_toPrint
         val file = File("${mosaicImages.path}/$imageName")
+        val fileToPrint = File("${mosaicToPrint.path}/$imageName")
         file.delete()
+        fileToPrint.delete()
     }
 
     fun getRandomImageIndex(): Int? {
@@ -364,7 +366,7 @@ object MosaicManager {
     fun moveToPrintsToMerge(context: Context) {
         val toPrintMosaicsDir = File("${context.getCurrentEventPhotosPath()}mosaic/toPrint/")
 
-        toPrintMosaicsDir.listFiles()?.forEach {
+        toPrintMosaicsDir.listFiles().take(6).forEach {
             Files.move(it.toPath(), File("${context.getCurrentEventPhotosPath()}mosaic/merge/${it.name}").toPath(), StandardCopyOption.REPLACE_EXISTING)
         }
     }
