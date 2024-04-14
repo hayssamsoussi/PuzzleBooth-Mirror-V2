@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.puzzlebooth.main.models.MosaicBox
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.ListItemDesignBinding
@@ -36,7 +37,12 @@ class MosaicAdapter (val list: List<MosaicItem>, val clicked: (MosaicItem) -> Un
     inner class ViewHolder(private val itemBinding: ListItemMosaicBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bindItems(item: MosaicItem) {
-            Glide.with(itemBinding.root.context).load(item.file).into(itemBinding.ivMosaic)
+            Glide.with(itemBinding.root.context)
+                .load(item.file)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(itemBinding.ivMosaic)
+
             itemBinding.tvPosition.text = item.position.toString()
             itemBinding.ivMosaic.alpha = if(item.original) 0.2F else 0.8F
             itemBinding.root.setOnClickListener {

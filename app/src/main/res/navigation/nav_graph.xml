@@ -30,6 +30,9 @@
             android:id="@+id/action_mainFragment_to_themeFragment"
             app:destination="@id/themeFragment" />
         <action
+            android:id="@+id/action_mainFragment_to_allDesignsFragment"
+            app:destination="@id/allDesignsFragment" />
+        <action
             android:id="@+id/action_mainFragment_to_designsFragment"
             app:destination="@id/designsFragment" />
         <action
@@ -150,6 +153,13 @@
         android:name="com.puzzlebooth.server.designs.DesignsFragment"
         android:label="Designs Fragment"
         tools:layout="@layout/fragment_designs" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/allDesignsFragment"
+        android:name="com.puzzlebooth.server.allDesigns.AllDesignsFragment"
+        android:label="All Designs Fragment"
+        tools:layout="@layout/fragment_all_designs" >
     </fragment>
 
     <fragment

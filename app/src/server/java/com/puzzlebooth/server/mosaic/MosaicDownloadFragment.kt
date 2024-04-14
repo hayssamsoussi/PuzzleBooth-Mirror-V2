@@ -71,6 +71,7 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
     }
 
     fun downloadMosaic(design: Design) {
+        println("hhh downloading ${design.toString()}")
         val url = design.url
         if (!File("${requireContext().cacheDir}/mosaics/").exists()) {
             File("${requireContext().cacheDir}/mosaics/").mkdirs()
@@ -108,6 +109,7 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
                             val rows = pair[1].toIntOrNull()
 
                             if(rows != null && columns != null) {
+                                println("hhh fileName:${"${requireContext().cacheDir}/mosaics/${design.filename}"}")
                                 MosaicManager.splitBitmap("${requireContext().cacheDir}/mosaics/${design.filename}", columns, rows)
                                 MosaicManager.startMosaic(requireContext()) {}
                             }
@@ -149,6 +151,7 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
 
     private fun updateEvent(event: Event) {
         currentDesign = Design("", event.mosaic_url.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url)
+        println("hhh currentDesign ${currentDesign.toString()}")
         currentDesign?.let {
             Glide.with(requireContext()).load(it.url).into(binding.ivLayout)
         }

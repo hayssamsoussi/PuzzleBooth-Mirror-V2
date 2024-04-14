@@ -128,6 +128,10 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             findNavController().navigate(R.id.action_mainFragment_to_mosaicFragment)
         }
 
+        binding.allDesigns.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_allDesignsFragment)
+        }
+
         binding.sync.setOnClickListener {
             sync()
         }

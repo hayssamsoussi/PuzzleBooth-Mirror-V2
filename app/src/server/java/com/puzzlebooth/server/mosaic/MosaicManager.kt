@@ -185,6 +185,9 @@ object MosaicManager {
 
     fun deleteAll() {
         mosaic_originals.deleteRecursively()
+        mosaic_images.deleteRecursively()
+        mosaic_draft.deleteRecursively()
+        mosaic_toPrint.deleteRecursively()
     }
 
     fun deleteImageAtIndex(index: Int) {

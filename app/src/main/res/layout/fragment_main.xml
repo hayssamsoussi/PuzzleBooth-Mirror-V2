@@ -104,6 +104,18 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/allDesigns"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="All"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/sync"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
