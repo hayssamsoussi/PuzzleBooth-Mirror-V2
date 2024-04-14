@@ -142,6 +142,12 @@ object MosaicManager {
                     generatePrintableMosaic(context, it)
                 }
             }
+
+            val toPrintDir = File("${context.getCurrentEventPhotosPath()}mosaic/toPrint")
+            if((toPrintDir.listFiles()?.size ?: 0 ) >= countMosaic) {
+                moveToPrintsToMerge(context)
+            }
+
         }, 0, 4000)
 
         timer2 = Timer()

@@ -53,6 +53,7 @@
             app:backgroundTint="#1C1C1C"
             android:textColor="@color/white"
             app:tint="@color/white"
+            android:visibility="gone"
             android:src="@drawable/baseline_navigate_next_24"
             android:background="@drawable/button_background"
             android:textSize="10dp"

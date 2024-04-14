@@ -58,6 +58,7 @@
                 android:id="@+id/btnMosaicDownload"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
+                android:visibility="gone"
                 android:layout_marginHorizontal="40dp"
                 android:text="Mosaic Download" />
 

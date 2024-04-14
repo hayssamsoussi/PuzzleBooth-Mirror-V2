@@ -61,7 +61,7 @@ class HomeFragment : BaseFragment<FragmentHomeRemoteBinding>(R.layout.fragment_h
 
     override fun onResume() {
         super.onResume()
-        binding.btnContinueWithMosaic.visibility = if(mainActivity()?.mosaicOn == true) View.VISIBLE else View.GONE
+        //binding.btnContinueWithMosaic.visibility = if(mainActivity()?.mosaicOn == true) View.VISIBLE else View.GONE
     }
 }
 

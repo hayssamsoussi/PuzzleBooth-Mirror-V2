@@ -21,11 +21,11 @@ import kotlin.concurrent.timerTask
 
 class RemoteMosaicFragment : BaseFragment<FragmentMosaicRemoteBinding>(R.layout.fragment_mosaic_remote) {
 
-    val timer = Timer()
+    private val timer = Timer()
 
-    var mosaicViews = mutableListOf<MosaicBox>()
+    private var mosaicViews = mutableListOf<MosaicBox>()
 
-    var adapter: RemoteMosaicAdapter? = null
+    private var adapter: RemoteMosaicAdapter? = null
 
     override fun initViewBinding(view: View): FragmentMosaicRemoteBinding {
         return FragmentMosaicRemoteBinding.bind(view)

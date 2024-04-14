@@ -43,7 +43,6 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     fun onMessageEvent(event: MessageEvent?) {
         when {
             event?.text == "cancel" -> binding.btnCancel.performClick()
-            event?.text == "printWithMosaic" -> binding.btnPrintWithMosaic.performClick()
             event?.text?.startsWith("print") == true -> {
                 if(sharedPreferences.getBoolean("settings:showQR", false)) {
                     processPrintingAction(event.text)
@@ -57,96 +56,112 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     }
 
     fun processPrintingAction(event: String) {
-        val pair = saveFileToDrafts()
-        val fileName = pair.first
-        val normalPath = pair.second
+        if(MosaicManager.isRunning()) {
+            val mosaicPath = requireContext().mosaicDraftPath()
+            File(mosaicPath).mkdirs()
 
-        if(event.contains(":")) {
-            val substring = event.substringAfter(":") ?: ""
-            val array = substring.split(";")
-            val email = array[1]
-            val personName = array[0]
-            val phone = array[2]
+            val pair = saveFileToDrafts()
+            val fileName = pair.first
+            val normalPath = pair.second
 
-            if(email.isEmpty() && personName.isEmpty() && phone.isEmpty()) {
-                val requestBody: RequestBody = MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart(
-                        "fileToUpload",
-                        fileName,
-                        RequestBody.create("image/jpeg".toMediaTypeOrNull(), File("$normalPath$fileName"))
-                    )
-                    .build()
-
-                // upload without db entry
-                service
-                    .uploadPhotoFile(requestBody)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnError {
-                        it.printStackTrace()
-                    }
-                    .doOnNext {
-                        (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/uploads/${fileName}")
-                    }
-                    .subscribe()
-            } else {
-                val remotePhoto = RemotePhoto(
-                    name = fileName,
-                    phone = phone,
-                    personName = personName,
-                    email = email,
-                    sender = 0)
-
-                val request = RemotePhotoRequest(
-                    listOf(
-                        remotePhoto
-                    )
-                )
-
-                Paper.book().write(fileName, remotePhoto)
-
-                val requestBody: RequestBody = MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart(
-                        "fileToUpload",
-                        fileName,
-                        RequestBody.create("image/jpeg".toMediaTypeOrNull(), File("$normalPath$fileName"))
-                    )
-                    .build()
-
-
-                val requests = listOf(service.uploadPhotoNumber(request), service.uploadPhotoFile(requestBody))
-
-                service
-                    .uploadPhotoNumber(request)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnError {
-                        it.printStackTrace()
-                    }
-                    .doOnNext {
-                        service
-                            .uploadPhotoFile(requestBody)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnError {
-                                it.printStackTrace()
-                            }
-                            .doOnNext {
-                                (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/uploads/${fileName}")
-                            }
-                            .subscribe()
-                    }
-                    .subscribe()
+            if(MosaicManager.original) {
+                File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}/$fileName"), true)
             }
-        }
 
-        File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}$fileName"), true)
+            File("$normalPath$fileName").copyTo(File("${requireContext().mosaicDraftPath()}/$fileName"), true)
 
-        findNavController().navigate(R.id.action_previewFragment_to_printFragment)
+            findNavController().navigate(R.id.action_previewFragment_to_printFragment)
+        } else {
+            val pair = saveFileToDrafts()
+            val fileName = pair.first
+            val normalPath = pair.second
 
-        //val landscape = sharedPreferences.getBoolean("settings:landscape", false)
+            if(event.contains(":")) {
+                val substring = event.substringAfter(":") ?: ""
+                val array = substring.split(";")
+                val email = array[1]
+                val personName = array[0]
+                val phone = array[2]
+
+                if(email.isEmpty() && personName.isEmpty() && phone.isEmpty()) {
+                    val requestBody: RequestBody = MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart(
+                            "fileToUpload",
+                            fileName,
+                            RequestBody.create("image/jpeg".toMediaTypeOrNull(), File("$normalPath$fileName"))
+                        )
+                        .build()
+
+                    // upload without db entry
+                    service
+                        .uploadPhotoFile(requestBody)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnError {
+                            it.printStackTrace()
+                        }
+                        .doOnNext {
+                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/uploads/${fileName}")
+                        }
+                        .subscribe()
+                } else {
+                    val remotePhoto = RemotePhoto(
+                        name = fileName,
+                        phone = phone,
+                        personName = personName,
+                        email = email,
+                        sender = 0)
+
+                    val request = RemotePhotoRequest(
+                        listOf(
+                            remotePhoto
+                        )
+                    )
+
+                    Paper.book().write(fileName, remotePhoto)
+
+                    val requestBody: RequestBody = MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart(
+                            "fileToUpload",
+                            fileName,
+                            RequestBody.create("image/jpeg".toMediaTypeOrNull(), File("$normalPath$fileName"))
+                        )
+                        .build()
+
+
+                    val requests = listOf(service.uploadPhotoNumber(request), service.uploadPhotoFile(requestBody))
+
+                    service
+                        .uploadPhotoNumber(request)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnError {
+                            it.printStackTrace()
+                        }
+                        .doOnNext {
+                            service
+                                .uploadPhotoFile(requestBody)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnError {
+                                    it.printStackTrace()
+                                }
+                                .doOnNext {
+                                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/uploads/${fileName}")
+                                }
+                                .subscribe()
+                        }
+                        .subscribe()
+                }
+            }
+
+            File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}$fileName"), true)
+
+            findNavController().navigate(R.id.action_previewFragment_to_printFragment)
+
+            //val landscape = sharedPreferences.getBoolean("settings:landscape", false)
 
 
 //            if(landscape) {
@@ -170,6 +185,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 //            } else {
 //                File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}$fileName"), true)
 //            }
+        }
     }
 
     override fun onStart() {
@@ -265,7 +281,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     }
 
     private fun initViews() {
-        binding.btnPrintWithMosaic.visibility = if(MosaicManager.isRunning()) View.VISIBLE else View.GONE
+        //binding.btnPrintWithMosaic.visibility = if(MosaicManager.isRunning()) View.VISIBLE else View.GONE
         binding.buttonsContainer.visibility = if(sharedPreferences.getBoolean("settings:touchMode", false)) View.VISIBLE else View.GONE
         binding.btnPrint.setOnClickListener {
             if(sharedPreferences.getBoolean("settings:showQR", false)) {
