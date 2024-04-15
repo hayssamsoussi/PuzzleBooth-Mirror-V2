@@ -16,6 +16,23 @@ fun Context.getCurrentEventPhotosPath(): String {
     return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/${timeStampDate}-${selectedLayout}/"
 }
 
+fun Context.getPuzzleBoothFolder(): File {
+    val file = File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/PuzzleBooth/")
+    if(!file.exists())
+        file.mkdirs()
+
+    return file
+}
+
+fun Context.getStoredEvents(): List<String> {
+    println("*** getStoredEvents:")
+    val list = getPuzzleBoothFolder().list()
+    list?.forEach {
+        println("*** *** $it")
+    }
+    return list?.toList() ?: listOf()
+}
+
 fun Context.draftPath(): String {
     return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts/"
 }
