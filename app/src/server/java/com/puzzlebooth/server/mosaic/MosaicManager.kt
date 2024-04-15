@@ -102,6 +102,7 @@ object MosaicManager {
     }
 
     fun startMosaic(context: Context, timerTik: () -> Unit) {
+        println("hhh context.getCurrentEventPhotosPath(): ${context.getCurrentEventPhotosPath()}")
         mosaic_originals = File(context.getCurrentEventPhotosPath() + "mosaic/originals")
         mosaic_images = File(context.getCurrentEventPhotosPath() + "mosaic/images")
         mosaic_working = File(context.getCurrentEventPhotosPath() + "mosaic/working")
@@ -137,9 +138,12 @@ object MosaicManager {
             val mergeDir = File("${context.getCurrentEventPhotosPath()}mosaic/merge")
             println("hhh timer1 mergeDir:${mergeDir.listFiles()?.size}")
             mergeDir.listFiles()?.takeLast(countMosaic).let {
-                if(it?.size != 0) {
-                    println("hhh timer1 *** got 6 and now generating printable mosaic of these 6")
-                    generatePrintableMosaic(context, it)
+                println("hhh it?.size: ${it?.size}")
+                it?.size?.let { size ->
+                    if(size != 0) {
+                        println("hhh timer1 *** got 6 and now generating printable mosaic of these 6")
+                        generatePrintableMosaic(context, it)
+                    }
                 }
             }
 
@@ -508,8 +512,9 @@ object MosaicManager {
     }
 
     fun splitBitmap(inputImagePath: String, columns: Int, rows: Int): List<Bitmap> {
+        println("hhh downloaded the image and path is ${inputImagePath}")
         val bitmap = BitmapFactory.decodeFile(inputImagePath)
-        println("hhh downloaded the image and the width is ${bitmap.width} height is ${bitmap.height}")
+
         println("hhh we need to generate 8 x 11 so each box will be of width ${bitmap.width/8} and height ${bitmap.height/11}")
 
         val outputFolder = MosaicManager.mosaic_originals

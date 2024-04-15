@@ -118,6 +118,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
     }
 
     private  fun storeSelectedLayout(fileName: String) {
+        println("hhh storeSelectedLayout: ${fileName}")
         val edit = sharedPreferences.edit()
         edit.putString("selectedLayout", fileName)
         edit.apply()
@@ -146,7 +147,6 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
             }
             .progress { readBytes, totalBytes ->
                 val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
-                println("hhh progress ${progress}")
             }
             .response { result ->
                 result.fold(
@@ -200,7 +200,6 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
                 }
                 .progress { readBytes, totalBytes ->
                     val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
-                    println("hhh progress ${progress}")
                 }
                 .response { result ->
                     result.fold(
@@ -257,8 +256,8 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
 //        stringBuilder.appendLine("Location: ${event.location}")
 //        //binding.tvEventDescription.text = stringBuilder.toString()
 
-        if(event.design_url.isNotEmpty()) {
-            downloadLayout(Design("", event.design_url.substringAfterLast("/").removeSuffix(".png"), event.design_url))
+        if(!event.design_url.isNullOrEmpty()) {
+            downloadLayout(Design("", event.design_url!!.substringAfterLast("/"), event.design_url!!))
         } else {
             AlertDialog.Builder(requireContext())
                 .setMessage("No design assigned to this event!")

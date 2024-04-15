@@ -157,7 +157,6 @@ class AnimationsFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_
                 }
                 .progress { readBytes, totalBytes ->
                     val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
-                    println("hhh progress ${progress}")
                 }
                 .response { result ->
                     result.fold(
@@ -209,7 +208,9 @@ class AnimationsFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_
     }
 
     private fun updateEvent(event: Event) {
-        downloadLayout(Design("", event.animation_url.substringAfterLast("/").removeSuffix(".gif"), event.animation_url))
+        event.animation_url?.let {
+            downloadLayout(Design("", it.substringAfterLast("/").removeSuffix(".gif"), it))
+        }
     }
 
     private fun fetchEventInfo(eventId: Int): Observable<Event> {

@@ -39,8 +39,6 @@ class MosaicAdapter (val list: List<MosaicItem>, val clicked: (MosaicItem) -> Un
         fun bindItems(item: MosaicItem) {
             Glide.with(itemBinding.root.context)
                 .load(item.file)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(itemBinding.ivMosaic)
 
             itemBinding.tvPosition.text = item.position.toString()

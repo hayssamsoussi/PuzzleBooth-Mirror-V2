@@ -28,115 +28,113 @@
         tools:context=".MainActivity">
 
         <LinearLayout
-            android:id="@+id/previewContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/mosaicLabel"
+            <LinearLayout
+                android:id="@+id/previewContainer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/mosaicLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mosaic:"/>
+
+                <ImageView
+                    android:id="@+id/ivMosaic"
+                    android:layout_width="100dp"
+                    android:layout_marginVertical="16dp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/designLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Design:"/>
+
+                <ImageView
+                    android:id="@+id/ivDesign"
+                    android:layout_width="100dp"
+                    android:layout_marginVertical="16dp"
+                    android:layout_height="wrap_content" />
+
+
+                <TextView
+                    android:id="@+id/animationLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Animation:"/>
+
+                <ImageView
+                    android:id="@+id/ivAnimation"
+                    android:layout_width="100dp"
+                    android:layout_marginVertical="16dp"
+                    android:layout_height="wrap_content" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mosaic:"/>
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/ivMosaic"
-                android:layout_width="100dp"
-                android:layout_marginVertical="16dp"
-                android:layout_height="wrap_content" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    app:endIconDrawable="@drawable/baseline_10k_24"
+                    app:endIconMode="custom"
+                    app:endIconTint="@color/white">
 
-            <TextView
-                android:id="@+id/designLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Design:"/>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Event ID"
+                        android:textColor="@color/white" />
 
-            <ImageView
-                android:id="@+id/ivDesign"
-                android:layout_width="100dp"
-                android:layout_marginVertical="16dp"
-                android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
 
 
-            <TextView
-                android:id="@+id/animationLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Animation:"/>
+                <Button
+                    android:id="@+id/refreshButton"
+                    android:labelFor="@id/textInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/saveButton"
+                    android:text="Refresh" />
 
-            <ImageView
-                android:id="@+id/ivAnimation"
-                android:layout_width="100dp"
-                android:layout_marginVertical="16dp"
-                android:layout_height="wrap_content" />
+                <Button
+                    android:id="@+id/saveButton"
+                    android:enabled="false"
+                    android:labelFor="@id/textInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/textInputLayout"
+                    android:text="Save" />
 
+                <Button
+                    android:id="@+id/clearButton"
+                    android:labelFor="@id/textInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/textInputLayout"
+                    android:text="Clear" />
+
+
+            </LinearLayout>
 
         </LinearLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/submitButton"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            app:endIconDrawable="@drawable/baseline_10k_24"
-            app:endIconMode="custom"
-            app:endIconTint="@color/white">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Event ID"
-                android:textColor="@color/white" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-<!--        <LinearLayout-->
-<!--            android:id="@+id/btnContainer"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="16dp"-->
-<!--            android:layout_below="@id/textInputLayout"-->
-<!--            android:orientation="horizontal">-->
-
-<!--            <Button-->
-<!--                android:id="@+id/scanButton"-->
-<!--                android:labelFor="@id/textInputLayout"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:layout_marginEnd="10dp"-->
-<!--                android:text="Scan QR Code" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/mosaicButton"-->
-<!--                android:labelFor="@id/textInputLayout"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:layout_marginEnd="10dp"-->
-<!--                android:text="Mosaic" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/updateButton"-->
-<!--                android:labelFor="@id/textInputLayout"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:visibility="gone"-->
-<!--                android:text="Update" />-->
-
-<!--        </LinearLayout>-->
-
-        <Button
-            android:id="@+id/submitButton"
-            android:labelFor="@id/textInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="Submit" />
 
     </RelativeLayout>
 

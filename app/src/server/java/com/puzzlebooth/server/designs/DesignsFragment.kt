@@ -130,9 +130,9 @@ class DesignsFragment : BaseFragment<FragmentDesignsBinding>(R.layout.fragment_d
             }
         }
 
-        val mosaicName = sharedPreferences.getString("selectedAnimation", "")
-        if (animationName?.isNotEmpty() == true) {
-            val layoutFile = File("${requireContext().cacheDir}/animations/${animationName}")
+        val mosaicName = sharedPreferences.getString("selectedMosaic", "")
+        if (mosaicName?.isNotEmpty() == true) {
+            val layoutFile = File("${requireContext().cacheDir}/mosaics/${mosaicName}")
             if (layoutFile.exists()) {
                 Glide.with(this)
                     .load(layoutFile)
@@ -185,7 +185,6 @@ class DesignsFragment : BaseFragment<FragmentDesignsBinding>(R.layout.fragment_d
                 }
                 .progress { readBytes, totalBytes ->
                     val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
-                    println("hhh progress ${progress}")
                 }
                 .response { result ->
                     result.fold(
@@ -229,14 +228,14 @@ class DesignsFragment : BaseFragment<FragmentDesignsBinding>(R.layout.fragment_d
     }
 
     private fun updateEvent(event: Event) {
-        if(event.design_url.isNotEmpty())
-            downloadLayout(Design("", event.design_url.substringAfterLast("/").removeSuffix(".png"), event.design_url))
+        if(!event.design_url.isNullOrEmpty())
+            downloadLayout(Design("", event.design_url!!.substringAfterLast("/").removeSuffix(".png"), event.design_url!!))
 
-        if(event.animation_url.isNotEmpty())
-            downloadLayout(Design("", event.animation_url.substringAfterLast("/").removeSuffix(".gif"), event.animation_url))
+        if(!event.animation_url.isNullOrEmpty())
+            downloadLayout(Design("", event.animation_url!!.substringAfterLast("/").removeSuffix(".gif"), event.animation_url!!))
 
-        if(event.mosaic_url.isNotEmpty())
-            downloadMosaic(Design("", event.mosaic_url.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url))
+        if(!event.mosaic_url.isNullOrEmpty())
+            downloadMosaic(Design("", event.mosaic_url!!.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url!!))
     }
 
     fun downloadMosaic(design: Design) {

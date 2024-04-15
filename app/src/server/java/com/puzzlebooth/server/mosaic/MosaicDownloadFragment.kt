@@ -150,12 +150,14 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
     }
 
     private fun updateEvent(event: Event) {
-        currentDesign = Design("", event.mosaic_url.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url)
-        println("hhh currentDesign ${currentDesign.toString()}")
-        currentDesign?.let {
-            Glide.with(requireContext()).load(it.url).into(binding.ivLayout)
+        if(!event.mosaic_url.isNullOrEmpty()) {
+            currentDesign = Design("", event.mosaic_url!!.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url!!)
+            println("hhh currentDesign ${currentDesign.toString()}")
+            currentDesign?.let {
+                Glide.with(requireContext()).load(it.url).into(binding.ivLayout)
+            }
+            //downloadMosaic(Design("", event.mosaic_url.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url))
         }
-        //downloadMosaic(Design("", event.mosaic_url.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url))
     }
 
     fun initViews() {

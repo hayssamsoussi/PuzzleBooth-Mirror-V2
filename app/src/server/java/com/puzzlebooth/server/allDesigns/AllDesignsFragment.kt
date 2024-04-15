@@ -17,6 +17,7 @@ import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.FragmentAllDesignsBinding
 import com.puzzlebooth.server.databinding.FragmentThemeBinding
 import com.puzzlebooth.server.mosaic.MosaicManager
+import com.puzzlebooth.server.mosaic.fadeOutAndDisable
 import com.puzzlebooth.server.network.Design
 import com.puzzlebooth.server.network.Event
 import com.puzzlebooth.server.theme.listing.DesignsAdapter
@@ -35,6 +36,9 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
     private var designs = mutableListOf<Design>()
     private lateinit var adapter: DesignsAdapter
     var mosaic: Design? = null
+    var animation: Design? = null
+    var layout: Design? = null
+    var eventID: String? = null
 
     override fun onResume() {
         super.onResume()
@@ -50,6 +54,8 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
 
                 fetchEventInfo(id).map {
                     updateEvent(it)
+                }.doOnError {
+                    it.printStackTrace()
                 }.subscribe()
             }
 
@@ -106,7 +112,7 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
     private fun showLayout() {
         val layoutName = sharedPreferences.getString("selectedLayout", "")
         val animationName = sharedPreferences.getString("selectedAnimation", "")
-        //val mosaicName = File("${requireContext().cacheDir}/mosaics/${design.filename}")
+        val mosaicName = sharedPreferences.getString("selectedMosaic", "")
         println("hhh showLayout animationName ${animationName}")
         if (layoutName?.isNotEmpty() == true) {
             val layoutFile = File("${requireContext().cacheDir}/layouts/${layoutName}")
@@ -121,7 +127,7 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
         }
 
         if(animationName?.isNotEmpty() == true) {
-            val animationFile = File("${requireContext().cacheDir}/animations/${layoutName}")
+            val animationFile = File("${requireContext().cacheDir}/animations/${animationName}")
             if (animationFile.exists()) {
                 println("hhh animationFile exists")
                 Glide.with(this)
@@ -132,6 +138,20 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
                     .into(binding.ivAnimation)
             }
         }
+
+        if(mosaicName?.isNotEmpty() == true) {
+            val mosaicFile = File("${requireContext().cacheDir}/mosaics/${mosaicName}")
+            if (mosaicFile.exists()) {
+                Glide.with(this)
+                    .load(mosaicFile)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.transform(RotateTransformation(requireContext(), 270f))
+                    .into(binding.ivMosaic)
+            }
+        }
+
+
     }
 
     private  fun storeSelectedLayout(fileName: String) {
@@ -145,6 +165,39 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
         val edit = sharedPreferences.edit()
         edit.putString("selectedAnimation", fileName)
         edit.apply()
+    }
+
+    private fun storeSelectedMosaic(fileName: String) {
+        println("hhh storingMosaic: ${fileName}")
+        val edit = sharedPreferences.edit()
+        edit.putString("selectedMosaic", fileName)
+        edit.apply()
+    }
+
+    fun showRemoteLayout() {
+        if(layout != null) {
+            Glide.with(requireContext())
+                .load(layout?.url)
+                .into(binding.ivDesign)
+        } else {
+            Glide.with(requireContext()).clear(binding.ivDesign)
+        }
+
+        if(mosaic != null) {
+            Glide.with(requireContext())
+            .load(mosaic?.url)
+            .into(binding.ivMosaic)
+        } else {
+            Glide.with(requireContext()).clear(binding.ivMosaic)
+        }
+
+        if(animation != null) {
+            Glide.with(requireContext())
+                .load(animation?.url)
+                .into(binding.ivAnimation)
+        } else {
+            Glide.with(requireContext()).clear(binding.ivAnimation)
+        }
     }
 
     private fun downloadMosaic(url: String) {
@@ -170,7 +223,6 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
             }
             .progress { readBytes, totalBytes ->
                 val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
-                println("hhh progress ${progress}")
             }
             .response { result ->
                 result.fold(
@@ -208,8 +260,6 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
             val fileLocal = File(locallayouts + design.filename)
             Files.copy(fileLocal.toPath(), outputStream)
 
-            storeSelectedAnimation(design.filename)
-
             requireActivity().runOnUiThread {
                 showLayout()
             }
@@ -232,10 +282,9 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
                 .response { result ->
                     result.fold(
                         success = {
-                            storeSelectedAnimation(design.filename)
 
                             requireActivity().runOnUiThread {
-                                showLayout()
+                                showRemoteLayout()
                             }
                         },
                         failure = {
@@ -281,15 +330,11 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
                     success = {
 
                         requireActivity().runOnUiThread {
-                            binding.mosaicLabel.text = "Mosaic"
-                            val pair = design.filename.substringAfter(":").substringBefore(".").split(":")
-                            val columns = pair[0].toIntOrNull()
-                            val rows = pair[1].toIntOrNull()
+                            //binding.mosaicLabel.text = "Mosaic"
 
-                            if(rows != null && columns != null) {
-                                println("hhh fileName:${"${requireContext().cacheDir}/mosaics/${design.filename}"}")
-                                MosaicManager.splitBitmap("${requireContext().cacheDir}/mosaics/${design.filename}", columns, rows)
-                                MosaicManager.startMosaic(requireContext()) {}
+
+                            requireActivity().runOnUiThread {
+                                showRemoteLayout()
                             }
                         }
                     },
@@ -321,8 +366,6 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
             val fileLocal = File(locallayouts + design.filename)
             Files.copy(fileLocal.toPath(), outputStream)
 
-            storeSelectedLayout(design.filename)
-
             requireActivity().runOnUiThread {
                 showLayout()
             }
@@ -341,15 +384,12 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
                     requireActivity().runOnUiThread {
                         binding.designLabel.text = "Design {${progress.toInt()}%}"
                     }
-                    println("hhh progress ${progress}")
                 }
                 .response { result ->
                     result.fold(
                         success = {
-                            storeSelectedLayout(design.filename)
-
                             requireActivity().runOnUiThread {
-                                showLayout()
+                                showRemoteLayout()
                             }
                         },
                         failure = {
@@ -362,16 +402,62 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
         }
     }
 
+    fun storeEventID(id: String) {
+        val edit = sharedPreferences.edit()
+        edit.putString("eventID", id)
+        edit.apply()
+    }
+
     private fun initViews() {
         adapter = DesignsAdapter(designs) {
             downloadLayout(it)
         }
 
-        binding.submitButton.setOnClickListener {
+        binding.clearButton.setOnClickListener {
+            layout = null
+            mosaic = null
+            animation = null
+
+            storeEventID("-1")
+            showRemoteLayout()
+        }
+
+        binding.saveButton.setOnClickListener {
+            binding.progressBarContainer.show()
             val eventQuery = binding.editText.text.toString()
+            storeEventID(eventQuery)
+            storeSelectedLayout(layout?.filename ?: "")
+            storeSelectedAnimation(animation?.filename ?: "")
+            storeSelectedMosaic(mosaic?.filename ?: "")
+
+            if(mosaic != null) {
+                val mosaicDesign = sharedPreferences.getString("selectedMosaic", "")
+                val pair = mosaicDesign?.substringAfter(":")?.substringBefore(".")?.split(":")
+                val columns = pair?.get(0)?.toIntOrNull()
+                val rows = pair?.get(1)?.toIntOrNull()
+
+                if(rows != null && columns != null) {
+                    println("hhh fileName:${"${requireContext().cacheDir}/mosaics/${mosaic!!.filename}"}")
+                    MosaicManager.splitBitmap("${requireContext().cacheDir}/mosaics/${sharedPreferences.getString("selectedMosaic", "")}", columns, rows)
+                    MosaicManager.startMosaic(requireContext()) {}
+
+                }
+            }
+
+            binding.progressBarContainer.hide()
+            findNavController().popBackStack()
+        }
+
+        binding.refreshButton.setOnClickListener {
+            val eventQuery = binding.editText.text.toString()
+
             eventQuery.toIntOrNull()?.let {
                 fetchEventInfo(it).map {
                     updateEvent(it)
+                    binding.saveButton.isEnabled = true
+                    binding.saveButton.alpha = 1F
+                }.doOnError {
+                    it.printStackTrace()
                 }.subscribe()
             }
         }
@@ -386,21 +472,30 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
         val design = event.design_url
         val animation = event.animation_url
 
-        binding.designLabel.setTextColor(if(design.isEmpty()) Color.RED else Color.WHITE)
-        binding.mosaicLabel.setTextColor(if(mosaic.isEmpty()) Color.RED else Color.WHITE)
-        binding.animationLabel.setTextColor(if(animation.isEmpty()) Color.RED else Color.WHITE)
+        binding.designLabel.setTextColor(if(design.isNullOrEmpty()) Color.RED else Color.WHITE)
+        binding.mosaicLabel.setTextColor(if(mosaic.isNullOrEmpty()) Color.RED else Color.WHITE)
+        binding.animationLabel.setTextColor(if(animation.isNullOrEmpty()) Color.RED else Color.WHITE)
 
-
-        if(event.design_url.isNotEmpty()) {
-            downloadLayout(Design("", event.design_url.substringAfterLast("/").removeSuffix(".png"), event.design_url))
+        event.design_url?.let { design ->
+            if(design.isNotEmpty()) {
+                this.layout = Design("", design.substringAfterLast("/"), design)
+                downloadLayout(this.layout!!)
+            }
         }
 
-        if(event.animation_url.isNotEmpty()) {
-            downloadAnimation(Design("", event.animation_url.substringAfterLast("/").removeSuffix(".gif"), event.animation_url))
+        event.animation_url?.let { animation ->
+            if(animation.isNotEmpty()) {
+                this.animation = Design("", animation.substringAfterLast("/"), animation)
+                downloadAnimation(this.animation!!)
+                //downloadAnimation(Design("", animation.substringAfterLast("/"), animation))
+            }
         }
 
-        if(event.mosaic_url.isNotEmpty()) {
-            downloadMosaic(Design("", event.mosaic_url.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url))
+        event.mosaic_url?.let { mosaic ->
+            if(mosaic.isNotEmpty()) {
+                this.mosaic = Design("", mosaic.substringAfterLast("/"), mosaic)
+                downloadMosaic(this.mosaic!!)
+            }
         }
     }
 
@@ -410,13 +505,17 @@ class AllDesignsFragment : BaseFragment<FragmentAllDesignsBinding>(R.layout.frag
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .doOnSubscribe {
+                storeSelectedAnimation("")
+                storeSelectedMosaic("")
+                storeSelectedLayout("")
+
                 Glide.with(requireContext()).clear(binding.ivDesign)
                 Glide.with(requireContext()).clear(binding.ivMosaic)
                 Glide.with(requireContext()).clear(binding.ivAnimation)
+
                 binding.designLabel.setTextColor(Color.WHITE)
                 binding.mosaicLabel.setTextColor(Color.WHITE)
                 binding.animationLabel.setTextColor(Color.WHITE)
-
 
                 //binding.tvEventDescription.text = ""
                 binding.progressBarContainer.show()
