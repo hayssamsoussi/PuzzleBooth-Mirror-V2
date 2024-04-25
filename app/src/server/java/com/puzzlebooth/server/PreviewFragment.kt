@@ -20,6 +20,7 @@ import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.main.utils.mosaicDraftPath
 import com.puzzlebooth.server.databinding.FragmentPreviewBinding
 import com.puzzlebooth.server.mosaic.MosaicManager
+import com.puzzlebooth.server.settings.PhotoQuality
 import io.paperdb.Paper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -325,7 +326,8 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     fun saveFileToDrafts(): Pair<String, String> {
         val landscape = sharedPreferences.getBoolean("settings:landscape", false)
         val selectedLayout = sharedPreferences.getString("selectedLayout", "")
-        val quality = if(sharedPreferences.getBoolean("settings:printingQuality", false) ) 100 else 40
+        val quality = PhotoQuality.getCurrentQualityInt(requireContext())
+        println("hhh quality is ${quality}")
 
         val timeFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
         val timeStamp: String = timeFormat.format(Date())

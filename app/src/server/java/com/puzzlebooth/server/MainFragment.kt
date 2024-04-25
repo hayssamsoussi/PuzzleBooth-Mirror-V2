@@ -1,6 +1,5 @@
 package com.puzzlebooth.server
 
-import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -22,6 +21,8 @@ import com.puzzlebooth.server.utils.SyncManager
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 
 class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {

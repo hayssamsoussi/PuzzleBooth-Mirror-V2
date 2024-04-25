@@ -1,14 +1,18 @@
 package com.puzzlebooth.server.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.provider.ContactsContract.Contacts.Photo
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.FragmentSettingsBinding
 import com.puzzlebooth.server.settings.listing.SettingsAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlin.math.min
 
 enum class SettingType {
     TOGGLE, MULTI_TOGGLE, INPUT, DETAILS;
@@ -149,18 +153,18 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
     }
 
     fun toggleQuality() {
-        val current = sharedPreferences.getBoolean("settings:printingQuality", false)
-
-        val edit = sharedPreferences.edit()
-        edit.putBoolean("settings:printingQuality", !current)
-        edit.apply()
+        //val current = PhotoQuality.getCurrentQuality(requireContext())
+        PhotoQuality.toggleQuality(requireContext())
+//        val edit = sharedPreferences.edit()
+//        edit.putBoolean("settings:printingQuality", !current)
+//        edit.apply()
     }
 
     fun updateViews() {
         val currentFlash = if(sharedPreferences.getBoolean("settings:flash", false)) "ON" else "OFF"
         val currentAutoPhoto = if(sharedPreferences.getBoolean("settings:autoPhoto", false)) "ON" else "OFF"
         val currentPrintSlow = if(sharedPreferences.getBoolean("settings:printingSlow", false)) "ON" else "OFF"
-        val currentPrintQuality = if(sharedPreferences.getBoolean("settings:printingQuality", false)) "100%" else "40%"
+        val currentPrintQuality = PhotoQuality.getCurrentQuality(requireContext()).getRepresentation()
         val currentTouchMode = if(sharedPreferences.getBoolean("settings:touchMode", false)) "ON" else "OFF"
         val currentLandscape = if(sharedPreferences.getBoolean("settings:landscape", false)) "ON" else "OFF"
         val currentShowQR = if(sharedPreferences.getBoolean("settings:showQR", false)) "ON" else "OFF"
@@ -172,6 +176,47 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         binding.btnQualtiy.text = "Printing Quality: ${currentPrintQuality}"
         binding.btnTouchMode.text = "Touch Mode: ${currentTouchMode}"
         binding.btnLandscape.text = "Landscape: ${currentLandscape}"
+
+    }
+}
+
+enum class PhotoQuality(val quality: Int) {
+    QUALITY_20(20), QUALITY_40(40), QUALITY_60(60), QUALITY_80(80), QUALITY_100(100);
+
+    fun getRepresentation(): String {
+        return when(this) {
+            QUALITY_20 -> "20%"
+            QUALITY_40 -> "40%"
+            QUALITY_60 -> "60%"
+            QUALITY_80 -> "80%"
+            QUALITY_100 -> "100%"
+        }
+    }
+
+    companion object {
+        fun getCurrentQualityInt(context: Context): Int {
+            return getCurrentQuality(context).quality
+        }
+
+        fun getCurrentQuality(context: Context): PhotoQuality {
+            val sharedPreferences = context.getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
+            val quality = sharedPreferences.getInt("settings:printingQuality", PhotoQuality.entries.size - 1)
+            return PhotoQuality.entries[quality]
+        }
+
+        fun toggleQuality(context: Context) {
+            val sharedPreferences = context.getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
+            val current = sharedPreferences.getInt("settings:printingQuality", PhotoQuality.entries.size - 1)
+            val edit = sharedPreferences.edit()
+            if(current == (PhotoQuality.entries.size -1)) {
+                edit.putInt("settings:printingQuality", 0)
+            } else {
+                edit.putInt("settings:printingQuality", current + 1)
+            }
+
+            edit.apply()
+        }
+
 
     }
 }
