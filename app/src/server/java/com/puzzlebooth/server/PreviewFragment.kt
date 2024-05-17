@@ -103,7 +103,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
                             it.printStackTrace()
                         }
                         .doOnNext {
-                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/uploads/${fileName}")
+                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image.php?link=${fileName}")
                         }
                         .subscribe()
                 } else {
@@ -150,7 +150,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
                                     it.printStackTrace()
                                 }
                                 .doOnNext {
-                                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/uploads/${fileName}")
+                                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image.php?link=${fileName}")
                                 }
                                 .subscribe()
                         }
