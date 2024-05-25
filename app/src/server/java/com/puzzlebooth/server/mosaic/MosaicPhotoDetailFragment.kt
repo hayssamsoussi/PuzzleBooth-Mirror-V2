@@ -68,5 +68,12 @@ class MosaicPhotoDetailFragment : BaseFragment<FragmentMosaicDetailBinding>(R.la
                 findNavController().popBackStack()
             }
         }
+
+        binding.btnExit.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
     }
+
+
 }

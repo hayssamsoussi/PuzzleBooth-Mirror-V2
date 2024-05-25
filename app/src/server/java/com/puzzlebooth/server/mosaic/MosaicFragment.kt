@@ -1,5 +1,7 @@
 package com.puzzlebooth.server.mosaic
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -7,19 +9,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.github.kittinunf.fuel.Fuel
+import com.kongzue.dialogx.dialogs.MessageDialog
 import com.puzzlebooth.main.MosaicAdapter
 import com.puzzlebooth.main.MosaicItem
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
+import com.puzzlebooth.main.utils.draftPath
+import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
+import com.puzzlebooth.main.utils.mosaicDraftPath
+import com.puzzlebooth.main.utils.showInputDialog
 import com.puzzlebooth.server.R
+import com.puzzlebooth.server.animations.hide
+import com.puzzlebooth.server.animations.show
 import com.puzzlebooth.server.databinding.FragmentMosaicBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.puzzlebooth.server.network.Design
+import com.puzzlebooth.server.network.Event
+import com.puzzlebooth.server.theme.listing.DesignsAdapter
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.File
+import java.io.FileOutputStream
 import java.util.Timer
 import kotlin.concurrent.timerTask
 
@@ -27,6 +47,10 @@ import kotlin.concurrent.timerTask
 class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mosaic) {
 
     var mosaicViews = mutableListOf<MosaicItem>()
+
+    var currentDesign: Design? = null
+    private var designs = mutableListOf<Design>()
+    private lateinit var adapterDownload: DesignsAdapter
 
     val timer = Timer()
     override fun onStart() {
@@ -60,8 +84,6 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         return FragmentMosaicBinding.bind(view)
     }
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -73,8 +95,28 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        startTimer()
+        //startTimer()
         initViews()
+        initData()
+        updateViews()
+    }
+
+    fun initData() {
+        service
+            .listMosaic()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Error")
+                    .setMessage(it.message)
+                    .show()
+            }
+            .doOnNext {
+                designs.clear()
+                designs.addAll(it)
+                adapterDownload.notifyDataSetChanged()
+            }.subscribe()
     }
 
     fun startTimer() {
@@ -101,7 +143,11 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         fetchMosaicViews()
 
         adapter = MosaicAdapter(mosaicViews.toList()) {
-            openMosaicDetails(it)
+            if(!it.original) {
+                openMosaicDetails(it)
+            } else {
+                //openPictureChooser()
+            }
         }
 
         binding.rvMosaic.layoutManager = GridLayoutManager(requireContext(), 8)
@@ -114,12 +160,90 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
             updateViews()
         }
 
-        binding.btnMosaicDownload.setOnClickListener {
-            findNavController().navigate(R.id.action_mosaicFragment_to_mosaicDownloadFragment)
+        binding.refreshButton.setOnClickListener {
+            updateViews()
         }
+
+        binding.settingsButton.setOnClickListener {
+            openPictureChooser()
+            //findNavController().navigate(R.id.action_mosaicFragment_to_mosaicSettingsFragment)
+        }
+//        binding.btn.setOnClickListener {
+//            findNavController().navigate(R.id.action_mosaicFragment_to_mosaicDownloadFragment)
+//        }
+
+        adapterDownload = DesignsAdapter(designs) {
+            currentDesign = it
+            Glide.with(requireContext()).load(it.url).into(binding.ivLayout)
+        }
+
+        binding.updateButton.setOnClickListener {
+//            val eventId = binding.editText.text.toString().toIntOrNull() ?: return@setOnClickListener
+//            fetchEventInfo(eventId).map {
+//                val event = it ?: return@map
+//                updateEvent(event)
+//            }.subscribe()
+        }
+
+        binding.exitButton.setOnClickListener {
+            requireContext().showInputDialog("Alert", "Delete?") {
+                if(it == "taysir123") {
+                    MosaicManager.deleteAll()
+                }
+            }
+        }
+
+        binding.downloadButton.setOnClickListener {
+            currentDesign?.let { it1 -> downloadMosaic(it1) }
+        }
+
+        binding.deleteButton.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setMessage("Are you sure?")
+                .setPositiveButton("Yes", object: DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        MosaicManager.deleteAll()
+                    }
+                })
+                .setNegativeButton("No", object: DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        dialog?.dismiss()
+                    }
+
+                }).show()
+        }
+
+        binding.rvList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        binding.rvList.adapter = adapterDownload
+    }
+
+    fun openPictureChooser() {
+        val fragment = ChoosePictureDialogFragment.newInstance("")
+        fragment.listener = object: ChoosePictureDialogFragmentListener {
+            override fun fillThisPic(file: File) {
+                if(MosaicManager.isRunning()) {
+                    val mosaicPath = requireContext().mosaicDraftPath()
+                    File(mosaicPath).mkdirs()
+
+                    val pair = Pair(file.name, file.path)
+                    val fileName = pair.first
+                    val normalPath = requireContext().getCurrentEventPhotosPath()
+
+                    if(MosaicManager.original) {
+                        File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}/$fileName"), true)
+                    }
+
+                    File("$normalPath$fileName").copyTo(File("${requireContext().mosaicDraftPath()}/$fileName"), true)
+                }
+            }
+
+        }
+        fragment.show(parentFragmentManager, "")
     }
 
     fun updateViews() {
+
+        initViews()
 
         val stringBuilder = StringBuilder()
         stringBuilder.appendLine("Originals: ${MosaicManager.mosaic_originals.listFiles()?.size}")
@@ -135,8 +259,97 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         binding.btnSendToPrint.text = "${MosaicManager.mosaic_toPrint.list()?.size}/${MosaicManager.countMosaic}"
 
         fetchMosaicViews()
-        activity?.runOnUiThread {
-            adapter?.notifyDataSetChanged()
+        println("hhh mosaicViews ${mosaicViews.size}")
+        adapter?.notifyDataSetChanged()
+    }
+
+    fun downloadMosaic(design: Design) {
+        println("hhh downloading ${design.toString()}")
+        val url = design.url
+        if (!File("${requireContext().cacheDir}/mosaics/").exists()) {
+            File("${requireContext().cacheDir}/mosaics/").mkdirs()
+        }
+
+        val file = File("${requireContext().cacheDir}/mosaics/${design.filename}")
+        if (file.exists()) {
+            file.delete()
+        }
+
+        val outputStream = FileOutputStream(file)
+
+        Fuel.download(url)
+            .streamDestination { response, _ ->
+                Pair(
+                    outputStream
+                ) { response.body().toStream() }
+            }
+            .fileDestination { _, _ ->
+                file
+            }
+            .progress { readBytes, totalBytes ->
+                val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
+                requireActivity().runOnUiThread {
+                    binding.downloadButton.text = "Download ${progress}%" }
+            }
+            .response { result ->
+                result.fold(
+                    success = {
+
+                        requireActivity().runOnUiThread {
+                            binding.downloadButton.text = "Download"
+                            val pair = design.filename.substringAfter(":").substringBefore(".").split(":")
+                            val columns = pair[0].toIntOrNull()
+                            val rows = pair[1].toIntOrNull()
+
+                            if(rows != null && columns != null) {
+                                println("hhh fileName:${"${requireContext().cacheDir}/mosaics/${design.filename}"}")
+                                MosaicManager.splitBitmap("${requireContext().cacheDir}/mosaics/${design.filename}", columns, rows)
+                                MosaicManager.startMosaic(requireContext()) {}
+                            }
+
+                            //findNavController().popBackStack()
+                        }
+                    },
+                    failure = {
+                        it.printStackTrace()
+                        Toast.makeText(requireContext(), "Error downloading file!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                )
+            }
+
+    }
+
+    private fun fetchEventInfo(eventId: Int): Observable<Event> {
+        return service
+            .getEvent(eventId)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .doOnSubscribe {
+                Glide.with(requireContext()).clear(binding.ivLayout)
+                //binding.tvEventDescription.text = ""
+                binding.progressBar.show()
+            }
+            .doOnError {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Error!")
+                    .setMessage(it.message)
+                    .show()
+                binding.progressBar.hide()
+            }
+            .doOnComplete {
+                binding.progressBar.hide()
+            }
+    }
+
+    private fun updateEvent(event: Event) {
+        if(!event.mosaic_url.isNullOrEmpty()) {
+            currentDesign = Design("", event.mosaic_url!!.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url!!)
+            println("hhh currentDesign ${currentDesign.toString()}")
+            currentDesign?.let {
+                Glide.with(requireContext()).load(it.url).into(binding.ivLayout)
+            }
+            //downloadMosaic(Design("", event.mosaic_url.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url))
         }
     }
 }
@@ -183,5 +396,4 @@ fun Button.lockButtonAfterClickFor(delay: Long, block: () -> Unit) {
         this.isClickable = true
         this.alpha = 1F
     }, delay)
-
 }

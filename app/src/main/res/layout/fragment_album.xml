@@ -22,9 +22,8 @@
             android:layout_weight="1"
             app:backgroundTint="#1C1C1C"
             app:tint="@color/white"
-            android:src="@drawable/baseline_navigate_next_24"
+            android:src="@drawable/baseline_arrow_back_ios_new_24"
             android:background="@drawable/button_background"
-            android:textSize="10dp"
             android:layout_margin="10dp"
             android:text="Prev" />
 
@@ -75,11 +74,10 @@
 
     </LinearLayout>
 
-    <GridView
-        android:id="@+id/photoGrid"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAlbum"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="auto_fit"
         android:padding="30dp"
         android:gravity="center"
         android:layout_below="@id/buttonContainer"

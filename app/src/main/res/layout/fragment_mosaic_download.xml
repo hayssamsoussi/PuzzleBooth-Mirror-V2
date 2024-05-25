@@ -94,31 +94,47 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/btnContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_alignParentBottom="true"
-            android:orientation="horizontal">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/btnContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/downloadButton"
+                    android:labelFor="@id/textInputLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="10dp"
+                    android:text="Download" />
+
+                <Button
+                    android:id="@+id/deleteButton"
+                    android:labelFor="@id/textInputLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="10dp"
+                    android:text="Delete" />
+
+
+            </LinearLayout>
 
             <Button
-                android:id="@+id/downloadButton"
+                android:id="@+id/exitButton"
                 android:labelFor="@id/textInputLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="10dp"
-                android:text="Download" />
-
-            <Button
-                android:id="@+id/deleteButton"
-                android:labelFor="@id/textInputLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="10dp"
-                android:text="Delete" />
-
+                android:text="Exit" />
 
         </LinearLayout>
 

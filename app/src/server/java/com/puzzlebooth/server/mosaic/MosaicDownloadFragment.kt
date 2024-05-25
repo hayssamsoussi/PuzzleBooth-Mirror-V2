@@ -174,6 +174,10 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
             }.subscribe()
         }
 
+        binding.exitButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         binding.downloadButton.setOnClickListener {
             currentDesign?.let { it1 -> downloadMosaic(it1) }
         }

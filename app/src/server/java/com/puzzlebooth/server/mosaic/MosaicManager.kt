@@ -90,13 +90,13 @@ object MosaicManager {
         }
 
         return MosaicInfo(
-            originals = mosaic_originals.listFiles().size,
-            images = mosaic_images.listFiles().size,
-            drafts = mosaic_draft.listFiles().size,
-            toPrint = mosaic_toPrint.listFiles().size,
-            merge = mosaic_merge.listFiles().size,
-            mosaicPrint = mosaic_print.listFiles().size,
-            done = mosaic_done.listFiles().size,
+            originals = mosaic_originals.listFiles()?.size ?: 0,
+            images = mosaic_images.listFiles()?.size ?: 0,
+            drafts = mosaic_draft.listFiles()?.size ?: 0,
+            toPrint = mosaic_toPrint.listFiles()?.size ?: 0,
+            merge = mosaic_merge.listFiles()?.size ?: 0,
+            mosaicPrint = mosaic_print.listFiles()?.size ?: 0,
+            done = mosaic_done.listFiles()?.size ?: 0,
             boxes = map
         )
     }
@@ -191,7 +191,10 @@ object MosaicManager {
         mosaic_originals.deleteRecursively()
         mosaic_images.deleteRecursively()
         mosaic_draft.deleteRecursively()
+        mosaic_done.deleteRecursively()
         mosaic_toPrint.deleteRecursively()
+        mosaic_merge.deleteRecursively()
+        mosaic_print.deleteRecursively()
     }
 
     fun deleteImageAtIndex(index: Int) {

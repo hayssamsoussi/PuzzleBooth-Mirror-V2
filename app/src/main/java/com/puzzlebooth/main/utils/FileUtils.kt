@@ -2,6 +2,8 @@ package com.puzzlebooth.main.utils
 
 import android.content.Context
 import android.os.Environment
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 import java.text.SimpleDateFormat
@@ -23,4 +25,29 @@ fun Context.draftPath(): String {
 fun Context.mosaicDraftPath(): String {
     val current = this.getCurrentEventPhotosPath()
     return "${current}mosaic/draft"
+}
+
+fun Context.showInputDialog(
+    title: String,
+    hint: String = "",
+    callback: (String) -> Unit
+) {
+    val input = EditText(this).apply {
+        this.hint = hint
+    }
+
+    AlertDialog.Builder(this).apply {
+        setTitle(title)
+        setView(input)
+        setPositiveButton("OK") { dialog, _ ->
+            val inputText = input.text.toString()
+            callback(inputText)
+            dialog.dismiss()
+        }
+        setNegativeButton("Cancel") { dialog, _ ->
+            dialog.cancel()
+        }
+        create()
+        show()
+    }
 }

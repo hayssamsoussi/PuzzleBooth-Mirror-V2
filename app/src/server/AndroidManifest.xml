@@ -8,20 +8,20 @@
         tools:ignore="ScopedStorage" />
 
     <application>
-
+        <activity
+            android:name=".mosaic.ChooseMosaicPictureActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:label="PB Server V2"
             android:configChanges="orientation|keyboardHidden"
-            android:exported="true">
+            android:exported="true"
+            android:label="PB Server V2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
     </application>
 
 </manifest>
