@@ -53,6 +53,20 @@
         android:layout_below="@id/buttons_container"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_height="0dp"/>
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnExit"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:backgroundTint="#1C1C1C"
+        app:tint="@color/white"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/white"
+        android:src="@drawable/baseline_navigate_next_24"
+        android:background="@drawable/button_background"
+        android:textSize="10dp"
+        android:layout_margin="5dp"
+        android:text="Exit" />
 
 </RelativeLayout>

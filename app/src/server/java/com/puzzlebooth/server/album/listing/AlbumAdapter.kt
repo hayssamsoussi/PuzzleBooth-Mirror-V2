@@ -1,5 +1,6 @@
 package com.puzzlebooth.server.album.listing
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,7 @@ import java.io.File
 
 data class LocalImage(val file: File, val position: Int)
 
-class AlbumAdapter(private val mList: List<LocalImage>, val action: (String) -> Unit) : RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
+class AlbumAdapter(private val mList: List<LocalImage>, val action: (LocalImage) -> Unit) : RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
 
     companion object {
         var currentPosition = 0
@@ -35,10 +36,10 @@ class AlbumAdapter(private val mList: List<LocalImage>, val action: (String) -> 
     }
 
     fun setSelectedPosition(position: Int) {
-        val oldPosition = currentPosition
-        currentPosition = position
-        notifyItemChanged(oldPosition, Object())
-        notifyItemChanged(currentPosition, Object())
+//        currentPosition = position
+//        if(currentPosition != -1) {
+//            notifyDataSetChanged()
+//        }
     }
 
     // binds the list items to a view
@@ -61,11 +62,22 @@ class AlbumAdapter(private val mList: List<LocalImage>, val action: (String) -> 
 //            )
             .into(holder.imageView)
 
-        if(position == currentPosition) {
-            holder.imageNumberTv.visibility = View.VISIBLE
-        } else {
-            holder.imageNumberTv.visibility = View.GONE
+        holder.itemView.setOnClickListener {
+            action.invoke(file)
         }
+
+//        if(currentPosition == file.position) {
+//            holder.imageNumberTv.setTextColor(Color.RED)
+//        } else {
+//            holder.imageNumberTv.setTextColor(Color.WHITE)
+//        }
+
+        holder.imageNumberTv.text = file.position.toString()
+//        if(position == currentPosition) {
+//            holder.imageNumberTv.visibility = View.VISIBLE
+//        } else {
+//            holder.imageNumberTv.visibility = View.GONE
+//        }
     }
 
     // return the number of the items in the list

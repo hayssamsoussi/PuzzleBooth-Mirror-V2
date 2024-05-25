@@ -7,6 +7,8 @@ import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.models.RemotePhoto
@@ -33,14 +35,42 @@ import java.io.File
 
 class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album) {
 
+    var currentPositionSelected = -1
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent?) {
-        when(event?.text) {
-            "albumNext" -> binding.btnNext.performClick()
-            "albumPrevious" -> binding.btnPrevious.performClick()
-            "albumPrint" -> binding.btnPrint.performClick()
-            "albumQR" -> binding.btnQR.performClick()
-            "reset" -> findNavController().popBackStack()
+        when {
+            event?.text == "albumNext" -> binding.btnNext.performClick()
+            event?.text == "albumPrevious" -> binding.btnPrevious.performClick()
+            event?.text?.startsWith("albumPrint:") == true -> printPhoto(event.text.removePrefix("albumPrint:").toIntOrNull() ?: -1)
+            event?.text?.startsWith("albumQR:") == true -> getQRPhoto(event.text.removePrefix("albumQR:").toIntOrNull() ?: -1)
+            event?.text == "reset" -> findNavController().popBackStack()
+        }
+    }
+
+    private fun getQRPhoto(index: Int) {
+        if(index == -1) return
+
+        val fileToQR = localFiles.firstOrNull { it.position == index }
+
+        val fileName = fileToQR?.file?.name
+        val filePath = fileToQR?.file?.path
+
+        if(fileName != null && filePath != null) {
+            if(sharedPreferences.getBoolean("settings:showQR", false)) {
+                processPrintingAction(fileName, filePath, "print:;;;")
+            } else {
+                processPrintingAction(fileName, filePath, "print")
+            }
+        }
+    }
+
+    private fun printPhoto(index: Int) {
+        if(index == -1) return
+
+        val fileToPrint = localFiles.firstOrNull { it.position == index }
+        fileToPrint?.file?.let { file ->
+            File(file.path).copyTo(File("${requireContext().draftPath()}${file.name}"), true)
         }
     }
 
@@ -58,54 +88,51 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initData()
+        refreshData()
         initViews()
     }
 
 
     private fun initViews() {
         val adapter = PhotosAdapter(requireContext(), localFiles.toList())
-        binding.photoGrid.adapter = adapter
-
-        binding.photoGrid.setOnItemClickListener { _, view, position, _ ->
-            // Handle item click
-            currentPosition = position
-            adapter.setSelectedPosition(position)
-        }
-
+//        binding.photoGrid.adapter = adapter
+//
+//        binding.photoGrid.setOnItemClickListener { _, view, position, _ ->
+//            // Handle item click
+//            currentPosition = position
+//            adapter.setSelectedPosition(position)
+//        }
+//
         binding.btnPrevious.setOnClickListener {
-            if (currentPosition > 0) {
-                currentPosition--
-                if(currentPosition%2==0)
-                    binding.photoGrid.scrollListBy((requireContext().getScreenHeight() - 100f.dpToPx(requireContext())).toInt()/3)
-                binding.photoGrid.setSelection(currentPosition)
-                adapter.setSelectedPosition(currentPosition)
-            }
+            binding.rvAlbum.scrollBy(0, -200)
+//            currentPage -= 1
+//            refreshData()
+//            if (currentPosition > 0) {
+//                currentPosition--
+//                if(currentPosition%2==0)
+//                    binding.photoGrid.scrollListBy((requireContext().getScreenHeight() - 100f.dpToPx(requireContext())).toInt()/3)
+//                binding.photoGrid.setSelection(currentPosition)
+//                adapter.setSelectedPosition(currentPosition)
+//            }
         }
 
         binding.btnNext.setOnClickListener {
-            if (currentPosition < localFiles.size - 1) {
-                currentPosition++
-                if(currentPosition%2==0)
-                    binding.photoGrid.scrollListBy((requireContext().getScreenHeight() - 100f.dpToPx(requireContext())).toInt()/3)
-                binding.photoGrid.setSelection(currentPosition)
-                adapter.setSelectedPosition(currentPosition)
-            }
+            binding.rvAlbum.scrollBy(0, 200)
+//            if (currentPosition < localFiles.size - 1) {
+//                currentPosition++
+//                if(currentPosition%2==0)
+//                    binding.photoGrid.scrollListBy((requireContext().getScreenHeight() - 100f.dpToPx(requireContext())).toInt()/3)
+//                binding.photoGrid.setSelection(currentPosition)
+//                adapter.setSelectedPosition(currentPosition)
+//            }
         }
 
         binding.btnQR.setOnClickListener {
-            val fileName = localFiles[currentPosition].file.name
-            val filePath = localFiles[currentPosition].file.path
-
-            if(sharedPreferences.getBoolean("settings:showQR", false)) {
-                processPrintingAction(fileName, filePath, "print:;;;")
-            } else {
-                processPrintingAction(fileName, filePath, "print")
-            }
+            getQRPhoto(currentPositionSelected)
         }
 
         binding.btnPrint.setOnClickListener {
-            File(localFiles[currentPosition].file.path).copyTo(File("${requireContext().draftPath()}${localFiles[currentPosition].file.name}"), true)
+            printPhoto(currentPositionSelected)
 
 //            val landscape = sharedPreferences.getBoolean("settings:landscape", false)
 //            if(landscape) {
@@ -131,17 +158,6 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
 //                File(localFiles[currentPosition].file.path).copyTo(File("${requireContext().draftPath()}${localFiles[currentPosition].file.name}"), true)
 //            }
         }
-
-
-
-//        albumAdapter = AlbumAdapter(localFiles.toList()) {
-//            println("hhh action $it")
-//        }
-//
-//        binding.rvAlbum.apply {
-//            adapter = albumAdapter
-//            layoutManager = GridLayoutManager(requireContext(), 2, RecyclerView.VERTICAL, false)
-//        }
     }
 
     fun processPrintingAction(fileName: String, normalPath: String, event: String) {
@@ -237,11 +253,10 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
         EventBus.getDefault().unregister(this)
     }
 
-    private fun initData() {
+    private fun refreshData() {
         localFiles.clear()
         val file = File(requireContext().getCurrentEventPhotosPath())
 
-        val twodaysmillis = 172800000
         val monthmillis = 172800000
         val twodaysago = if(false) (System.currentTimeMillis() - monthmillis) else 0
         val files = file.listFiles()?.filter {
@@ -253,6 +268,16 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
             files.sortedByDescending { it.lastModified() }.forEachIndexed { index, file ->
                 localFiles.add(LocalImage(file, index))
             }
+        }
+
+        albumAdapter = AlbumAdapter(localFiles.toList()) {
+            currentPositionSelected = it.position.toString().toIntOrNull() ?: -1
+            //albumAdapter.setSelectedPosition(it.toIntOrNull() ?: -1)
+        }
+//
+        binding.rvAlbum.apply {
+            this.adapter = albumAdapter
+            layoutManager = GridLayoutManager(requireContext(), 5, RecyclerView.VERTICAL, false)
         }
     }
 }

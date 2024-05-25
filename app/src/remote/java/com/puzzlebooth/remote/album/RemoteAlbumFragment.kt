@@ -20,7 +20,13 @@ class RemoteAlbumFragment : BaseFragment<FragmentAlbumRemoteBinding>(R.layout.fr
         binding.btnCloseAlbum.setOnClickListener { mainActivity()?.send("reset") }
         binding.btnAlbumNext.setOnClickListener { mainActivity()?.send("albumNext") }
         binding.btnAlbumPrevious.setOnClickListener { mainActivity()?.send("albumPrevious") }
-        binding.btnALbumPrint.setOnClickListener { mainActivity()?.send("albumPrint") }
-        binding.btnShowQR.setOnClickListener { mainActivity()?.send("albumQR") }
+        binding.btnALbumPrint.setOnClickListener {
+            val number = binding.etNumber.text.toString().toIntOrNull() ?: -1
+            mainActivity()?.send("albumPrint:$number")
+        }
+        binding.btnShowQR.setOnClickListener {
+            val number = binding.etNumber.text.toString().toIntOrNull() ?: -1
+            mainActivity()?.send("albumQR:$number")
+        }
     }
 }

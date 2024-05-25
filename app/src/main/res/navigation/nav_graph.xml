@@ -57,7 +57,22 @@
             android:id="@+id/action_mosaicFragment_to_mosaicDetailFragment"
             app:destination="@id/mosaicDetailFragment" />
         <action
+            android:id="@+id/action_mosaicFragment_to_mosaicSettingsFragment"
+            app:destination="@id/mosaicSettingsFragment" />
+        <action
             android:id="@+id/action_mosaicFragment_to_mosaicDownloadFragment"
+            app:destination="@id/mosaicDownloadFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/mosaicSettingsFragment"
+        android:name="com.puzzlebooth.server.mosaic.MosaicSettingsFragment"
+        android:label="Mosaic Settings Fragment"
+        tools:layout="@layout/fragment_mosaic_settings" >
+
+        <action
+            android:id="@+id/action_mosaicSettingsFragment_to_mosaicDownloadFragment"
             app:destination="@id/mosaicDownloadFragment" />
 
     </fragment>
