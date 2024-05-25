@@ -3,9 +3,11 @@ package com.puzzlebooth.server
 import android.R.attr
 import android.R.attr.duration
 import android.R.attr.resource
+import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
@@ -85,10 +87,17 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
         //startCountdown()
     }
 
+    fun Context.playAudioFromRaw(resId: Int): MediaPlayer? {
+        val mediaPlayer = MediaPlayer.create(this, resId)
+        mediaPlayer?.start()
+        return mediaPlayer
+    }
+
     private fun initViews() {
 
         binding.btnStart2.setOnClickListener {
             if(!countdownRunning) {
+                requireContext().playAudioFromRaw(R.raw.camera_sound)
                 binding.camera.takePicture()
             }
         }
