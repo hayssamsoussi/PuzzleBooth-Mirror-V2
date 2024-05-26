@@ -72,7 +72,7 @@ class MainActivity : BaseNearbyActivity() {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
             MosaicManager.startMosaic(this) {
-                sendMosaicStatus()
+                //sendMosaicStatus()
             }
 
             requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -139,6 +139,14 @@ class MainActivity : BaseNearbyActivity() {
     override fun onReceive(endpoint: Endpoint?, payload: Payload?) {
         super.onReceive(endpoint, payload)
         val event = payload?.asBytes()?.let { String(it) }
+        when {
+            event.equals("cancel") -> {
+                showQRFragment?.dismissAllowingStateLoss()
+            }
+            event.equals("sendToPrint") -> {
+                MosaicManager.moveToPrintsToMerge(this)
+            }
+        }
         if(event.equals("cancel")) {
             showQRFragment?.dismissAllowingStateLoss()
         }

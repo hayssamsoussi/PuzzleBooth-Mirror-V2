@@ -88,42 +88,42 @@ class RemoteMosaicFragment : BaseFragment<FragmentMosaicRemoteBinding>(R.layout.
             mainActivity()?.sendThroughDelay("sendToPrint")
         }
 
-        if(mainActivity()?.mosaicOn == true) {
-            binding.rvMosaic.visibility = View.VISIBLE
-            binding.summariesContainer.visibility = View.VISIBLE
-            binding.mosaicOff.visibility = View.GONE
-
-            fetchMosaicViews()
-
-            adapter = RemoteMosaicAdapter(mosaicViews) {
-                // Initializing the popup menu and giving the reference as current context
-                val popupMenu = PopupMenu(requireContext(), it.second)
-
-                // Inflating popup menu from popup_menu.xml file
-                popupMenu.menuInflater.inflate(
-                    com.puzzlebooth.server.R.menu.mosaic_popup_menu,
-                    popupMenu.getMenu()
-                )
-                popupMenu.setOnMenuItemClickListener { item ->
-                    when (item?.itemId) {
-                        com.puzzlebooth.server.R.id.delete -> {
-                            mainActivity()?.send("deleteMosaic:${it.first.boxNumber}")
-                        }
-
-                        com.puzzlebooth.server.R.id.print -> {
-                            mainActivity()?.send("printMosaic:${it.first.boxNumber}")
-                        }
-                    }
-                    true
-                }
-                // Showing the popup menu
-                popupMenu.show()
-            }
-        } else {
-            binding.rvMosaic.visibility = View.GONE
-            binding.summariesContainer.visibility = View.GONE
-            binding.mosaicOff.visibility = View.VISIBLE
-        }
+//        if(mainActivity()?.mosaicOn == true) {
+//            binding.rvMosaic.visibility = View.VISIBLE
+//            binding.summariesContainer.visibility = View.VISIBLE
+//            binding.mosaicOff.visibility = View.GONE
+//
+//            fetchMosaicViews()
+//
+//            adapter = RemoteMosaicAdapter(mosaicViews) {
+//                // Initializing the popup menu and giving the reference as current context
+//                val popupMenu = PopupMenu(requireContext(), it.second)
+//
+//                // Inflating popup menu from popup_menu.xml file
+//                popupMenu.menuInflater.inflate(
+//                    com.puzzlebooth.server.R.menu.mosaic_popup_menu,
+//                    popupMenu.getMenu()
+//                )
+//                popupMenu.setOnMenuItemClickListener { item ->
+//                    when (item?.itemId) {
+//                        com.puzzlebooth.server.R.id.delete -> {
+//                            mainActivity()?.send("deleteMosaic:${it.first.boxNumber}")
+//                        }
+//
+//                        com.puzzlebooth.server.R.id.print -> {
+//                            mainActivity()?.send("printMosaic:${it.first.boxNumber}")
+//                        }
+//                    }
+//                    true
+//                }
+//                // Showing the popup menu
+//                popupMenu.show()
+//            }
+//        } else {
+//            binding.rvMosaic.visibility = View.GONE
+//            binding.summariesContainer.visibility = View.GONE
+//            binding.mosaicOff.visibility = View.VISIBLE
+//        }
 
         binding.rvMosaic.layoutManager = GridLayoutManager(requireContext(), 8)
         binding.rvMosaic.adapter = adapter

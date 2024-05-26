@@ -7,6 +7,7 @@
 
     <FrameLayout
         android:id="@+id/mosaicOff"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -44,6 +45,7 @@
                 android:id="@+id/btnRefresh"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
+                android:visibility="gone"
                 android:layout_marginHorizontal="40dp"
                 android:text="Refresh" />
 
@@ -68,6 +70,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMosaic"
+        android:visibility="gone"
         android:layout_below="@id/summariesContainer"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"

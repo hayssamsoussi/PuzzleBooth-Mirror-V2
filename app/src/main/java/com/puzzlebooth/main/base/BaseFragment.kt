@@ -1,5 +1,6 @@
 package com.puzzlebooth.main.base
 
+import android.app.ProgressDialog
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,6 +19,8 @@ abstract class BaseFragment<VB : ViewBinding>(
     @LayoutRes val layoutRes: Int
 ) : Fragment() {
 
+    var progressDialog: ProgressDialog? = null
+
     lateinit var sharedPreferences: SharedPreferences
     private var _binding: VB? = null
     protected val binding get() = _binding!!
@@ -33,6 +36,21 @@ abstract class BaseFragment<VB : ViewBinding>(
         _binding = initViewBinding(view)
         sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
         return view
+    }
+
+    fun hideProgress() {
+        progressDialog?.let { progress ->
+            progress.hide()
+        }
+    }
+
+    fun showProgress() {
+        if(progressDialog != null) {
+            progressDialog?.show()
+        } else {
+            progressDialog = ProgressDialog(requireContext())
+            progressDialog?.show()
+        }
     }
 
     override fun onDestroyView() {

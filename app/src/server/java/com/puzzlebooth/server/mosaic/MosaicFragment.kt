@@ -1,7 +1,9 @@
 package com.puzzlebooth.server.mosaic
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.DialogInterface
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,6 +17,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.github.kittinunf.fuel.Fuel
 import com.kongzue.dialogx.dialogs.MessageDialog
 import com.puzzlebooth.main.MosaicAdapter
@@ -22,6 +26,7 @@ import com.puzzlebooth.main.MosaicItem
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.draftPath
+import com.puzzlebooth.main.utils.getCurrentEventName
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.main.utils.mosaicDraftPath
 import com.puzzlebooth.main.utils.showInputDialog
@@ -32,6 +37,7 @@ import com.puzzlebooth.server.databinding.FragmentMosaicBinding
 import com.puzzlebooth.server.network.Design
 import com.puzzlebooth.server.network.Event
 import com.puzzlebooth.server.theme.listing.DesignsAdapter
+import io.paperdb.Paper
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -41,12 +47,15 @@ import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Timer
+import javax.sql.DataSource
 import kotlin.concurrent.timerTask
 
 
 class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mosaic) {
 
     var mosaicViews = mutableListOf<MosaicItem>()
+
+    var NUM_COLUMNS = 8
 
     var currentDesign: Design? = null
     private var designs = mutableListOf<Design>()
@@ -89,6 +98,7 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         //MosaicManager.startMosaic(requireContext())
         return super.onCreateView(inflater, container, savedInstanceState)
     }
@@ -149,8 +159,11 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
                 //openPictureChooser()
             }
         }
-
-        binding.rvMosaic.layoutManager = GridLayoutManager(requireContext(), 8)
+        val colRows = Paper.book().read<String>("${requireContext().getCurrentEventName()}:columns:rows", "")
+        if(!colRows.isNullOrEmpty()) {
+            NUM_COLUMNS = colRows.split(":")?.getOrNull(0)?.toIntOrNull() ?: 8
+        }
+        binding.rvMosaic.layoutManager = GridLayoutManager(requireContext(), NUM_COLUMNS)
         binding.rvMosaic.adapter = adapter
 
         binding.btnSendToPrint.setOnClickListener {
@@ -164,6 +177,12 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
             updateViews()
         }
 
+        binding.tvAutoPrint.setOnClickListener {
+            requireContext().showInputDialog("Ade l 3ared", "10") {
+
+            }
+        }
+
         binding.settingsButton.setOnClickListener {
             openPictureChooser()
             //findNavController().navigate(R.id.action_mosaicFragment_to_mosaicSettingsFragment)
@@ -174,7 +193,31 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
 
         adapterDownload = DesignsAdapter(designs) {
             currentDesign = it
-            Glide.with(requireContext()).load(it.url).into(binding.ivLayout)
+            showProgress()
+            Glide.with(requireContext()).load(it.url)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        hideProgress()
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        dataSource: com.bumptech.glide.load.DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        hideProgress()
+                        return false
+                    }
+                })
+                .into(binding.ivLayout)
         }
 
         binding.updateButton.setOnClickListener {
@@ -228,11 +271,6 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
                     val pair = Pair(file.name, file.path)
                     val fileName = pair.first
                     val normalPath = requireContext().getCurrentEventPhotosPath()
-
-                    if(MosaicManager.original) {
-                        File("$normalPath$fileName").copyTo(File("${requireContext().draftPath()}/$fileName"), true)
-                    }
-
                     File("$normalPath$fileName").copyTo(File("${requireContext().mosaicDraftPath()}/$fileName"), true)
                 }
             }
@@ -304,6 +342,7 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
                             if(rows != null && columns != null) {
                                 println("hhh fileName:${"${requireContext().cacheDir}/mosaics/${design.filename}"}")
                                 MosaicManager.splitBitmap("${requireContext().cacheDir}/mosaics/${design.filename}", columns, rows)
+                                Paper.book().write("${requireContext().getCurrentEventName()}:columns:rows", "$columns:$rows")
                                 MosaicManager.startMosaic(requireContext()) {}
                             }
 
