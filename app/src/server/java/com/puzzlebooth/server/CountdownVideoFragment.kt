@@ -32,6 +32,7 @@ import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.databinding.FragmentCountdownBinding
+import com.puzzlebooth.server.databinding.FragmentCountdownVideoBinding
 import com.puzzlebooth.server.utils.AnimationsManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,7 +42,7 @@ import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 
 
-class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragment_countdown) {
+class CountdownVideoFragment : BaseFragment<FragmentCountdownVideoBinding>(R.layout.fragment_countdown_video) {
 
     var countdownRunning = true
 
@@ -81,8 +82,8 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
         }
     }
 
-    override fun initViewBinding(view: View): FragmentCountdownBinding {
-        return FragmentCountdownBinding.bind(view)
+    override fun initViewBinding(view: View): FragmentCountdownVideoBinding {
+        return FragmentCountdownVideoBinding.bind(view)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -175,7 +176,7 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
         countdownRunning = true
 
         lifecycleScope.launch {
-            //binding.camera.mode = Mode.VIDEO
+            binding.camera.mode = Mode.VIDEO
             binding.camera.open()
 //            val exposure = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
 //            binding.camera.exposureCorrection = 1.0F

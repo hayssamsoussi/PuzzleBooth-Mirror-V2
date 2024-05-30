@@ -30,6 +30,10 @@ fun Context.draftPath(): String {
     return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts/"
 }
 
+fun Context.draftPathCutIn2(): String {
+    return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts_cut_in_2/"
+}
+
 fun Context.mosaicDraftPath(): String {
     val current = this.getCurrentEventPhotosPath()
     return "${current}mosaic/draft"

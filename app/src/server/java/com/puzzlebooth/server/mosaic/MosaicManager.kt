@@ -18,6 +18,7 @@ import com.puzzlebooth.main.MosaicItem
 import com.puzzlebooth.main.models.MosaicBox
 import com.puzzlebooth.main.models.MosaicInfo
 import com.puzzlebooth.main.utils.draftPath
+import com.puzzlebooth.main.utils.draftPathCutIn2
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.R
 import java.io.File
@@ -390,10 +391,10 @@ object MosaicManager {
     fun generatePrintableMosaic(context: Context, list: List<File>?) {
         try {
             val randName = list?.firstOrNull()?.name
-            val outputImagePath = File("${context.draftPath()}$randName.jpg").path
+            val outputImagePath = File("${context.draftPathCutIn2()}$randName.jpg").path
             val backgroundWidth = 1000  // 10 cm = 1000 px (assuming 1 cm = 100 px)
             val backgroundHeight = 1500 // 15 cm = 1500 px (assuming 1 cm = 100 px)
-            val squareSize = 485        // 5 cm = 500 px (assuming 1 cm = 100 px)
+            val squareSize = 490        // 5 cm = 500 px (assuming 1 cm = 100 px)
 
             // Create a blank white background bitmap
             val background = Bitmap.createBitmap(backgroundWidth, backgroundHeight, Bitmap.Config.ARGB_8888)
@@ -412,11 +413,11 @@ object MosaicManager {
 
                 val xandy = when (index) {
                     0 -> Pair((backgroundWidth - squareSize) - 17, (backgroundHeight - squareSize) / 2f)
-                    1 -> Pair((backgroundWidth - squareSize) - 17, ((backgroundHeight - squareSize) / 2f) - 485)
-                    2 -> Pair((backgroundWidth - squareSize) - 17, ((backgroundHeight - squareSize) / 2f) + 485)
-                    3 -> Pair(13f, ((backgroundHeight - squareSize) / 2f))
-                    4 -> Pair(13f, ((backgroundHeight - squareSize) / 2f) - 485)
-                    5 -> Pair(13f, ((backgroundHeight - squareSize) / 2f) + 485)
+                    1 -> Pair((backgroundWidth - squareSize) - 17, ((backgroundHeight - squareSize) / 2f) - squareSize)
+                    2 -> Pair((backgroundWidth - squareSize) - 17, ((backgroundHeight - squareSize) / 2f) + squareSize)
+                    3 -> Pair(8f, ((backgroundHeight - squareSize) / 2f))
+                    4 -> Pair(8f, ((backgroundHeight - squareSize) / 2f) - squareSize)
+                    5 -> Pair(8f, ((backgroundHeight - squareSize) / 2f) + squareSize)
                     else -> Pair(squareSize.toFloat(), squareSize.toFloat())
                 }
 

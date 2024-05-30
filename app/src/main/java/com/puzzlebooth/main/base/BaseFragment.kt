@@ -2,6 +2,7 @@ package com.puzzlebooth.main.base
 
 import android.app.ProgressDialog
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,6 +37,10 @@ abstract class BaseFragment<VB : ViewBinding>(
         _binding = initViewBinding(view)
         sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
         return view
+    }
+
+    fun isLandscape(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
     fun hideProgress() {
