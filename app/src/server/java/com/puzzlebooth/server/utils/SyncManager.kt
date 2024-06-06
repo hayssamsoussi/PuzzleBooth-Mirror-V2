@@ -21,21 +21,23 @@ enum class Status {
     SYNCING, DONE, ERROR;
 }
 
-class SyncManager(val context: Context, callback: (Status) -> Unit) {
+class SyncManager(val context: Context, callback: (Pair<Status, String>) -> Unit) {
 
     private val uploadedFilesMap = mutableMapOf<String, Boolean>()
     private val service = RetrofitInstance.getRetrofitInstance().create(APIService::class.java)
 
     init {
+        println("*** syncmanager: sync manager initted")
         val requestsToUpload = mutableListOf<Observable<ResponseBody>>()
         fetchRemoteFiles()
             .doOnSubscribe {
-                callback.invoke(Status.SYNCING)
+                callback.invoke(Pair(Status.SYNCING, ""))
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
                 val localFiles = fetchLocalFiles()
+                println("*** syncmanager: local files ${localFiles.size}")
                 localFiles.forEach {
                     uploadedFilesMap[it.name] = false
                 }
@@ -43,9 +45,17 @@ class SyncManager(val context: Context, callback: (Status) -> Unit) {
                 it.files.forEach {
                     if(uploadedFilesMap.contains(it.file)) {
                         uploadedFilesMap[it.file] = true
+                        println("*** syncmanager: setting ${it.file} to true")
                     }
                 }
 
+                val total = uploadedFilesMap.size
+                val uploading = uploadedFilesMap.filter { !it.value }.size
+                val uploaded = uploadedFilesMap.filter { it.value }.size
+
+                callback.invoke(Pair(Status.SYNCING, "Uploading: ${uploading} - Uploaded: ${uploaded} - Total: ${total}"))
+
+                println("*** syncmanager: map: ${uploadedFilesMap.toString()}")
                 uploadedFilesMap.forEach {
                     if(it.value == false) {
                         val requestBody: RequestBody = MultipartBody.Builder()
@@ -61,27 +71,27 @@ class SyncManager(val context: Context, callback: (Status) -> Unit) {
                             service.uploadPhotoFile(requestBody)
                         )
 
-                        val remotePhotoRequestCached: RemotePhoto? = Paper.book().read<RemotePhoto>(it.key)
-                        requestsToUpload.add(
-                            service.uploadPhotoNumber(RemotePhotoRequest(listOf(RemotePhoto(name = it.key, sender = 0, personName = remotePhotoRequestCached?.personName ?: "", email = remotePhotoRequestCached?.email ?: "", phone = remotePhotoRequestCached?.phone ?: ""))))
-                        )
+//                        val remotePhotoRequestCached: RemotePhoto? = Paper.book().read<RemotePhoto>(it.key)
+//                        requestsToUpload.add(
+//                            service.uploadPhotoNumber(RemotePhotoRequest(listOf(RemotePhoto(name = it.key, sender = 0, personName = remotePhotoRequestCached?.personName ?: "", email = remotePhotoRequestCached?.email ?: "", phone = remotePhotoRequestCached?.phone ?: ""))))
+//                        )
 
                         Observable.merge(requestsToUpload)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .doOnComplete {
-                                callback.invoke(Status.DONE)
+                                callback.invoke(Pair(Status.DONE, ""))
                             }
                             .subscribe()
                     }
                 }
             }
             .doOnComplete {
-                callback.invoke(Status.DONE)
+                callback.invoke(Pair(Status.DONE, ""))
             }
             .doOnError {
                 it.printStackTrace()
-                callback.invoke(Status.ERROR)
+                callback.invoke(Pair(Status.ERROR, ""))
             }.subscribe()
     }
 
@@ -91,7 +101,9 @@ class SyncManager(val context: Context, callback: (Status) -> Unit) {
 
     private fun fetchLocalFiles(): List<File> {
         val file = File(context.getCurrentEventPhotosPath())
+        println("*** syncmanager: getCurrentEventPhotosPath: ${context.getCurrentEventPhotosPath()} ")
         val files = file.listFiles()?.filter { it.isFile && it.extension.equals("jpeg", true) }
+        println("*** syncmanager: getCurrentEventPhotosPath: files: ${files?.size} ")
         return files ?: listOf()
     }
 }

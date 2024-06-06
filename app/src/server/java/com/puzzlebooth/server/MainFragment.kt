@@ -143,7 +143,8 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
         SyncManager(requireContext()) {
             requireActivity().runOnUiThread {
-                when(it) {
+                println("*** syncmanager: status: ${it}")
+                when(it.first) {
                     Status.DONE -> {
                         progressDialog.dismiss()
                     }
