@@ -35,3 +35,23 @@ jobs:
       - name: Upload APK to Server
         run: |
           curl -X POST -F "file=@app/build/outputs/apk/${{ matrix.flavor }}/debug/puzzlebooth-mirror-${{ matrix.flavor }}-v2.apk" https://puzzleslb.com/puzzlebooth/api_v2/apps/upload.php
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Authenticate to Firebase
+        run: |
+          echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT }} > $HOME/firebase-service-account.json
+          firebase auth:login --token "$(cat $HOME/firebase-service-account.json)" --non-interactive
+
+      - name: Upload APK to Firebase App Distribution
+        run: |
+          firebase appdistribution:distribute app/build/outputs/apk/${{ matrix.flavor }}/debug/puzzlebooth-mirror-${{ matrix.flavor }}-v2.apk \
+            --app 1:117465196008:android:5727b0ad34924b4ff7305d \
+            --groups all \
+            --token "$(cat $HOME/firebase-service-account.json)"
