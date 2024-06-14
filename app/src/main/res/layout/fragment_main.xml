@@ -128,6 +128,18 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/audio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="Audio"
+            android:visibility="visible"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/camera_permission"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

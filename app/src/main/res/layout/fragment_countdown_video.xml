@@ -7,7 +7,7 @@
     android:background="@color/black">
 
     <Button
-        android:id="@+id/btnStart2"
+        android:id="@+id/btnRecord"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:translationZ="10dp"
@@ -18,7 +18,52 @@
         android:background="@drawable/button_background"
         android:textSize="10dp"
         android:layout_margin="5dp"
-        android:text="Take Picture" />
+        android:text="Record" />
+
+    <Button
+        android:id="@+id/btnPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:translationZ="10dp"
+        android:layout_weight="1"
+        app:backgroundTint="#1C1C1C"
+        app:tint="@color/white"
+        android:src="@drawable/baseline_navigate_next_24"
+        android:background="@drawable/button_background"
+        android:textSize="10dp"
+        android:layout_toEndOf="@id/btnRecord"
+        android:layout_margin="5dp"
+        android:text="Play" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:translationZ="10dp"
+        android:layout_weight="1"
+        app:backgroundTint="#1C1C1C"
+        app:tint="@color/white"
+        android:src="@drawable/baseline_navigate_next_24"
+        android:background="@drawable/button_background"
+        android:textSize="10dp"
+        android:layout_toEndOf="@id/btnPlay"
+        android:layout_margin="5dp"
+        android:text="Cancel" />
+
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:translationZ="10dp"
+        android:layout_weight="1"
+        app:backgroundTint="#1C1C1C"
+        app:tint="@color/white"
+        android:src="@drawable/baseline_navigate_next_24"
+        android:background="@drawable/button_background"
+        android:textSize="10dp"
+        android:layout_toEndOf="@id/btnCancel"
+        android:layout_margin="5dp"
+        android:text="Submit" />
 
     <ImageView
         android:id="@+id/overlayAnimation"
@@ -28,32 +73,21 @@
         android:scaleType="centerCrop"
         android:alpha="0.2" />
 
-    <com.otaliastudios.cameraview.CameraView
-        android:id="@+id/camera"
-        android:layout_width="400dp"
-        android:layout_height="600dp"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:keepScreenOn="true"
-        app:cameraExperimental="true"
-        app:cameraEngine="camera2"
-        app:cameraPreview="glSurface"
-        app:cameraPlaySounds="false"
-        app:cameraGrid="off"
-        app:cameraPictureSizeBiggest="true"
-        app:cameraFlash="off"
-        app:cameraAudio="off"
-        app:cameraFacing="back"
-        app:cameraHdr="on"
-        app:cameraGestureTap="autoFocus"
-        app:cameraGestureLongTap="none"
-        app:cameraGesturePinch="zoom"
-        app:cameraGestureScrollHorizontal="filterControl1"
-        app:cameraGestureScrollVertical="exposureCorrection"
-        app:cameraMode="picture"
-        app:cameraAutoFocusMarker="@string/cameraview_default_autofocus_marker">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_below="@id/btnSubmit"
+        android:background="#000000">
 
-    </com.otaliastudios.cameraview.CameraView>
+
+        <SurfaceView
+            android:id="@+id/mSurfaceview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/textDisplay"

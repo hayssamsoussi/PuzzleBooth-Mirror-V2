@@ -111,6 +111,9 @@
         <action
             android:id="@+id/action_startFragment_to_countdownFragment"
             app:destination="@id/countdownFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_countdownVideoFragment"
+            app:destination="@id/countdownVideoFragment" />
 
     </fragment>
 
@@ -119,6 +122,19 @@
         android:name="com.puzzlebooth.server.camera.CameraFragment"
         android:label="Camera Fragment"
         tools:layout="@layout/fragment_camera" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/countdownVideoFragment"
+        android:name="com.puzzlebooth.server.CountdownVideoFragment"
+        android:label="Countdown Video Fragment"
+        tools:layout="@layout/fragment_countdown_video" >
+
+        <action
+            android:id="@+id/action_countdownVideoFragment_to_previewFragment"
+            app:popUpTo="@id/startFragment"
+            app:destination="@id/previewFragment" />
+
     </fragment>
 
     <fragment
@@ -202,6 +218,9 @@
         <action
             android:id="@+id/action_previewFragment_to_countdownFragment"
             app:destination="@id/countdownFragment" />
+        <action
+            android:id="@+id/action_previewFragment_to_countdownVideoFragment"
+            app:destination="@id/countdownVideoFragment" />
         <action
             android:id="@+id/action_previewFragment_to_startFragment"
             app:destination="@id/startFragment" />

@@ -94,6 +94,9 @@ class MainActivity : BaseNearbyActivity() {
             setContentView(R.layout.activity_main)
 
             val landscape = sharedPreferences?.getBoolean("settings:landscape", false)
+            findViewById<LinearLayout>(R.id.dotStatusRemoteContainer).setOnClickListener {
+                setState(State.SEARCHING)
+            }
             findViewById<ImageView>(R.id.dotStatusPrinter).visibility = if(landscape == true) View.VISIBLE else View.GONE
         }
     }

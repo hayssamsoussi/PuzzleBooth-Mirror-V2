@@ -9,6 +9,9 @@
 
     <application>
         <activity
+            android:name=".audio.AudioActivity"
+            android:exported="false" />
+        <activity
             android:name=".mosaic.ChooseMosaicPictureActivity"
             android:exported="false" />
         <activity

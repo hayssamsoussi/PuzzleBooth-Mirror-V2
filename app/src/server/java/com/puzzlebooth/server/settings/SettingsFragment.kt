@@ -84,6 +84,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             updateViews()
         }
 
+        binding.btnVideoMessage.setOnClickListener {
+            toggleVideoMessage()
+            updateViews()
+        }
+
         binding.btnLandscape.setOnClickListener {
             toggleLandscape()
             updateViews()
@@ -128,6 +133,14 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         edit.apply()
     }
 
+    fun toggleVideoMessage() {
+        val current = sharedPreferences.getBoolean("settings:isVideoMessage", false)
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("settings:isVideoMessage", !current)
+        edit.apply()
+    }
+
     fun toggleTouchMode() {
         val current = sharedPreferences.getBoolean("settings:touchMode", false)
 
@@ -168,6 +181,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         val currentTouchMode = if(sharedPreferences.getBoolean("settings:touchMode", false)) "ON" else "OFF"
         val currentLandscape = if(sharedPreferences.getBoolean("settings:landscape", false)) "ON" else "OFF"
         val currentShowQR = if(sharedPreferences.getBoolean("settings:showQR", false)) "ON" else "OFF"
+        val currentVideoMessage = if(sharedPreferences.getBoolean("settings:isVideoMessage", false)) "ON" else "OFF"
 
         binding.btnShowQR.text = "Show QR: ${currentShowQR}"
         binding.btnFlash.text = "Flash: ${currentFlash}"
@@ -176,6 +190,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         binding.btnQualtiy.text = "Printing Quality: ${currentPrintQuality}"
         binding.btnTouchMode.text = "Touch Mode: ${currentTouchMode}"
         binding.btnLandscape.text = "Landscape: ${currentLandscape}"
+        binding.btnVideoMessage.text = "isVideoMessage: ${currentVideoMessage}"
 
     }
 }

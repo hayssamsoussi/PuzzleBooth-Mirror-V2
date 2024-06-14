@@ -58,7 +58,12 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
         }
 
         binding.clickable.setOnClickListener {
-            findNavController().navigate(R.id.action_startFragment_to_countdownFragment)
+            val isVideoMessage = sharedPreferences.getBoolean("settings:isVideoMessage", false)
+            if(isVideoMessage) {
+                findNavController().navigate(R.id.action_startFragment_to_countdownVideoFragment)
+            } else {
+                findNavController().navigate(R.id.action_startFragment_to_countdownFragment)
+            }
         }
     }
 

@@ -136,6 +136,10 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         binding.sync.setOnClickListener {
             sync()
         }
+
+//        binding.audio.setOnClickListener {
+//            startActivity(Intent(requireContext(), AudioActivity::class.java))
+//        }
     }
 
     fun sync() {
