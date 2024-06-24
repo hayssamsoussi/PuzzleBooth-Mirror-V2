@@ -53,6 +53,7 @@
         android:layout_weight="1"
         android:layout_margin="10dp"
         app:cardCornerRadius="10dp"
+        android:visibility="gone"
         app:cardBackgroundColor="#202020"
         app:cardElevation="10dp">
 
@@ -169,6 +170,7 @@
         android:layout_weight="1"
         android:layout_margin="10dp"
         app:cardCornerRadius="10dp"
+        android:visibility="gone"
         app:cardBackgroundColor="#202020"
         app:cardElevation="10dp">
 
