@@ -90,6 +90,10 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     private fun initViews() {
 
+        val edit = sharedPreferences.edit()
+        edit.putFloat("camera:exposure", 0F)
+        edit.apply()
+
         binding.textDisplay.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_startFragment)
         }

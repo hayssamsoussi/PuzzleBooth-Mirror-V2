@@ -61,10 +61,10 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(R.layout.fragment_cam
 
     private fun initViews() {
         binding.camera.open()
+        binding.camera.exposureCorrection = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
 
         binding.upButton.setOnClickListener {
             binding.camera.exposureCorrection += .5F
-            println("hhh expsosure now is " + binding.camera.exposureCorrection)
         }
 
         binding.downButton.setOnClickListener {

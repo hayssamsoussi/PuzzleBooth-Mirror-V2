@@ -105,17 +105,22 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
 
         binding.btnStart2.setOnClickListener {
             if(!countdownRunning) {
-                requireContext().playAudioFromRaw(R.raw.camera_sound)
+                //requireContext().playAudioFromRaw(R.raw.camera_sound)
+                val exposure = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
+                binding.camera.exposureCorrection = exposure
                 binding.camera.takePicture()
             }
         }
 
         val landscape = sharedPreferences.getBoolean("settings:landscape", false)
 
-        countdownRunning = true
         binding.camera.open()
-        val zoom = sharedPreferences.getFloat("camera:zoom", binding.camera.exposureCorrection)
-        binding.camera.zoom = zoom
+
+        countdownRunning = true
+
+
+        //val zoom = sharedPreferences.getFloat("camera:zoom", binding.camera.exposureCorrection)
+        //binding.camera.zoom = zoom
         val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", false)
 
         val animation = if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -177,10 +182,10 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
         lifecycleScope.launch {
             //binding.camera.mode = Mode.VIDEO
             binding.camera.open()
-//            val exposure = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
-//            binding.camera.exposureCorrection = 1.0F
-//            binding.camera.exposureCorrection = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
-//
+            val exposure = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
+            binding.camera.exposureCorrection = exposure
+            //binding.camera.exposureCorrection = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
+
             val zoom = sharedPreferences.getFloat("camera:zoom", binding.camera.exposureCorrection)
             binding.camera.zoom = zoom
 
