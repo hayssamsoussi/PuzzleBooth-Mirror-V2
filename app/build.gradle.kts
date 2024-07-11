@@ -47,15 +47,15 @@ android {
         create("remote") {
             dimension = "version"
             applicationId = "com.puzzlebooth.remote"
-            versionCode = 2
-            versionName = "1.1"
+            versionCode = 3
+            versionName = "2.0"
         }
 
         create("server") {
             dimension = "version"
             applicationId = "com.puzzlebooth.server"
-            versionCode = 2
-            versionName = "1.1"
+            versionCode = 3
+            versionName = "2.0"
         }
     }
 }
