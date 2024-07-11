@@ -1,0 +1,97 @@
+{
+  "project_info": {
+    "project_number": "117465196008",
+    "project_id": "puzzlebooth-mirror",
+    "storage_bucket": "puzzlebooth-mirror.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:117465196008:android:5727b0ad34924b4ff7305d",
+        "android_client_info": {
+          "package_name": "com.hayssam.photoboothv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "117465196008-bngvr7bghadjuu7ko06bn2vcqfj21sr2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr4lXkeb16rY0I95oScVeMDLfLUb6E5Bs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117465196008-bngvr7bghadjuu7ko06bn2vcqfj21sr2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:117465196008:android:cc33de71e5ae216bf7305d",
+        "android_client_info": {
+          "package_name": "com.puzzlebooth.remote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "117465196008-bngvr7bghadjuu7ko06bn2vcqfj21sr2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr4lXkeb16rY0I95oScVeMDLfLUb6E5Bs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117465196008-bngvr7bghadjuu7ko06bn2vcqfj21sr2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:117465196008:android:6d07f7a8bba00fcef7305d",
+        "android_client_info": {
+          "package_name": "com.puzzlebooth.server"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "117465196008-bngvr7bghadjuu7ko06bn2vcqfj21sr2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr4lXkeb16rY0I95oScVeMDLfLUb6E5Bs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117465196008-bngvr7bghadjuu7ko06bn2vcqfj21sr2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

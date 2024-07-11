@@ -134,7 +134,7 @@
             android:gravity="center"
             android:layout_marginTop="10dp"
             android:text="Audio"
-            android:visibility="visible"
+            android:visibility="gone"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />

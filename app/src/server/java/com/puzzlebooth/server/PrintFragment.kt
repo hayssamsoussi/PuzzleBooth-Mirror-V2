@@ -58,7 +58,7 @@ class PrintFragment : BaseFragment<FragmentPrintBinding>(R.layout.fragment_print
                     isFirstResource: Boolean
                 ): Boolean {
                     if (resource is GifDrawable) {
-                        (resource).setLoopCount(2)
+                        (resource).setLoopCount(3)
                     }
                     return false
                 }
@@ -67,7 +67,9 @@ class PrintFragment : BaseFragment<FragmentPrintBinding>(R.layout.fragment_print
 
         coroutineScope.launch {
             var countdownSeconds = 5
-            delay(9000)
+            val isSlow = sharedPreferences.getBoolean("settings:printingSlow", false)
+
+            delay(if(isSlow) 15000 else 9000)
 
             if(isVisible) {
                 findNavController().navigate(R.id.action_printFragment_to_startFragment)

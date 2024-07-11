@@ -4,6 +4,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     kotlin("plugin.serialization")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -13,8 +15,8 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.3"
+        versionCode = 5
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -62,6 +64,7 @@ dependencies {
 
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     implementation("androidx.activity:activity:1.8.0")
+    implementation("com.google.firebase:firebase-crashlytics:19.0.3")
     val nav_version = "2.7.4"
 
     // Java language implementation

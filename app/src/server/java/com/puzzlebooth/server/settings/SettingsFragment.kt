@@ -1,6 +1,8 @@
 package com.puzzlebooth.server.settings
 
 import android.content.Context
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.provider.ContactsContract.Contacts.Photo
@@ -89,6 +91,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             updateViews()
         }
 
+        binding.btnPrintSlow.setOnClickListener {
+            togglePrintingSlow()
+            updateViews()
+        }
+
         binding.btnLandscape.setOnClickListener {
             toggleLandscape()
             updateViews()
@@ -101,6 +108,20 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         binding.btnShowQR.setOnClickListener {
             toggleShowQR()
             updateViews()
+        }
+
+        val version = "Version: " + getAppVersionName()
+        binding.tvVersion.text = version
+
+    }
+
+    private fun getAppVersionName(): String {
+        return try {
+            val packageInfo: PackageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
+            packageInfo.versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            "Version not found"
         }
     }
 
