@@ -8,6 +8,7 @@ import android.os.Handler
 import android.provider.ContactsContract.Contacts.Photo
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.nearby.connection.Strategy
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.FragmentSettingsBinding
@@ -105,6 +106,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             }, 2000)
         }
 
+        binding.btnConnection.setOnClickListener {
+            toggleConnection()
+            updateViews()
+        }
+
         binding.btnShowQR.setOnClickListener {
             toggleShowQR()
             updateViews()
@@ -186,6 +192,21 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         edit.apply()
     }
 
+    fun toggleConnection() {
+        val sharedPreferences = context?.getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
+        val current = sharedPreferences?.getInt("settings:connectionRemote", ConnectionRemote.entries[0].index)
+        val edit = sharedPreferences?.edit()
+        if(current == (ConnectionRemote.entries.size -1)) {
+            edit?.putInt("settings:connectionRemote", 0)
+        } else {
+            if (current != null) {
+                edit?.putInt("settings:connectionRemote", current + 1)
+            }
+        }
+
+        edit?.apply()
+    }
+
     fun toggleQuality() {
         //val current = PhotoQuality.getCurrentQuality(requireContext())
         PhotoQuality.toggleQuality(requireContext())
@@ -194,11 +215,19 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
 //        edit.apply()
     }
 
+    fun getCurrentConnection(context: Context): ConnectionRemote {
+        val sharedPreferences = context.getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
+        val quality = sharedPreferences.getInt("settings:connectionRemote", ConnectionRemote.entries[0].index)
+        return ConnectionRemote.entries[quality]
+    }
+
     fun updateViews() {
         val currentFlash = if(sharedPreferences.getBoolean("settings:flash", false)) "ON" else "OFF"
         val currentAutoPhoto = if(sharedPreferences.getBoolean("settings:autoPhoto", false)) "ON" else "OFF"
         val currentPrintSlow = if(sharedPreferences.getBoolean("settings:printingSlow", false)) "ON" else "OFF"
         val currentPrintQuality = PhotoQuality.getCurrentQuality(requireContext()).getRepresentation()
+        val currentConnectionRemote = getCurrentConnection(requireContext())
+
         val currentTouchMode = if(sharedPreferences.getBoolean("settings:touchMode", false)) "ON" else "OFF"
         val currentLandscape = if(sharedPreferences.getBoolean("settings:landscape", false)) "ON" else "OFF"
         val currentShowQR = if(sharedPreferences.getBoolean("settings:showQR", false)) "ON" else "OFF"
@@ -211,9 +240,15 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         binding.btnQualtiy.text = "Printing Quality: ${currentPrintQuality}"
         binding.btnTouchMode.text = "Touch Mode: ${currentTouchMode}"
         binding.btnLandscape.text = "Landscape: ${currentLandscape}"
+        binding.btnConnection.text = "Connection: ${currentConnectionRemote}"
         binding.btnVideoMessage.text = "isVideoMessage: ${currentVideoMessage}"
 
+
     }
+}
+
+enum class ConnectionRemote(val index: Int) {
+    P2P_STAR(0), P2P_CLUSTER(1), P2P_POINT_TO_POINT(2)
 }
 
 enum class PhotoQuality(val quality: Int) {

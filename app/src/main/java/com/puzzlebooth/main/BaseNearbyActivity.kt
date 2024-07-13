@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.UiThread
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.navigation.findNavController
 import com.google.android.gms.nearby.connection.ConnectionInfo
@@ -40,7 +41,7 @@ open class BaseNearbyActivity: ConnectionsActivity() {
      * The connection strategy we'll use for Nearby Connections. In this case, we've decided on
      * P2P_STAR, which is a combination of Bluetooth Classic and WiFi Hotspots.
      */
-    private val STRATEGY = Strategy.P2P_STAR
+    //private val STRATEGY = Strategy.P2P_STAR
 
     /** Length of state change animations.  */
     private val ANIMATION_DURATION: Long = 600
@@ -372,7 +373,9 @@ open class BaseNearbyActivity: ConnectionsActivity() {
 
     /** {@see ConnectionsActivity#getStrategy()}  */
     override fun getStrategy(): Strategy {
-        return STRATEGY
+        val sharedPreferences = getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
+        val index = sharedPreferences.getInt("settings:connectionRemote", 0)
+        return Strategy.P2P_CLUSTER
     }
 
     override fun logV(msg: String) {

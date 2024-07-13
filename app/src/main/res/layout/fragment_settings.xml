@@ -70,6 +70,13 @@
             android:layout_marginHorizontal="40dp"
             android:text="Show QR: " />
 
+        <Button
+            android:id="@+id/btnConnection"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="Connection Remote: " />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
