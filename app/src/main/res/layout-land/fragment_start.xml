@@ -22,7 +22,6 @@
         android:id="@+id/startAnimation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/red"
         android:translationZ="10dp"
         android:scaleType="centerCrop"
         android:alpha="1" />

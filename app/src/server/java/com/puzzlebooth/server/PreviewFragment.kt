@@ -52,7 +52,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
                     processPrintingAction("print")
                 }
             }
-            event?.text == "save" -> binding.btnSave.performClick()
+            event?.text == "save" -> binding.btnSave?.performClick()
             event?.text == "retake" -> binding.btnRetake.performClick()
         }
     }
@@ -106,7 +106,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
 
     private fun initViews() {
-        binding.buttonsContainer.visibility = if(sharedPreferences.getBoolean("settings:touchMode", false)) View.VISIBLE else View.GONE
+        binding.buttonsContainer?.visibility = if(sharedPreferences.getBoolean("settings:touchMode", false)) View.VISIBLE else View.GONE
         binding.btnPrint.setOnClickListener {
             if(sharedPreferences.getBoolean("settings:showQR", false)) {
                 processPrintingAction("print:;;;")
@@ -123,7 +123,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
             findNavController().navigate(R.id.action_previewFragment_to_countdownFragment)
         }
 
-        binding.btnSave.setOnClickListener {
+        binding.btnSave?.setOnClickListener {
             saveFileToDrafts()
             findNavController().navigate(R.id.action_previewFragment_to_printFragment)
         }
