@@ -5,9 +5,11 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.provider.ContactsContract.Contacts.Photo
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.google.android.gms.nearby.connection.Strategy
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.server.R
@@ -15,6 +17,8 @@ import com.puzzlebooth.server.databinding.FragmentSettingsBinding
 import com.puzzlebooth.server.settings.listing.SettingsAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.math.min
 
 enum class SettingType {
@@ -106,8 +110,13 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             }, 2000)
         }
 
-        binding.btnConnection.setOnClickListener {
-            toggleConnection()
+        binding.btnCanonTwoPrinters.setOnClickListener {
+            toggleCanonPrintingTwoPrinters()
+            updateViews()
+        }
+
+        binding.btnCanon.setOnClickListener {
+            toggleCanonPrinting()
             updateViews()
         }
 
@@ -116,9 +125,24 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             updateViews()
         }
 
+        binding.btnClearGlideCache?.setOnClickListener {
+            clearCacheGlide()
+        }
+
+        binding.backButton?.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
         val version = "Version: " + getAppVersionName()
         binding.tvVersion.text = version
 
+    }
+
+    fun clearCacheGlide() {
+        GlobalScope.launch(Dispatchers.IO) {
+            // Call your function here
+            Glide.get(requireContext()).clearDiskCache()
+        }
     }
 
     private fun getAppVersionName(): String {
@@ -192,6 +216,22 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         edit.apply()
     }
 
+    fun toggleCanonPrintingTwoPrinters() {
+        val current = sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false)
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("settings:canonPrintingTwoPrinters", !current)
+        edit.apply()
+    }
+
+    fun toggleCanonPrinting() {
+        val current = sharedPreferences.getBoolean("settings:canonPrinting", false)
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("settings:canonPrinting", !current)
+        edit.apply()
+    }
+
     fun toggleConnection() {
         val sharedPreferences = context?.getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
         val current = sharedPreferences?.getInt("settings:connectionRemote", ConnectionRemote.entries[0].index)
@@ -226,12 +266,12 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         val currentAutoPhoto = if(sharedPreferences.getBoolean("settings:autoPhoto", false)) "ON" else "OFF"
         val currentPrintSlow = if(sharedPreferences.getBoolean("settings:printingSlow", false)) "ON" else "OFF"
         val currentPrintQuality = PhotoQuality.getCurrentQuality(requireContext()).getRepresentation()
-        val currentConnectionRemote = getCurrentConnection(requireContext())
-
+        val currentButtonPrinting = sharedPreferences.getBoolean("settings:canonPrinting", false)
         val currentTouchMode = if(sharedPreferences.getBoolean("settings:touchMode", false)) "ON" else "OFF"
         val currentLandscape = if(sharedPreferences.getBoolean("settings:landscape", false)) "ON" else "OFF"
         val currentShowQR = if(sharedPreferences.getBoolean("settings:showQR", false)) "ON" else "OFF"
         val currentVideoMessage = if(sharedPreferences.getBoolean("settings:isVideoMessage", false)) "ON" else "OFF"
+        val currentButtonPrintingTwoPrinters = sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false)
 
         binding.btnShowQR.text = "Show QR: ${currentShowQR}"
         binding.btnFlash.text = "Flash: ${currentFlash}"
@@ -240,7 +280,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         binding.btnQualtiy.text = "Printing Quality: ${currentPrintQuality}"
         binding.btnTouchMode.text = "Touch Mode: ${currentTouchMode}"
         binding.btnLandscape.text = "Landscape: ${currentLandscape}"
-        binding.btnConnection.text = "Connection: ${currentConnectionRemote}"
+        binding.btnCanon.text = "Canon Printing: ${currentButtonPrinting}"
+        binding.btnCanonTwoPrinters.text = "Canon Two Printers: ${currentButtonPrintingTwoPrinters}"
         binding.btnVideoMessage.text = "isVideoMessage: ${currentVideoMessage}"
 
 

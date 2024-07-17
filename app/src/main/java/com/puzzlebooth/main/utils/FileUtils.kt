@@ -2,9 +2,13 @@ package com.puzzlebooth.main.utils
 
 import android.content.Context
 import android.os.Environment
+import android.os.FileUtils
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.puzzlebooth.server.MainActivity
+import com.puzzlebooth.server.PreviewFragment
+import com.puzzlebooth.server.settings.SettingsFragment
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -27,7 +31,25 @@ fun Context.getCurrentEventName(): String {
 }
 
 fun Context.draftPath(): String {
-    return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts/"
+    val sharedPreferences = this.getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
+    val currentCanonPrinting = sharedPreferences.getBoolean("settings:canonPrinting", false)
+    return if(currentCanonPrinting) {
+        println("hhh currentCanonPrinting: ${currentCanonPrinting}")
+        val currentCanonPrintingTwoPrinters = sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false)
+        println("hhh currentCanonPrintingTwoPrinters: ${currentCanonPrintingTwoPrinters}")
+        if(currentCanonPrintingTwoPrinters) {
+            println("hhh MainActivity.printerOne: ${MainActivity.printerOne}")
+            if(MainActivity.printerOne) {
+                "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts_canon_1/"
+            } else {
+                "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts_canon_2/"
+            }
+        } else {
+            "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts_canon_1/"
+        }
+    } else {
+        "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts/"
+    }
 }
 
 fun Context.draftPathCutIn2(): String {

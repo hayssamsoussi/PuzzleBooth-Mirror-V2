@@ -5,8 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    android:background="@color/black"
-    tools:context="com.puzzlebooth.main.CountdownFragment">
+    android:background="@color/black">
+
+    <FrameLayout
+        android:id="@+id/backButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:translationZ="10dp"
+        android:background="#20FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="X"/>
+
+    </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

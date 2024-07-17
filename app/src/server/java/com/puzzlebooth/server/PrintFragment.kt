@@ -1,5 +1,6 @@
 package com.puzzlebooth.server
 
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
@@ -36,8 +37,14 @@ class PrintFragment : BaseFragment<FragmentPrintBinding>(R.layout.fragment_print
     private fun startCountdown() {
         val landscape = sharedPreferences.getBoolean("settings:landscape", false)
 
+        val printingAnimation = if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            AnimationsManager.printingLand
+        } else {
+            AnimationsManager.printing
+        }
+
         Glide.with(this)
-            .load(AnimationsManager.printing)
+            .load(printingAnimation)
             .transform(RotateTransformation(requireContext(), if(landscape) 270f else 0F))
             //.transform(RotateTransformation(requireContext(), 270f))
             .listener(object : RequestListener<Drawable> {

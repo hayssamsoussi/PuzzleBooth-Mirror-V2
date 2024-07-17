@@ -177,6 +177,10 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
             updateViews()
         }
 
+        binding.backButton.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
         binding.tvAutoPrint.setOnClickListener {
             requireContext().showInputDialog("Ade l 3ared", "10") {
 

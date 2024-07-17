@@ -1,4 +1,4 @@
-package com.puzzlebooth.server.theme
+package com.puzzlebooth.server.animations
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -14,7 +14,6 @@ import com.github.kittinunf.fuel.Fuel
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.FragmentThemeBinding
-import com.puzzlebooth.server.mosaic.MosaicManager
 import com.puzzlebooth.server.network.Design
 import com.puzzlebooth.server.network.Event
 import com.puzzlebooth.server.theme.listing.DesignsAdapter
@@ -28,7 +27,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 
-class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme) {
+class AnimationsLandFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme) {
 
     private var designs = mutableListOf<Design>()
     private lateinit var adapter: DesignsAdapter
@@ -71,10 +70,11 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
 
     private fun initData() {
         service
-            .listDesigns()
+            .listAnimations()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError {
+                it.printStackTrace()
                 AlertDialog.Builder(requireContext())
                     .setTitle("Error")
                     .setMessage(it.message)
@@ -89,7 +89,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
     }
 
     private fun getLocalLayouts(): List<Design> {
-        val list = File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/").listFiles()?.filter { it.name.endsWith(".png") }
+        val list = File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/").listFiles()?.filter { it.name.endsWith(".gif") }
             ?: return listOf()
 
         return list.map { file ->
@@ -103,9 +103,9 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
     }
 
     private fun showLayout() {
-        val layoutName = sharedPreferences.getString("selectedLayout", "")
+        val layoutName = sharedPreferences.getString("selectedAnimationLand", "")
         if (layoutName?.isNotEmpty() == true) {
-            val layoutFile = File("${requireContext().cacheDir}/layouts/${layoutName}")
+            val layoutFile = File("${requireContext().cacheDir}/animations/${layoutName}")
             if (layoutFile.exists()) {
                 Glide.with(this)
                     .load(layoutFile)
@@ -118,61 +118,18 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
     }
 
     private  fun storeSelectedLayout(fileName: String) {
-        println("hhh storeSelectedLayout: ${fileName}")
         val edit = sharedPreferences.edit()
-        edit.putString("selectedLayout", fileName)
+        edit.putString("selectedAnimationLand", fileName)
         edit.apply()
     }
-
-    private fun downloadMosaic(url: String) {
-        if (!File("${requireContext().cacheDir}/layouts/").exists()) {
-            File("${requireContext().cacheDir}/layouts/").mkdirs()
-        }
-
-        val file = File("${requireContext().cacheDir}/layouts/mosaic.jpg")
-        if (file.exists()) {
-            file.delete()
-        }
-
-        val outputStream = FileOutputStream(file)
-
-        Fuel.download(url)
-            .streamDestination { response, _ ->
-                Pair(
-                    outputStream
-                ) { response.body().toStream() }
-            }
-            .fileDestination { _, _ ->
-                file
-            }
-            .progress { readBytes, totalBytes ->
-                val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
-            }
-            .response { result ->
-                result.fold(
-                    success = {
-                        //storeSelectedLayout()
-//                        requireActivity().runOnUiThread {
-//                            MosaicManager.splitBitmap("${requireContext().cacheDir}/layouts/mosaic.jpg", 8, 11)
-//                        }
-                    },
-                    failure = {
-                        it.printStackTrace()
-                        Toast.makeText(requireContext(), "Error downloading file!", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                )
-            }
-    }
-
     private fun downloadLayout(design: Design) {
         val locallayouts = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/"
 
-        if (!File("${requireContext().cacheDir}/layouts/").exists()) {
-            File("${requireContext().cacheDir}/layouts/").mkdirs()
+        if (!File("${requireContext().cacheDir}/animations/").exists()) {
+            File("${requireContext().cacheDir}/animations/").mkdirs()
         }
 
-        val file = File("${requireContext().cacheDir}/layouts/${design.filename}")
+        val file = File("${requireContext().cacheDir}/animations/${design.filename}")
         if (file.exists()) {
             file.delete()
         }
@@ -200,6 +157,11 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
                 }
                 .progress { readBytes, totalBytes ->
                     val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
+
+                    requireActivity().runOnUiThread {
+                        binding.submitButton.text = progress.toString()
+                    }
+
                 }
                 .response { result ->
                     result.fold(
@@ -221,6 +183,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
     }
 
     private fun initViews() {
+
         adapter = DesignsAdapter(designs) {
             downloadLayout(it)
         }
@@ -231,7 +194,6 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
 
         binding.rvList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         binding.rvList.adapter = adapter
-
 
         binding.textInputLayout.setEndIconOnClickListener(View.OnClickListener {
             scanQrCodeLauncher.launch(null)
@@ -245,27 +207,14 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
             }.subscribe()
         }
 
-        binding.backButton?.setOnClickListener {
-            requireActivity().onBackPressed()
-        }
 
         binding.scanButton.visibility = View.GONE
         binding.mosaicButton?.visibility = View.GONE
     }
 
     private fun updateEvent(event: Event) {
-//        val stringBuilder = StringBuilder()
-//        stringBuilder.appendLine("ID: ${event.id}")
-//        stringBuilder.appendLine("Names: ${event.names}")
-//        stringBuilder.appendLine("Location: ${event.location}")
-//        //binding.tvEventDescription.text = stringBuilder.toString()
-
-        if(!event.design_url.isNullOrEmpty()) {
-            downloadLayout(Design("", event.design_url!!.substringAfterLast("/"), event.design_url!!))
-        } else {
-            AlertDialog.Builder(requireContext())
-                .setMessage("No design assigned to this event!")
-                .show()
+        event.animation_url?.let {
+            downloadLayout(Design("", it.substringAfterLast("/").removeSuffix(".gif"), it))
         }
     }
 
@@ -291,12 +240,4 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
             }
     }
 
-}
-
-fun View.hide() {
-    this.visibility = View.GONE
-}
-
-fun View.show() {
-    this.visibility = View.VISIBLE
 }

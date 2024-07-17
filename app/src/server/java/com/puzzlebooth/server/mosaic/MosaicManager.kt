@@ -1,6 +1,8 @@
 package com.puzzlebooth.server.mosaic
 
+import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -253,6 +255,7 @@ object MosaicManager {
     }
 
     fun mergeBitmapsWithTextV2(
+        context: Context,
         bottomImagePath: String,
         topImagePath: String,
         text: String,
@@ -262,7 +265,8 @@ object MosaicManager {
             // Load the bottom and top images
             val bottomImage = BitmapFactory.decodeFile(bottomImagePath) //asliye
             val topImageBefore = BitmapFactory.decodeFile(topImagePath) //tsawaret
-            val topImage = resizeAndZoomFirstBitmapToFitSecondWidth(topImageBefore, bottomImage, 1.3f)
+            val landscape = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+            val topImage = resizeAndZoomFirstBitmapToFitSecondWidth(topImageBefore, bottomImage, if(landscape) 1.7f else 1.3f)
 
             println("hhhh bottom image width:${bottomImage.width}/height:${bottomImage.height}")
             println("hhhh top image width:${topImage.width}/height:${topImage.height}")
@@ -350,6 +354,7 @@ object MosaicManager {
             val bottomImagePath = File("${context.getCurrentEventPhotosPath()}mosaic/originals/${randomNumber.toString().padStart(3, '0')}.jpg")
 
             val outputImageFile = mergeBitmapsWithTextV2(
+                context,
                 bottomImagePath.path,
                 topImageFile.path ?: "",
                 randomNumber.toString(),

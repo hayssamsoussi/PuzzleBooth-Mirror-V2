@@ -157,6 +157,10 @@ class AnimationsFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_
                 }
                 .progress { readBytes, totalBytes ->
                     val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
+
+                    requireActivity().runOnUiThread {
+                        binding.submitButton.text = progress.toString()
+                    }
                 }
                 .response { result ->
                     result.fold(

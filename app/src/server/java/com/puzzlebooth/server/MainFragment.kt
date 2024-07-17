@@ -1,6 +1,8 @@
 package com.puzzlebooth.server
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -16,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.server.databinding.FragmentMainBinding
+import com.puzzlebooth.server.mosaic.MosaicManager
 import com.puzzlebooth.server.utils.Status
 import com.puzzlebooth.server.utils.SyncManager
 import org.greenrobot.eventbus.EventBus
@@ -115,7 +118,22 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         }
 
         binding.animations.setOnClickListener {
-            findNavController().navigate(R.id.action_mainFragment_to_animationsFragment)
+            AlertDialog.Builder(requireContext())
+                .setMessage("Portrait or Landscape?")
+                .setPositiveButton("Portrait", object: DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        findNavController().navigate(R.id.action_mainFragment_to_animationsFragment)
+                        dialog?.dismiss()
+                    }
+                })
+                .setNegativeButton("Landscape", object: DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        findNavController().navigate(R.id.action_mainFragment_to_animationsLandFragment)
+                        dialog?.dismiss()
+                    }
+
+                }).show()
+
         }
 
         binding.camera.setOnClickListener {

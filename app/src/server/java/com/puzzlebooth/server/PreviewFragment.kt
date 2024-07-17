@@ -59,6 +59,9 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
 
     private fun processPrintingAction(event: String) {
+        println("hhh processPrintingAction  MainActivity.printerOne ${ MainActivity.printerOne}")
+        MainActivity.printerOne = !MainActivity.printerOne
+
         val isUpload = event.contains(":")
         val pair = saveFileToDrafts()
         val fileName = pair.first

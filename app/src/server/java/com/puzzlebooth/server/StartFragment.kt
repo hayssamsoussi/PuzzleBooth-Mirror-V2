@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
@@ -33,10 +34,21 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
 
     private fun initViews() {
         if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Glide.with(this)
-                .load(AnimationsManager.startLandscape)
-                .transform(RotateTransformation(requireContext(), 0f))
-                .into(binding.startAnimation)
+            val layoutName = sharedPreferences.getString("selectedAnimationLand", "")
+            if(layoutName.isNullOrEmpty()) {
+                Glide.with(this)
+                    .load(AnimationsManager.startLandscape)
+                    .transform(RotateTransformation(requireContext(), 0f))
+                    .into(binding.startAnimation)
+            } else {
+                val layoutPath = "${requireContext().cacheDir}/animations/${layoutName}"
+                Glide.with(this)
+                    .load(layoutPath)
+                    .transform(RotateTransformation(requireContext(),
+                        0f
+                    ))
+                    .into(binding.startAnimation)
+            }
         } else {
             val layoutName = sharedPreferences.getString("selectedAnimation", "")
             if(layoutName.isNullOrEmpty()) {
@@ -55,6 +67,10 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
                     ))
                     .into(binding.startAnimation)
             }
+        }
+
+        binding.backButton?.setOnClickListener {
+            requireActivity().onBackPressed()
         }
 
         binding.clickable.setOnClickListener {
