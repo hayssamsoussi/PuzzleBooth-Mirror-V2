@@ -6,13 +6,14 @@ import android.os.FileUtils
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.puzzlebooth.server.MainActivity
-import com.puzzlebooth.server.PreviewFragment
-import com.puzzlebooth.server.settings.SettingsFragment
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+object Constants {
+    var printerOne = false
+}
 
 fun Context.getCurrentEventPhotosPath(): String {
     val timeFormatDate = SimpleDateFormat("yyyyMMdd", Locale.US)
@@ -38,8 +39,7 @@ fun Context.draftPath(): String {
         val currentCanonPrintingTwoPrinters = sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false)
         println("hhh currentCanonPrintingTwoPrinters: ${currentCanonPrintingTwoPrinters}")
         if(currentCanonPrintingTwoPrinters) {
-            println("hhh MainActivity.printerOne: ${MainActivity.printerOne}")
-            if(MainActivity.printerOne) {
+            if(Constants.printerOne) {
                 "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts_canon_1/"
             } else {
                 "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/mirror_drafts_canon_2/"

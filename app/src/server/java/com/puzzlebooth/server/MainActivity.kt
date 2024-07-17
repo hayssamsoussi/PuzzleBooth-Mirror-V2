@@ -42,7 +42,6 @@ class MainActivity : BaseNearbyActivity() {
     companion object {
         var lastTimePrinterConnectionReceived: Long = System.currentTimeMillis() - (600000)
         var mosaic = false
-        var printerOne = false
     }
 
     fun sendStatus() {

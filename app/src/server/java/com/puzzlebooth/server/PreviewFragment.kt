@@ -7,7 +7,9 @@ import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.FileUtils
 import android.view.View
+import androidx.compose.ui.unit.Constraints
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -15,6 +17,7 @@ import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.models.RemotePhoto
 import com.puzzlebooth.main.models.RemotePhotoRequest
+import com.puzzlebooth.main.utils.Constants
 import com.puzzlebooth.main.utils.draftPath
 import com.puzzlebooth.main.utils.draftPathCutIn2
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
@@ -59,8 +62,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
 
     private fun processPrintingAction(event: String) {
-        println("hhh processPrintingAction  MainActivity.printerOne ${ MainActivity.printerOne}")
-        MainActivity.printerOne = !MainActivity.printerOne
+        Constants.printerOne = !Constants.printerOne
 
         val isUpload = event.contains(":")
         val pair = saveFileToDrafts()
