@@ -206,6 +206,12 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
                         target: com.bumptech.glide.request.target.Target<Drawable>,
                         isFirstResource: Boolean
                     ): Boolean {
+                        println("hhh failed loading! ${e?.message}")
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setMessage("Error ${e?.message}")
+                                .show()
+                        }
                         hideProgress()
                         return false
                     }
@@ -354,9 +360,15 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
                         }
                     },
                     failure = {
-                        it.printStackTrace()
-                        Toast.makeText(requireContext(), "Error downloading file!", Toast.LENGTH_SHORT)
-                            .show()
+                        println("hhh failure! ${it.message}")
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setMessage("Error ${it.message}")
+                                .show()
+                        }
+//                        it.printStackTrace()
+//                        Toast.makeText(requireContext(), "Error downloading file!", Toast.LENGTH_SHORT)
+//                            .show()
                     }
                 )
             }
