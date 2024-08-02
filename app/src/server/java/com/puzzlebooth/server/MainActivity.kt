@@ -2,6 +2,7 @@ package com.puzzlebooth.server
 
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.BatteryManager
 import android.os.Bundle
@@ -92,7 +93,6 @@ class MainActivity : BaseNearbyActivity() {
             preriodicallyCheckPrinterStatus()
 
             setContentView(R.layout.activity_main)
-
             val landscape = sharedPreferences?.getBoolean("settings:landscape", false)
             findViewById<LinearLayout>(R.id.dotStatusRemoteContainer).setOnClickListener {
                 setState(State.SEARCHING)
@@ -175,14 +175,18 @@ class MainActivity : BaseNearbyActivity() {
 
 
     override fun toggleRemoteDot(state: State) {
-        val landscape = sharedPreferences?.getBoolean("settings:landscape", false)
+        val landscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
         if(state == State.CONNECTED) {
             findViewById<ImageView>(R.id.dotStatusRemote)?.setColorFilter(Color.parseColor("#0da002"), android.graphics.PorterDuff.Mode.SRC_IN)
             findViewById<LinearLayout>(R.id.dotStatusRemoteContainer)?.alpha = 0.3F
         } else {
             findViewById<ImageView>(R.id.dotStatusRemote)?.setColorFilter(Color.parseColor("#d40000"), android.graphics.PorterDuff.Mode.SRC_IN)
-            findViewById<LinearLayout>(R.id.dotStatusRemoteContainer)?.alpha = 1F
+            if(landscape) {
+                findViewById<LinearLayout>(R.id.dotStatusRemoteContainer)?.alpha = 0.3F
+            } else {
+                findViewById<LinearLayout>(R.id.dotStatusRemoteContainer)?.alpha = 1F
+            }
         }
     }
 

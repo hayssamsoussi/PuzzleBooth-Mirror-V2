@@ -309,7 +309,7 @@ object MosaicManager {
             // Set the paint for the text
             paint.alpha = (textAlpha * 255).toInt()
             paint.color = Color.WHITE
-            paint.textSize = 28f
+            paint.textSize = if(landscape) 12F else 28F
 
             // Calculate the position for the text in the bottom right corner
             val textX = bottomImage.width - paint.measureText(text) - 20

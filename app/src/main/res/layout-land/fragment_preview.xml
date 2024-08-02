@@ -4,88 +4,89 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    tools:context="com.puzzlebooth.main.CountdownFragment">
+    android:background="@color/black">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/photoLayout"
         android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent">
 
-        <Button
-            android:id="@+id/btnPrint"
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            android:background="@drawable/button_background"
-            android:src="@drawable/baseline_navigate_next_24"
-            android:text="Print"
-            android:textColor="@color/white"
-            android:textSize="10dp"
-            android:translationZ="10dp"
-            app:backgroundTint="#1C1C1C"
-            app:tint="@color/white" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/photoLayout"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@color/white"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/buttons_container">
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:alpha="0.5"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/btnPrint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/button_background">
 
             <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:src="@color/white"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/btnCancel"
-                android:layout_width="match_parent"
+                android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:translationZ="300dp"
-                app:backgroundTint="#1C1C1C"
-                android:textColor="@color/white"
-                app:tint="@color/white"
-                android:src="@drawable/baseline_navigate_next_24"
-                android:background="@drawable/button_background"
-                android:textSize="10dp"
-                android:layout_margin="5dp"
-                android:text="X" />
-
-            <Button
-                android:id="@+id/btnRetake"
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:background="@drawable/button_background"
-                android:src="@drawable/ic_baseline_refresh_24"
-                android:text="Retake"
-                android:textSize="10dp"
-                android:textColor="@color/white"
-                android:translationZ="10dp"
-                app:backgroundTint="#1C1C1C"
+                android:padding="20dp"
+                android:src="@drawable/ic_printer"
                 app:tint="@color/white" />
 
-        </LinearLayout>
+        </FrameLayout>
 
+        <FrameLayout
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/button_background">
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:padding="20dp"
+                android:rotation="45"
+                android:src="@drawable/baseline_add_24"
+                app:tint="@color/white" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/btnRetake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_background">
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:padding="20dp"
+                android:src="@drawable/ic_baseline_refresh_24"
+                app:tint="@color/white" />
+
+        </FrameLayout>
 
     </LinearLayout>
 
