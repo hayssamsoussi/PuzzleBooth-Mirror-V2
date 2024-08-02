@@ -187,7 +187,12 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
                         it.printStackTrace()
                     }
                     .doOnNext {
-                        (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image.php?link=${fileName}")
+                        val followQR = sharedPreferences.getBoolean("settings:followQR", false)
+                        if(followQR) {
+                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image.php?link=${fileName}")
+                        } else {
+                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image_unlocked.php?link=${fileName}")
+                        }
                     }
                     .subscribe()
             } else {
@@ -234,7 +239,12 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
                                 it.printStackTrace()
                             }
                             .doOnNext {
-                                (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image.php?link=${fileName}")
+                                val followQR = sharedPreferences.getBoolean("settings:followQR", false)
+                                if(followQR) {
+                                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image.php?link=${fileName}")
+                                } else {
+                                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image_unlocked.php?link=${fileName}")
+                                }
                             }
                             .subscribe()
                     }

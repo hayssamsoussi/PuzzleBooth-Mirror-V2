@@ -125,6 +125,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             updateViews()
         }
 
+        binding.btnFollowQR.setOnClickListener {
+            toggleFollowQR()
+            updateViews()
+        }
+
         binding.btnClearGlideCache?.setOnClickListener {
             clearCacheGlide()
         }
@@ -165,6 +170,14 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
 
         val edit = sharedPreferences.edit()
         edit.putBoolean("settings:showQR", !current)
+        edit.apply()
+    }
+
+    fun toggleFollowQR() {
+        val current = sharedPreferences.getBoolean("settings:followQR", false)
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("settings:followQR", !current)
         edit.apply()
     }
 
@@ -272,6 +285,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         val currentShowQR = if(sharedPreferences.getBoolean("settings:showQR", false)) "ON" else "OFF"
         val currentVideoMessage = if(sharedPreferences.getBoolean("settings:isVideoMessage", false)) "ON" else "OFF"
         val currentButtonPrintingTwoPrinters = sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false)
+        val currentFollowQR = sharedPreferences.getBoolean("settings:followQR", false)
 
         binding.btnShowQR.text = "Show QR: ${currentShowQR}"
         binding.btnFlash.text = "Flash: ${currentFlash}"
@@ -283,6 +297,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         binding.btnCanon.text = "Canon Printing: ${currentButtonPrinting}"
         binding.btnCanonTwoPrinters.text = "Canon Two Printers: ${currentButtonPrintingTwoPrinters}"
         binding.btnVideoMessage.text = "isVideoMessage: ${currentVideoMessage}"
+        binding.btnFollowQR.text = "Follow QR: ${currentFollowQR}"
 
 
     }
