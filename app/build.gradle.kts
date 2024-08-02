@@ -15,8 +15,8 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 34
-        versionCode = 5
-        versionName = "2.3"
+        versionCode = 6
+        versionName = "2.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -47,15 +47,15 @@ android {
         create("remote") {
             dimension = "version"
             applicationId = "com.puzzlebooth.remote"
-            versionCode = 6
-            versionName = "2.3"
+            versionCode = 7
+            versionName = "2.4"
         }
 
         create("server") {
             dimension = "version"
             applicationId = "com.puzzlebooth.server"
-            versionCode = 6
-            versionName = "2.3"
+            versionCode = 7
+            versionName = "2.4"
         }
     }
 }
