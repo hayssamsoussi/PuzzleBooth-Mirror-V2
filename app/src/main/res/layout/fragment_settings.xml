@@ -116,6 +116,13 @@
             android:text="Use two printers: " />
 
         <Button
+            android:id="@+id/btnTwoCopies"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="40dp"
+            android:text="Two Copies: " />
+
+        <Button
             android:id="@+id/btnClearGlideCache"
             android:layout_width="match_parent"
             android:layout_height="60dp"

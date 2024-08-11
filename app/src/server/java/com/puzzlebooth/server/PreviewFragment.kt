@@ -103,6 +103,14 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
                 File("${requireContext().draftPath()}$fileName"),
                 true
             )
+
+            val secondCopy = sharedPreferences.getBoolean("settings:twoCopies", false)
+            if(secondCopy) {
+                File("$normalPath$fileName").copyTo(
+                    File("${requireContext().draftPath()}COPY_$fileName"),
+                    true
+                )
+            }
         }
 
         findNavController().navigate(R.id.action_previewFragment_to_printFragment)
@@ -183,7 +191,6 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         val file = FileOutputStream("$normalPath$fileName")
 
         resultBitmap?.rotate(if(landscape) 90F else 0F)?.compress(Bitmap.CompressFormat.JPEG, quality, file)
-        println("hhh printing quality is ${quality} and the output is ${File("$normalPath$fileName").length()}")
 
         return Pair(fileName, normalPath)
     }

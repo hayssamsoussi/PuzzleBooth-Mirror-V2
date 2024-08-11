@@ -120,6 +120,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             updateViews()
         }
 
+        binding.btnTwoCopies?.setOnClickListener {
+            toggleTwoCopies()
+            updateViews()
+        }
+
         binding.btnShowQR.setOnClickListener {
             toggleShowQR()
             updateViews()
@@ -245,6 +250,14 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         edit.apply()
     }
 
+    fun toggleTwoCopies() {
+        val current = sharedPreferences.getBoolean("settings:twoCopies", false)
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("settings:twoCopies", !current)
+        edit.apply()
+    }
+
     fun toggleConnection() {
         val sharedPreferences = context?.getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
         val current = sharedPreferences?.getInt("settings:connectionRemote", ConnectionRemote.entries[0].index)
@@ -285,6 +298,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         val currentShowQR = if(sharedPreferences.getBoolean("settings:showQR", false)) "ON" else "OFF"
         val currentVideoMessage = if(sharedPreferences.getBoolean("settings:isVideoMessage", false)) "ON" else "OFF"
         val currentButtonPrintingTwoPrinters = sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false)
+        val currentTwoCopies = sharedPreferences.getBoolean("settings:twoCopies", false)
         val currentFollowQR = sharedPreferences.getBoolean("settings:followQR", false)
 
         binding.btnShowQR.text = "Show QR: ${currentShowQR}"
@@ -296,6 +310,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         binding.btnLandscape.text = "Landscape: ${currentLandscape}"
         binding.btnCanon.text = "Canon Printing: ${currentButtonPrinting}"
         binding.btnCanonTwoPrinters.text = "Canon Two Printers: ${currentButtonPrintingTwoPrinters}"
+        binding.btnTwoCopies?.text = "Two Copies ${currentTwoCopies}"
         binding.btnVideoMessage.text = "isVideoMessage: ${currentVideoMessage}"
         binding.btnFollowQR.text = "Follow QR: ${currentFollowQR}"
 
