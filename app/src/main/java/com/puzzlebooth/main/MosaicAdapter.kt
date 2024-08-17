@@ -19,7 +19,7 @@ data class MosaicItem(
     val original: Boolean
 )
 
-class MosaicAdapter (val list: List<MosaicItem>, val clicked: (MosaicItem) -> Unit) : RecyclerView.Adapter<MosaicAdapter.ViewHolder>() {
+class MosaicAdapter (var showMosaicImages: Boolean, val list: List<MosaicItem>, val clicked: (MosaicItem) -> Unit) : RecyclerView.Adapter<MosaicAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemBinding = ListItemMosaicBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -34,16 +34,24 @@ class MosaicAdapter (val list: List<MosaicItem>, val clicked: (MosaicItem) -> Un
         return list.size
     }
 
+    fun notify(showMosaicImages: Boolean) {
+        this.showMosaicImages = showMosaicImages
+        notifyDataSetChanged()
+    }
+
     inner class ViewHolder(private val itemBinding: ListItemMosaicBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bindItems(item: MosaicItem) {
-            Glide.with(itemBinding.root.context)
-                .load(item.file)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .into(itemBinding.ivMosaic)
+            if(showMosaicImages) {
+                Glide.with(itemBinding.root.context)
+                    .load(item.file)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(itemBinding.ivMosaic)
+            }
 
             itemBinding.tvPosition.text = item.position.toString()
+            itemBinding.tvPosition.alpha = if(item.original) 0.3F else 0.8F
             itemBinding.ivMosaic.alpha = if(item.original) 0.2F else 0.8F
             itemBinding.root.setOnClickListener {
                 clicked.invoke(item)

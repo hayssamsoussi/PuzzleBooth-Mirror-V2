@@ -30,6 +30,7 @@ import com.puzzlebooth.main.utils.getCurrentEventName
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.main.utils.mosaicDraftPath
 import com.puzzlebooth.main.utils.showInputDialog
+import com.puzzlebooth.main.utils.showMenuDialog
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.animations.hide
 import com.puzzlebooth.server.animations.show
@@ -38,6 +39,7 @@ import com.puzzlebooth.server.network.Design
 import com.puzzlebooth.server.network.Event
 import com.puzzlebooth.server.theme.listing.DesignsAdapter
 import io.paperdb.Paper
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -80,7 +82,13 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
             event?.text?.startsWith("openMosaic") == true -> {
                 val mosaicPosition = event.text.substringAfter(":")
                 if(mosaicPosition.isNotEmpty()) {
-                    openMosaicDetails(MosaicManager.getMosaicFileAt(mosaicPosition.toInt()))
+                    MosaicManager
+                        .getMosaicFileAt(mosaicPosition.toInt())
+                        .doOnSuccess {
+                            openMosaicDetails(it)
+                        }
+                        .subscribe()
+
                     //openMosaicDetails()
                 }
             }
@@ -105,10 +113,10 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //startTimer()
         initViews()
         initData()
         updateViews()
+
     }
 
     fun initData() {
@@ -137,9 +145,29 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         }, 0, 2000)
     }
 
-    fun fetchMosaicViews() {
-        mosaicViews.clear()
-        mosaicViews.addAll(MosaicManager.generateMosaicViews())
+    fun fetchMosaicViews(): Completable {
+        return Completable.create { emitter ->
+            MosaicManager
+                .generateMosaicViews()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    activity?.runOnUiThread {
+                        showProgress()
+                    }
+                }
+                .doOnSuccess {
+                    activity?.runOnUiThread {
+                        hideProgress()
+                    }
+
+                    mosaicViews.clear()
+                    mosaicViews.addAll(it)
+                    emitter.onComplete()
+                }
+
+                .subscribe()
+        }
     }
 
     fun openMosaicDetails(mosaicItem: MosaicItem) {
@@ -151,20 +179,49 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
 
     fun initViews() {
         fetchMosaicViews()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnComplete {
+                val showMosaicImages = sharedPreferences.getBoolean("settings:showMosaicImages", false)
 
-        adapter = MosaicAdapter(mosaicViews.toList()) {
-            if(!it.original) {
-                openMosaicDetails(it)
-            } else {
-                //openPictureChooser()
+                adapter = MosaicAdapter(showMosaicImages, mosaicViews.toList()) {
+                    if(!it.original) {
+                        openMosaicDetails(it)
+                    } else {
+                        //openPictureChooser()
+                    }
+                }
+                val colRows = Paper.book().read<String>("${requireContext().getCurrentEventName()}:columns:rows", "")
+                if(!colRows.isNullOrEmpty()) {
+                    NUM_COLUMNS = colRows.split(":")?.getOrNull(0)?.toIntOrNull() ?: 8
+                }
+                binding.rvMosaic.layoutManager = GridLayoutManager(requireContext(), NUM_COLUMNS)
+                binding.rvMosaic.adapter = adapter
+
+            }
+            .subscribe()
+
+        binding.bannerMosaic.setOnClickListener {
+            val showMosaicImages = sharedPreferences.getBoolean("settings:showMosaicImages", false)
+            val showOrHideImagesBtn = if(showMosaicImages) "Hide Images" else "Show Images"
+            val menuItems = arrayOf("Auto Fill", showOrHideImagesBtn)
+
+            requireContext().showMenuDialog("Choose an option", menuItems) { index ->
+                when (index) {
+                    0 -> {
+                        MosaicManager.autoFill(requireContext())
+                        updateViews()
+                    }
+                    1 -> {
+                        val edit = sharedPreferences.edit()
+                        edit.putBoolean("settings:showMosaicImages", !showMosaicImages)
+                        edit.apply()
+                        updateViews()
+                    }
+                    2 -> { /* Action for Item 3 */ }
+                }
             }
         }
-        val colRows = Paper.book().read<String>("${requireContext().getCurrentEventName()}:columns:rows", "")
-        if(!colRows.isNullOrEmpty()) {
-            NUM_COLUMNS = colRows.split(":")?.getOrNull(0)?.toIntOrNull() ?: 8
-        }
-        binding.rvMosaic.layoutManager = GridLayoutManager(requireContext(), NUM_COLUMNS)
-        binding.rvMosaic.adapter = adapter
 
         binding.btnSendToPrint.setOnClickListener {
             println("hhh clicked!!!")
@@ -274,15 +331,7 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         val fragment = ChoosePictureDialogFragment.newInstance("")
         fragment.listener = object: ChoosePictureDialogFragmentListener {
             override fun fillThisPic(file: File) {
-                if(MosaicManager.isRunning()) {
-                    val mosaicPath = requireContext().mosaicDraftPath()
-                    File(mosaicPath).mkdirs()
-
-                    val pair = Pair(file.name, file.path)
-                    val fileName = pair.first
-                    val normalPath = requireContext().getCurrentEventPhotosPath()
-                    File("$normalPath$fileName").copyTo(File("${requireContext().mosaicDraftPath()}/$fileName"), true)
-                }
+                MosaicManager.fillRandomPic(requireContext(), file)
             }
 
         }
@@ -308,7 +357,9 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
 
         fetchMosaicViews()
         println("hhh mosaicViews ${mosaicViews.size}")
-        adapter?.notifyDataSetChanged()
+
+        val showMosaicImages = sharedPreferences.getBoolean("settings:showMosaicImages", false)
+        adapter?.notify(showMosaicImages)
     }
 
     fun downloadMosaic(design: Design) {

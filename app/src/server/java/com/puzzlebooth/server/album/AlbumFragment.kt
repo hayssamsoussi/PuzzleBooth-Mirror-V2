@@ -35,7 +35,9 @@ import java.io.File
 
 class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album) {
 
-    var currentPositionSelected = -1
+    companion object {
+        var currentPositionSelected = -1
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent?) {
@@ -102,6 +104,10 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
 //            currentPosition = position
 //            adapter.setSelectedPosition(position)
 //        }
+
+        binding.btnExit.setOnClickListener {
+            activity?.onBackPressed()
+        }
 //
         binding.btnPrevious.setOnClickListener {
             binding.rvAlbum.scrollBy(0, -200)
@@ -282,7 +288,7 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
 
         albumAdapter = AlbumAdapter(localFiles.toList()) {
             currentPositionSelected = it.position.toString().toIntOrNull() ?: -1
-            //albumAdapter.setSelectedPosition(it.toIntOrNull() ?: -1)
+            albumAdapter.notifyDataSetChanged()
         }
 //
         binding.rvAlbum.apply {

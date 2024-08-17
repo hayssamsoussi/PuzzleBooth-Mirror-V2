@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.github.kittinunf.fuel.Fuel
 import com.puzzlebooth.main.base.BaseFragment
+import com.puzzlebooth.main.utils.showMenuDialog
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.FragmentThemeBinding
 import com.puzzlebooth.server.mosaic.MosaicManager
@@ -29,6 +30,10 @@ import java.io.FileOutputStream
 import java.nio.file.Files
 
 class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme) {
+
+    companion object {
+        var showLocal = false
+    }
 
     private var designs = mutableListOf<Design>()
     private lateinit var adapter: DesignsAdapter
@@ -82,7 +87,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
             }
             .doOnNext {
                 designs.clear()
-                designs.addAll(getLocalLayouts())
+                if(showLocal) designs.addAll(getLocalLayouts())
                 designs.addAll(it)
                 adapter.notifyDataSetChanged()
             }.subscribe()
@@ -243,6 +248,19 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
                 val event = it ?: return@map
                 updateEvent(event)
             }.subscribe()
+        }
+
+        binding.header?.setOnClickListener {
+            val showOrHideLocals = if(showLocal) "Hide LOCAL" else "Show LOCAL"
+            val menuItems = arrayOf(showOrHideLocals)
+            requireContext().showMenuDialog("Choose an option", menuItems) { index ->
+                when (index) {
+                    0 -> {
+                        showLocal = !showLocal
+                        initData()
+                    }
+                }
+            }
         }
 
         binding.backButton?.setOnClickListener {

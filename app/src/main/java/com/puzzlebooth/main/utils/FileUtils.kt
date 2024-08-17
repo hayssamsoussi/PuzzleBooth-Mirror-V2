@@ -61,6 +61,23 @@ fun Context.mosaicDraftPath(): String {
     return "${current}mosaic/draft"
 }
 
+fun Context.showMenuDialog(
+    title: String,
+    menuItems: Array<String>,
+    onItemSelected: (index: Int) -> Unit
+) {
+    val builder = AlertDialog.Builder(this)
+    builder.setTitle(title)
+    builder.setItems(menuItems) { dialog, which ->
+        onItemSelected(which)
+        dialog.dismiss()
+    }
+    builder.setNegativeButton("Cancel") { dialog, _ ->
+        dialog.dismiss()
+    }
+    builder.create().show()
+}
+
 fun Context.showInputDialog(
     title: String,
     hint: String = "",

@@ -53,7 +53,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
             val layoutName = sharedPreferences.getString("selectedAnimation", "")
             if(layoutName.isNullOrEmpty()) {
                 Glide.with(this)
-                    .load(R.drawable.start)
+                    .load(AnimationsManager.start)
                     .transform(RotateTransformation(requireContext(),
                         0f
                     ))

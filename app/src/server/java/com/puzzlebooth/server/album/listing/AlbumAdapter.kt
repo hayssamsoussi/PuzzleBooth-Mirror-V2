@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.puzzlebooth.main.utils.RotateTransformation
 import com.puzzlebooth.server.R
+import com.puzzlebooth.server.album.AlbumFragment.Companion.currentPositionSelected
 import java.io.File
 
 data class LocalImage(val file: File, val position: Int)
@@ -66,6 +67,11 @@ class AlbumAdapter(private val mList: List<LocalImage>, val action: (LocalImage)
             action.invoke(file)
         }
 
+        if(position == currentPositionSelected) {
+            holder.imageNumberTv.setTextColor(Color.RED)
+        } else {
+            holder.imageNumberTv.setTextColor(Color.WHITE)
+        }
 //        if(currentPosition == file.position) {
 //            holder.imageNumberTv.setTextColor(Color.RED)
 //        } else {

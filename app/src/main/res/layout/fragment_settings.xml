@@ -7,190 +7,267 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <FrameLayout
-        android:id="@+id/backButton"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:translationZ="10dp"
-        android:background="#20FFFFFF"
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/backButton"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="#20FFFFFF"
+            android:translationZ="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="X"
+                android:textColor="@color/white" />
+
+        </FrameLayout>
 
         <TextView
+            android:id="@+id/bannerMosaic"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:text="X"/>
-
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <Button
-            android:id="@+id/btnFlash"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Flash: "
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/btnAutoPhoto"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Auto Photo: " />
-
-        <Button
-            android:id="@+id/btnTouchMode"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Touch Mode: " />
-
-        <Button
-            android:id="@+id/btnPrintSlow"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Print Slow: " />
-
-
-        <Button
-            android:id="@+id/btnQualtiy"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Print quality: " />
-
-        <Button
-            android:id="@+id/btnLandscape"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Landscape: " />
-
-        <Button
-            android:id="@+id/btnVideoMessage"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Video Message: "
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/btnShowQR"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Show QR: " />
-
-        <Button
-            android:id="@+id/btnFollowQR"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Follow QR: " />
-
-        <Button
-            android:id="@+id/btnCanon"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Canon Printing: " />
-
-        <Button
-            android:id="@+id/btnCanonTwoPrinters"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Use two printers: " />
-
-        <Button
-            android:id="@+id/btnTwoCopies"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Two Copies: " />
-
-        <Button
-            android:id="@+id/btnClearGlideCache"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="40dp"
-            android:text="Clear Glide cache" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <ToggleButton
-                android:id="@+id/toggleLQ"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textOff="LQ"
-                android:textOn="LQ" />
-
-            <ToggleButton
-                android:id="@+id/toggleMQ"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textOff="MQ"
-                android:textOn="MQ" />
-
-            <ToggleButton
-                android:id="@+id/toggleHQ"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textOff="HQ"
-                android:textOn="HQ" />
-
-            <ToggleButton
-                android:id="@+id/toggleUHQ"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textOff="UHQ"
-                android:textOn="UHQ" />
-        </LinearLayout>
-
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:visibility="gone">
-
-            <ToggleButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="test" />
-
-            <ToggleButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="test" />
-
-            <ToggleButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="test" />
-
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+            android:background="#2B2B2B"
+            android:gravity="center"
+            android:padding="20dp"
+            android:text="Settings"
+            android:textColor="@color/white"
+            android:textSize="30dp" />
 
     </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#2B2B2B"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginVertical="10dp"
+                android:text="General"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
+
+            <Button
+                android:id="@+id/btnFlash"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="#2B2B2B"
+                android:layout_marginHorizontal="40dp"
+                android:text="Flash: "
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnAutoPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Auto Photo: " />
+
+            <Button
+                android:id="@+id/btnTouchMode"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Touch Mode: " />
+
+            <Button
+                android:id="@+id/btnPrintSlow"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Print Slow: " />
+
+
+            <Button
+                android:id="@+id/btnQualtiy"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Print quality: " />
+
+            <Button
+                android:id="@+id/btnLandscape"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:visibility="gone"
+                android:text="Landscape: " />
+
+            <Button
+                android:id="@+id/btnTwoCopies"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Two Copies: " />
+
+            <Button
+                android:id="@+id/btnVideoMessage"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Video Message: "
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#2B2B2B"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginVertical="10dp"
+                android:text="QR"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
+
+            <Button
+                android:id="@+id/btnShowQR"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Show QR: " />
+
+            <Button
+                android:id="@+id/btnFollowQR"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Follow QR: " />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#2B2B2B"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginVertical="10dp"
+                android:text="Canon"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
+
+            <Button
+                android:id="@+id/btnCanon"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Canon Printing: " />
+
+            <Button
+                android:id="@+id/btnCanonTwoPrinters"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Use two printers: " />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#2B2B2B"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginVertical="10dp"
+                android:text="Other"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
+
+            <Button
+                android:id="@+id/btnClearGlideCache"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Clear Glide cache" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="30dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ToggleButton
+                    android:id="@+id/toggleLQ"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textOff="LQ"
+                    android:textOn="LQ" />
+
+                <ToggleButton
+                    android:id="@+id/toggleMQ"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textOff="MQ"
+                    android:textOn="MQ" />
+
+                <ToggleButton
+                    android:id="@+id/toggleHQ"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textOff="HQ"
+                    android:textOn="HQ" />
+
+                <ToggleButton
+                    android:id="@+id/toggleUHQ"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textOff="UHQ"
+                    android:textOn="UHQ" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:visibility="gone">
+
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="test" />
+
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="test" />
+
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="test" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <TextView
         android:id="@+id/tvVersion"

@@ -22,6 +22,7 @@
             android:layout_weight="1"
             app:backgroundTint="#1C1C1C"
             app:tint="@color/white"
+            android:visibility="gone"
             android:src="@drawable/baseline_arrow_back_ios_new_24"
             android:background="@drawable/button_background"
             android:layout_margin="10dp"
@@ -34,6 +35,7 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:translationZ="10dp"
+            android:visibility="gone"
             android:textSize="10dp"
             android:src="@drawable/baseline_navigate_next_24"
             android:layout_margin="10dp"
@@ -41,6 +43,21 @@
             app:backgroundTint="#1C1C1C"
             android:background="@drawable/button_background"
             android:text="Next" />
+
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:translationZ="10dp"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:src="@drawable/baseline_print_24"
+            app:tint="@color/white"
+            android:textColor="@color/white"
+            app:backgroundTint="#1C1C1C"
+            android:background="@drawable/button_background"
+            android:textSize="15dp"
+            android:text="X" />
 
         <ImageButton
             android:id="@+id/btnPrint"

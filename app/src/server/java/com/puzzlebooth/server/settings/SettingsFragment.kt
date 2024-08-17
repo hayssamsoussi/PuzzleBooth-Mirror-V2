@@ -3,11 +3,13 @@ package com.puzzlebooth.server.settings
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.ContactsContract.Contacts.Photo
 import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.android.gms.nearby.connection.Strategy
@@ -287,32 +289,43 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         return ConnectionRemote.entries[quality]
     }
 
+    fun Button.setStatus(isEnabled: Boolean, prefix: String) {
+        if(isEnabled) {
+            this.setBackgroundColor(Color.GREEN)
+        } else {
+            this.setBackgroundColor(Color.RED)
+        }
+
+        this.text = "${prefix}: ${if(isEnabled) "true" else "false"}"
+    }
+
     fun updateViews() {
-        val currentFlash = if(sharedPreferences.getBoolean("settings:flash", false)) "ON" else "OFF"
+        val currentFlash = sharedPreferences.getBoolean("settings:flash", false)
         val currentAutoPhoto = if(sharedPreferences.getBoolean("settings:autoPhoto", false)) "ON" else "OFF"
         val currentPrintSlow = if(sharedPreferences.getBoolean("settings:printingSlow", false)) "ON" else "OFF"
         val currentPrintQuality = PhotoQuality.getCurrentQuality(requireContext()).getRepresentation()
         val currentButtonPrinting = sharedPreferences.getBoolean("settings:canonPrinting", false)
         val currentTouchMode = if(sharedPreferences.getBoolean("settings:touchMode", false)) "ON" else "OFF"
         val currentLandscape = if(sharedPreferences.getBoolean("settings:landscape", false)) "ON" else "OFF"
-        val currentShowQR = if(sharedPreferences.getBoolean("settings:showQR", false)) "ON" else "OFF"
+        val currentShowQR = sharedPreferences.getBoolean("settings:showQR", false)
         val currentVideoMessage = if(sharedPreferences.getBoolean("settings:isVideoMessage", false)) "ON" else "OFF"
         val currentButtonPrintingTwoPrinters = sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false)
         val currentTwoCopies = sharedPreferences.getBoolean("settings:twoCopies", false)
         val currentFollowQR = sharedPreferences.getBoolean("settings:followQR", false)
 
-        binding.btnShowQR.text = "Show QR: ${currentShowQR}"
-        binding.btnFlash.text = "Flash: ${currentFlash}"
-        binding.btnAutoPhoto.text = "Auto Photo: ${currentAutoPhoto}"
-        binding.btnPrintSlow.text = "Printing Slow: ${currentPrintSlow}"
+
+        binding.btnShowQR.setStatus(sharedPreferences.getBoolean("settings:showQR", false), "Show QR")
+        binding.btnFlash.setStatus(sharedPreferences.getBoolean("settings:flash", false), "Flash")
+        binding.btnAutoPhoto.setStatus(sharedPreferences.getBoolean("settings:autoPhoto", false), "Auto Photo")
+        binding.btnPrintSlow.setStatus(sharedPreferences.getBoolean("settings:printingSlow", false), "Print slow")
         binding.btnQualtiy.text = "Printing Quality: ${currentPrintQuality}"
-        binding.btnTouchMode.text = "Touch Mode: ${currentTouchMode}"
+        binding.btnTouchMode.setStatus(sharedPreferences.getBoolean("settings:touchMode", false), "Touch mode")
         binding.btnLandscape.text = "Landscape: ${currentLandscape}"
-        binding.btnCanon.text = "Canon Printing: ${currentButtonPrinting}"
-        binding.btnCanonTwoPrinters.text = "Canon Two Printers: ${currentButtonPrintingTwoPrinters}"
-        binding.btnTwoCopies?.text = "Two Copies ${currentTwoCopies}"
-        binding.btnVideoMessage.text = "isVideoMessage: ${currentVideoMessage}"
-        binding.btnFollowQR.text = "Follow QR: ${currentFollowQR}"
+        binding.btnCanon.setStatus(sharedPreferences.getBoolean("settings:canonPrinting", false), "Canon printing")
+        binding.btnCanonTwoPrinters.setStatus(sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false), "Canon two printers")
+        binding.btnTwoCopies?.setStatus(sharedPreferences.getBoolean("settings:twoCopies", false), "2 copies")
+        binding.btnVideoMessage.setStatus(sharedPreferences.getBoolean("settings:isVideoMessage", false), "Video message")
+        binding.btnFollowQR.setStatus(sharedPreferences.getBoolean("settings:followQR", false), "Follow QR")
 
 
     }

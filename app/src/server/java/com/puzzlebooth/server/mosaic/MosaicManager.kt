@@ -22,7 +22,13 @@ import com.puzzlebooth.main.models.MosaicInfo
 import com.puzzlebooth.main.utils.draftPath
 import com.puzzlebooth.main.utils.draftPathCutIn2
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
+import com.puzzlebooth.main.utils.mosaicDraftPath
+import com.puzzlebooth.main.utils.showInputDialog
 import com.puzzlebooth.server.R
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -58,9 +64,15 @@ object MosaicManager {
         return (originalsExist)
     }
 
-    fun getMosaicFileAt(position: Int): MosaicItem {
-        val mosaicViews = generateMosaicViews()
-        return mosaicViews[position - 1]
+    fun getMosaicFileAt(position: Int): Single<MosaicItem> {
+        return Single.create<MosaicItem> { emitter ->
+            generateMosaicViews()
+                .doOnSuccess {
+                    val mosaicViews = it
+                    emitter.onSuccess(mosaicViews[position - 1])
+                }
+                .subscribe()
+        }
     }
 
     fun processMosaicEvent(context: Context, event: String?) {
@@ -219,6 +231,43 @@ object MosaicManager {
         println("hhh filtered: ${filtered?.size}")
 
         return if(filtered.isNullOrEmpty()) null else filtered.random()
+    }
+
+    fun autoFill(context: Context) {
+        context.showInputDialog("Alert", "Random Auto Fill?") {
+            if(it == "taysir123") {
+                (0 .. 10).forEach { num ->
+                    println("hhh:autoFill:${num}")
+                    val randomPic = File(context.getCurrentEventPhotosPath()).listFiles()?.filter { it.name.endsWith("png.jpeg") }?.random()
+
+                    if(randomPic != null) {
+                        println("hhh:autoFill:${randomPic.path}")
+
+                        if(MosaicManager.isRunning()) {
+                            val mosaicPath = context.mosaicDraftPath()
+                            File(mosaicPath).mkdirs()
+
+                            val pair = Pair(randomPic.name, randomPic.path)
+                            val fileName = pair.first
+                            val normalPath = context.getCurrentEventPhotosPath()
+                            File("$normalPath$fileName").copyTo(File("${context.mosaicDraftPath()}/$fileName"), true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun fillRandomPic(context: Context, file: File) {
+        if(MosaicManager.isRunning()) {
+            val mosaicPath = context.mosaicDraftPath()
+            File(mosaicPath).mkdirs()
+
+            val pair = Pair(file.name, file.path)
+            val fileName = pair.first
+            val normalPath = context.getCurrentEventPhotosPath()
+            File("$normalPath$fileName").copyTo(File("${context.mosaicDraftPath()}/$fileName"), true)
+        }
     }
 
     fun resizeAndZoomFirstBitmapToFitSecondWidth(bitmap1: Bitmap, bitmap2: Bitmap, zoomFactor: Float): Bitmap {
@@ -463,10 +512,15 @@ object MosaicManager {
         }
     }
 
-    fun copyImagesToPrintableMosaic(context: Context, position: Int): File? {
-        val mosaicItem = MosaicManager.getMosaicFileAt(position)
-        val file = mosaicItem.file
-        return copyImagesToPrintableMosaic(context, file)
+    fun copyImagesToPrintableMosaic(context: Context, position: Int) {
+        getMosaicFileAt(position)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess {
+                val file = it.file
+                copyImagesToPrintableMosaic(context, file)
+            }
+            .subscribe()
     }
 
     fun copyImagesToPrintableMosaic(context: Context, file: File): File? {
@@ -499,25 +553,28 @@ object MosaicManager {
         return null
     }
 
-    fun generateMosaicViews(): List<MosaicItem> {
-        val map = mutableListOf<MosaicItem>()
-        if(mosaic_originals.exists()) {
-            val size = mosaic_originals.listFiles().size
-            if(size > 0) {
-                (1..size).forEach {
-                    val image = "$it".padStart(3, '0') + ".jpg"
-                    val doesImageExist = mosaic_images.list { dir, name -> name == image }?.isNotEmpty() == true
+    fun generateMosaicViews(): Single<List<MosaicItem>> {
+        return Single.create { emitter ->
+            val map = mutableListOf<MosaicItem>()
+            if(mosaic_originals.exists()) {
+                val size = mosaic_originals.listFiles().size
+                if(size > 0) {
+                    (1..size).forEach {
+                        val image = "$it".padStart(3, '0') + ".jpg"
+                        val doesImageExist = mosaic_images.list { dir, name -> name == image }?.isNotEmpty() == true
 
-                    if(doesImageExist) {
-                        map.add(MosaicItem(it, File(mosaic_images.path + "/" + image), false))
-                    } else {
-                        map.add(MosaicItem(it, File(mosaic_originals.path + "/" + image), true))
+                        if(doesImageExist) {
+                            map.add(MosaicItem(it, File(mosaic_images.path + "/" + image), false))
+                        } else {
+                            map.add(MosaicItem(it, File(mosaic_originals.path + "/" + image), true))
+                        }
                     }
                 }
+                emitter.onSuccess(map)
+            } else {
+                emitter.onSuccess(map)
             }
         }
-
-        return map
     }
 
     fun splitBitmap(inputImagePath: String, columns: Int, rows: Int): List<Bitmap> {

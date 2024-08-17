@@ -4,154 +4,181 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
     android:background="@color/black">
 
-    <FrameLayout
-        android:id="@+id/backButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:translationZ="10dp"
-        android:background="#20FFFFFF"
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="match_parent"
+        <FrameLayout
+            android:id="@+id/backButton"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:text="X"/>
+            android:background="#20FFFFFF"
+            android:translationZ="10dp">
 
-    </FrameLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        tools:context=".MainActivity">
-
-        <LinearLayout
-            android:id="@+id/previewContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:visibility="gone"
-                android:padding="100dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <ImageView
-                android:id="@+id/ivLayout"
-                android:layout_width="200dp"
-                android:layout_height="300dp"
-                android:layout_centerHorizontal="true"/>
-
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="X"
+                android:textColor="@color/white" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/bannerMosaic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#2B2B2B"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Theme"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            tools:context=".MainActivity">
+
+            <LinearLayout
+                android:id="@+id/previewContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvEventDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:paddingStart="10dp"
+                <ProgressBar
+                    android:id="@+id/progressBar"
                     android:visibility="gone"
-                    android:layout_marginVertical="20dp"
-                    android:layout_below="@id/ivLayout"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvList"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
+                    android:padding="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+                <ImageView
+                    android:id="@+id/ivLayout"
+                    android:layout_width="200dp"
+                    android:layout_height="300dp"
+                    android:layout_centerHorizontal="true"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvEventDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:paddingStart="10dp"
+                        android:visibility="gone"
+                        android:layout_marginVertical="20dp"
+                        android:layout_below="@id/ivLayout"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvList"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout"
+                android:layout_width="match_parent"
+                android:layout_marginTop="16dp"
+                android:layout_below="@id/previewContainer"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/baseline_10k_24"
+                app:endIconTint="@color/white"
+                android:layout_height="wrap_content">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayout"
-            android:layout_width="match_parent"
-            android:layout_marginTop="16dp"
-            android:layout_below="@id/previewContainer"
-            app:endIconMode="custom"
-            app:endIconDrawable="@drawable/baseline_10k_24"
-            app:endIconTint="@color/white"
-            android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:hint="Event ID" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editText"
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/btnContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:hint="Event ID" />
+                android:layout_marginTop="16dp"
+                android:layout_below="@id/textInputLayout"
+                android:orientation="horizontal">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <Button
+                    android:id="@+id/scanButton"
+                    android:labelFor="@id/textInputLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="10dp"
+                    android:text="Scan QR Code" />
 
-        <LinearLayout
-            android:id="@+id/btnContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_below="@id/textInputLayout"
-            android:orientation="horizontal">
+                <Button
+                    android:id="@+id/mosaicButton"
+                    android:labelFor="@id/textInputLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="10dp"
+                    android:text="Mosaic" />
+
+                <Button
+                    android:id="@+id/updateButton"
+                    android:labelFor="@id/textInputLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    android:text="Update" />
+
+            </LinearLayout>
+
+            <com.konaire.numerickeyboard.NumericKeyboard
+                android:id="@+id/numericKeyboard"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/btnContainer"
+                app:field="@+id/editText"
+                app:keySpecial="&#x2713;"
+                app:keyTextColor="@color/white" />
 
             <Button
-                android:id="@+id/scanButton"
+                android:id="@+id/submitButton"
                 android:labelFor="@id/textInputLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="10dp"
-                android:text="Scan QR Code" />
+                android:layout_alignParentBottom="true"
+                android:text="Submit" />
 
-            <Button
-                android:id="@+id/mosaicButton"
-                android:labelFor="@id/textInputLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="10dp"
-                android:text="Mosaic" />
+        </RelativeLayout>
 
-            <Button
-                android:id="@+id/updateButton"
-                android:labelFor="@id/textInputLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:visibility="gone"
-                android:text="Update" />
+    </ScrollView>
 
-        </LinearLayout>
-
-        <com.konaire.numerickeyboard.NumericKeyboard
-            android:id="@+id/numericKeyboard"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="10dp"
-            android:layout_below="@id/btnContainer"
-            app:field="@+id/editText"
-            app:keySpecial="&#x2713;"
-            app:keyTextColor="@color/white" />
-
-        <Button
-            android:id="@+id/submitButton"
-            android:labelFor="@id/textInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="Submit" />
-
-    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

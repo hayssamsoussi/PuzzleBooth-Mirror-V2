@@ -2,6 +2,7 @@ package com.puzzlebooth.server.mosaic
 
 import android.os.Bundle
 import android.view.View
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.puzzlebooth.main.MosaicAdapter
@@ -9,6 +10,9 @@ import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.FragmentMosaicDetailBinding
+import com.puzzlebooth.server.mosaic.MosaicManager.generateMosaicViews
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -46,9 +50,14 @@ class MosaicPhotoDetailFragment : BaseFragment<FragmentMosaicDetailBinding>(R.la
     }
 
     fun initViews() {
-        val mosaicViews = MosaicManager.generateMosaicViews()
-
-        adapter = MosaicAdapter(mosaicViews.toList()) { }
+        generateMosaicViews()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { mosaicViews ->
+                val showMosaicImages = sharedPreferences.getBoolean("settings:showMosaicImages", false)
+                adapter = MosaicAdapter(showMosaicImages, mosaicViews.toList()) { }
+            }
+            .subscribe()
 
         val filePath = arguments?.getString("filePath")
         val position = arguments?.getInt("position")

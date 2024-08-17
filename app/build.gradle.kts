@@ -15,8 +15,6 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 34
-        versionCode = 7
-        versionName = "2.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,20 +40,28 @@ android {
         viewBinding = true
     }
 
-    flavorDimensions("version")
+    flavorDimensions.add("version")
+
     productFlavors {
         create("remote") {
             dimension = "version"
             applicationId = "com.puzzlebooth.remote"
-            versionCode = 8
-            versionName = "2.5"
+            versionCode = 10
+            versionName = "2.6"
         }
 
         create("server") {
             dimension = "version"
             applicationId = "com.puzzlebooth.server"
-            versionCode = 8
-            versionName = "2.5"
+            versionCode = 11
+            versionName = "2.7"
+        }
+
+        getByName("remote") {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        getByName("server") {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
