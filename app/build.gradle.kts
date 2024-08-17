@@ -60,6 +60,7 @@ android {
         getByName("remote") {
             signingConfig = signingConfigs.getByName("debug")
         }
+
         getByName("server") {
             signingConfig = signingConfigs.getByName("debug")
         }
