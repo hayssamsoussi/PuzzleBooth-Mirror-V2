@@ -30,8 +30,8 @@ jobs:
         run: ./gradlew build -Pflavor=${{ matrix.flavor }}
 
       - name: Rename APK
-        run: mv app/build/outputs/apk/${{ matrix.flavor }}/release/app-${{ matrix.flavor }}-release.apk app/build/outputs/apk/${{ matrix.flavor }}/release/puzzlebooth-mirror-${{ matrix.flavor }}-v2.apk
+        run: mv app/build/outputs/apk/${{ matrix.flavor }}/debug/app-${{ matrix.flavor }}-debug.apk app/build/outputs/apk/${{ matrix.flavor }}/debug/puzzlebooth-mirror-${{ matrix.flavor }}-v2.apk
 
       - name: Upload APK to Server
         run: |
-          curl -X POST -F "file=@app/build/outputs/apk/${{ matrix.flavor }}/release/puzzlebooth-mirror-${{ matrix.flavor }}-v2.apk" https://puzzleslb.com/puzzlebooth/api_v2/apps/upload.php
+          curl -X POST -F "file=@app/build/outputs/apk/${{ matrix.flavor }}/debug/puzzlebooth-mirror-${{ matrix.flavor }}-v2.apk" https://puzzleslb.com/puzzlebooth/api_v2/apps/upload.php
