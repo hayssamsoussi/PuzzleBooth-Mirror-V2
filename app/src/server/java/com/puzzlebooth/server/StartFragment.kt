@@ -33,6 +33,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
     }
 
     private fun initViews() {
+
         if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             val layoutName = sharedPreferences.getString("selectedAnimationLand", "")
             if(layoutName.isNullOrEmpty()) {
