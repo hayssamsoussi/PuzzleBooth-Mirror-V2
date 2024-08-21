@@ -316,10 +316,10 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
 
         binding.btnShowQR.setStatus(sharedPreferences.getBoolean("settings:showQR", false), "Show QR")
         binding.btnFlash.setStatus(sharedPreferences.getBoolean("settings:flash", false), "Flash")
-        binding.btnAutoPhoto.setStatus(sharedPreferences.getBoolean("settings:autoPhoto", false), "Auto Photo")
-        binding.btnPrintSlow.setStatus(sharedPreferences.getBoolean("settings:printingSlow", false), "Print slow")
+        binding.btnAutoPhoto.setStatus(sharedPreferences.getBoolean("settings:autoPhoto", true), "Auto Photo")
+        binding.btnPrintSlow.setStatus(sharedPreferences.getBoolean("settings:printingSlow", true), "Print slow")
         binding.btnQualtiy.text = "Printing Quality: ${currentPrintQuality}"
-        binding.btnTouchMode.setStatus(sharedPreferences.getBoolean("settings:touchMode", false), "Touch mode")
+        binding.btnTouchMode.setStatus(sharedPreferences.getBoolean("settings:touchMode", true), "Touch mode")
         binding.btnLandscape.text = "Landscape: ${currentLandscape}"
         binding.btnCanon.setStatus(sharedPreferences.getBoolean("settings:canonPrinting", false), "Canon printing")
         binding.btnCanonTwoPrinters.setStatus(sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false), "Canon two printers")
@@ -355,7 +355,7 @@ enum class PhotoQuality(val quality: Int) {
 
         fun getCurrentQuality(context: Context): PhotoQuality {
             val sharedPreferences = context.getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
-            val quality = sharedPreferences.getInt("settings:printingQuality", PhotoQuality.entries.size - 1)
+            val quality = sharedPreferences.getInt("settings:printingQuality", PhotoQuality.entries.size - 3)
             return PhotoQuality.entries[quality]
         }
 
@@ -371,7 +371,5 @@ enum class PhotoQuality(val quality: Int) {
 
             edit.apply()
         }
-
-
     }
 }

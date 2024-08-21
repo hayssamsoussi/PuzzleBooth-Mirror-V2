@@ -121,7 +121,7 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
 
         //val zoom = sharedPreferences.getFloat("camera:zoom", binding.camera.exposureCorrection)
         //binding.camera.zoom = zoom
-        val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", false)
+        val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", true)
 
         val animation = if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             AnimationsManager.countdownLandscape
@@ -190,7 +190,7 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
             binding.camera.zoom = zoom
 
 
-            val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", false)
+            val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", true)
 
 
 

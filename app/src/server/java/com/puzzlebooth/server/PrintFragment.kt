@@ -74,7 +74,7 @@ class PrintFragment : BaseFragment<FragmentPrintBinding>(R.layout.fragment_print
 
         coroutineScope.launch {
             var countdownSeconds = 5
-            val isSlow = sharedPreferences.getBoolean("settings:printingSlow", false)
+            val isSlow = sharedPreferences.getBoolean("settings:printingSlow", true)
 
             delay(if(isSlow) 15000 else 9000)
 

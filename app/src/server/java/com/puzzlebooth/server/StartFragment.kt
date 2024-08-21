@@ -52,12 +52,11 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
             }
         } else {
             val layoutName = sharedPreferences.getString("selectedAnimation", "")
+            println("hhh animation for portrait is ${layoutName}")
             if(layoutName.isNullOrEmpty()) {
                 Glide.with(this)
                     .load(AnimationsManager.start)
-                    .transform(RotateTransformation(requireContext(),
-                        0f
-                    ))
+                    .transform(RotateTransformation(requireContext(), 0f))
                     .into(binding.startAnimation)
             } else {
                 val layoutPath = "${requireContext().cacheDir}/animations/${layoutName}"

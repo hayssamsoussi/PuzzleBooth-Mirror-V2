@@ -119,7 +119,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
 
     private fun initViews() {
-        binding.buttonsContainer?.visibility = if(sharedPreferences.getBoolean("settings:touchMode", false)) View.VISIBLE else View.GONE
+        binding.buttonsContainer?.visibility = if(sharedPreferences.getBoolean("settings:touchMode", true)) View.VISIBLE else View.GONE
         binding.btnPrint.setOnClickListener {
             if(sharedPreferences.getBoolean("settings:showQR", false)) {
                 processPrintingAction("print:;;;")

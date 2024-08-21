@@ -87,6 +87,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
             }
             .doOnNext {
                 designs.clear()
+                designs.add(Design("", "blank.png", "https://www.puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/layouts_backup/blank.png"))
                 if(showLocal) designs.addAll(getLocalLayouts())
                 designs.addAll(it)
                 adapter.notifyDataSetChanged()
