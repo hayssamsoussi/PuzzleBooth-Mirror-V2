@@ -40,20 +40,29 @@ android {
         viewBinding = true
     }
 
-    flavorDimensions("version")
+    flavorDimensions.add("version")
+
     productFlavors {
         create("remote") {
             dimension = "version"
             applicationId = "com.puzzlebooth.remote"
-            versionCode = 10
-            versionName = "3.0"
+            versionCode = 20
+            versionName = "3.1"
         }
 
         create("server") {
             dimension = "version"
             applicationId = "com.puzzlebooth.server"
-            versionCode = 11
-            versionName = "3.1"
+            versionCode = 21
+            versionName = "3.2"
+        }
+
+        getByName("remote") {
+            signingConfig = signingConfigs.getByName("debug")
+        }
+
+        getByName("server") {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
