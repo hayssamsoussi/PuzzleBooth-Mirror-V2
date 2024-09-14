@@ -82,6 +82,17 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/multiTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="Multi Theme"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/animations"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

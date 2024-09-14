@@ -188,6 +188,25 @@
                 android:gravity="center"
                 android:padding="10dp"
                 android:layout_marginVertical="10dp"
+                android:text="Multiple photos"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
+
+            <Button
+                android:id="@+id/btnMultiPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="40dp"
+                android:text="Clear Glide cache" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#2B2B2B"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_marginVertical="10dp"
                 android:text="Other"
                 android:textColor="@color/white"
                 android:textSize="20dp" />

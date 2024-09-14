@@ -85,7 +85,7 @@
         app:cameraUseDeviceOrientation="false"
         app:cameraWhiteBalance="auto"
         app:cameraMode="picture"
-        app:cameraPlaySounds="true"
+        app:cameraPlaySounds="false"
         app:cameraPictureMetering="false"
         app:cameraPictureSnapshotMetering="false"
         app:cameraPictureFormat="jpeg"

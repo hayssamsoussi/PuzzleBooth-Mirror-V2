@@ -75,10 +75,14 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
 
         binding.clickable.setOnClickListener {
             val isVideoMessage = sharedPreferences.getBoolean("settings:isVideoMessage", false)
-            if(isVideoMessage) {
-                findNavController().navigate(R.id.action_startFragment_to_countdownVideoFragment)
-            } else {
-                findNavController().navigate(R.id.action_startFragment_to_countdownFragment)
+            val isMultiplePhotos = CountdownMultiplePhotosFragment.multiplePhotos
+            CountdownFragment.setCapturedPhoto(requireContext(), null)
+            CountdownFragment.setCapturedPhoto2(requireContext(), null)
+            CountdownFragment.setCapturedPhoto3(requireContext(), null)
+            when {
+                isVideoMessage -> findNavController().navigate(R.id.action_startFragment_to_countdownVideoFragment)
+                isMultiplePhotos -> findNavController().navigate(R.id.action_startFragment_to_countdownMultiplePhotosFragment)
+                else -> findNavController().navigate(R.id.action_startFragment_to_countdownFragment)
             }
         }
     }

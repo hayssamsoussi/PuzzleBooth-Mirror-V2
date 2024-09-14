@@ -6,6 +6,7 @@ import android.R.attr.resource
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.media.MediaPlayer
 import android.media.MediaRecorder
@@ -39,6 +40,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
+import java.io.FileOutputStream
 
 
 class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragment_countdown) {
@@ -65,19 +67,129 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
 
     companion object {
         var capturedPhoto: Bitmap? = null
+        var capturedPhoto2: Bitmap? = null
+        var capturedPhoto3: Bitmap? = null
+//
+//
+        fun getCapturedPhoto(context: Context): Bitmap? {
+            return capturedPhoto
+            //return getBitmapFromCache(context, "capturedPhoto.png")
+        }
+
+        fun getCapturedPhoto2(context: Context): Bitmap? {
+            return capturedPhoto2
+            //return getBitmapFromCache(context, "capturedPhoto2.png")
+        }
+
+        fun getCapturedPhoto3(context: Context): Bitmap? {
+            return capturedPhoto3
+            //return getBitmapFromCache(context, "capturedPhoto3.png")
+        }
+
+        fun setCapturedPhoto(context: Context, bitmap: Bitmap?) {
+            bitmap?.let {
+                val newBitmap = Bitmap.createScaledBitmap(bitmap, (bitmap.width * 0.5).toInt(), (bitmap.height * 0.5).toInt(), true)
+                capturedPhoto = newBitmap
+            }
+
+
+        //saveBitmapToCache(context, bitmap, "capturedPhoto.png")
+        }
+
+        fun setCapturedPhoto2(context: Context, bitmap: Bitmap?) {
+            bitmap?.let {
+                val newBitmap = Bitmap.createScaledBitmap(bitmap, (bitmap.width * 0.5).toInt(), (bitmap.height * 0.5).toInt(), true)
+                capturedPhoto2 = newBitmap
+            }
+            //saveBitmapToCache(context, bitmap, "capturedPhoto2.png")
+        }
+
+        fun setCapturedPhoto3(context: Context, bitmap: Bitmap?) {
+            bitmap?.let {
+                val newBitmap = Bitmap.createScaledBitmap(bitmap, (bitmap.width * 0.5).toInt(), (bitmap.height * 0.5).toInt(), true)
+                capturedPhoto3 = newBitmap
+            }
+            //saveBitmapToCache(context, bitmap, "capturedPhoto3.png")
+        }
+
+        // Function to save Bitmap to cache directory
+        fun saveBitmapToCache(context: Context, bitmap: Bitmap?, fileName: String): File? {
+            try {
+                // Create a file in the cache directory
+                val cacheFile = File(context.cacheDir, fileName)
+
+                if(bitmap != null) {
+                    // Open FileOutputStream to write the Bitmap
+                    val fileOutputStream = FileOutputStream(cacheFile)
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+                    fileOutputStream.flush()
+                    fileOutputStream.close()
+
+                    return cacheFile
+                } else {
+                    cacheFile.delete()
+                    return null
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return null
+            }
+        }
+
+        // Function to retrieve a Bitmap from cache directory
+        fun getBitmapFromCache(context: Context, fileName: String): Bitmap? {
+            return try {
+                // Create a file reference to the file in the cache directory
+                val cacheFile = File(context.cacheDir, fileName)
+
+                // Decode the file into a Bitmap
+                if (cacheFile.exists()) {
+                    BitmapFactory.decodeFile(cacheFile.absolutePath)
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
     }
 
     private inner class Listener : CameraListener() {
         override fun onPictureTaken(result: PictureResult) {
             super.onPictureTaken(result)
-            result.toBitmap() {
-                if (it != null) {
-                    println("hhh picture taken!")
-                    binding.camera.close()
-                    capturedPhoto = it
+            if(sharedPreferences.getBoolean("settings:multiPhoto", false)) {
+                println("hhh multiplePhotos")
+                result.toBitmap { bitmap ->
+                    if(getCapturedPhoto(requireContext()) == null) {
+                        setCapturedPhoto(requireContext(), bitmap)
+                    } else if(getCapturedPhoto2(requireContext()) == null) {
+                        setCapturedPhoto2(requireContext(), bitmap)
+                    } else {
+                        setCapturedPhoto3(requireContext(), bitmap)
+                    }
+
                     findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
+
+                    //refreshPhotoThumbnails()
+                }
+            } else {
+                result.toBitmap() {
+                    if (it != null) {
+                        binding.camera.close()
+                        setCapturedPhoto(requireContext(), it)
+                        findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
+                    }
                 }
             }
+//            result.toBitmap() {
+//                if (it != null) {
+//                    println("hhh picture taken!")
+//                    binding.camera.close()
+//                    capturedPhoto = it
+//                    findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
+//                }
+//            }
         }
     }
 

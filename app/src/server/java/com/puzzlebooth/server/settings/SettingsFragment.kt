@@ -132,6 +132,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             updateViews()
         }
 
+        binding.btnMultiPhoto?.setOnClickListener {
+            toggleMultiPhoto()
+            updateViews()
+        }
+
         binding.btnFollowQR.setOnClickListener {
             toggleFollowQR()
             updateViews()
@@ -177,6 +182,14 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
 
         val edit = sharedPreferences.edit()
         edit.putBoolean("settings:showQR", !current)
+        edit.apply()
+    }
+
+    fun toggleMultiPhoto() {
+        val current = sharedPreferences.getBoolean("settings:multiPhoto", false)
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("settings:multiPhoto", !current)
         edit.apply()
     }
 
@@ -326,6 +339,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         binding.btnTwoCopies?.setStatus(sharedPreferences.getBoolean("settings:twoCopies", false), "2 copies")
         binding.btnVideoMessage.setStatus(sharedPreferences.getBoolean("settings:isVideoMessage", false), "Video message")
         binding.btnFollowQR.setStatus(sharedPreferences.getBoolean("settings:followQR", false), "Follow QR")
+        binding.btnMultiPhoto?.setStatus(sharedPreferences.getBoolean("settings:multiPhoto", false), "Multi Photo")
 
 
     }

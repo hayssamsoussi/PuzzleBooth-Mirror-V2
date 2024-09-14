@@ -115,6 +115,9 @@
             android:id="@+id/action_startFragment_to_countdownFragment"
             app:destination="@id/countdownFragment" />
         <action
+            android:id="@+id/action_startFragment_to_countdownMultiplePhotosFragment"
+            app:destination="@id/multiplePhotosCountdownFragment" />
+        <action
             android:id="@+id/action_startFragment_to_countdownVideoFragment"
             app:destination="@id/countdownVideoFragment" />
 
@@ -147,6 +150,17 @@
         tools:layout="@layout/fragment_countdown" >
         <action
             android:id="@+id/action_countdownFragment_to_previewFragment"
+            app:popUpTo="@id/startFragment"
+            app:destination="@id/previewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/multiplePhotosCountdownFragment"
+        android:name="com.puzzlebooth.server.CountdownMultiplePhotosFragment"
+        android:label="Countdown Multiple PhotosFragment"
+        tools:layout="@layout/fragment_multiple_photos_countdown" >
+        <action
+            android:id="@+id/action_countdownMultiplePhotosFragment_to_previewFragment"
             app:popUpTo="@id/startFragment"
             app:destination="@id/previewFragment" />
     </fragment>
@@ -215,6 +229,12 @@
         android:name="com.puzzlebooth.server.theme.ThemeFragment"
         android:label="Theme Fragment"
         tools:layout="@layout/fragment_theme" >
+
+        <argument
+            android:name="isFromMulti"
+            app:argType="boolean"
+            android:defaultValue="false" />
+
     </fragment>
 
     <fragment
@@ -228,6 +248,9 @@
         <action
             android:id="@+id/action_previewFragment_to_countdownFragment"
             app:destination="@id/countdownFragment" />
+        <action
+            android:id="@+id/action_previewFragment_to_countdownMultiplePhotosFragment"
+            app:destination="@id/multiplePhotosCountdownFragment" />
         <action
             android:id="@+id/action_previewFragment_to_countdownVideoFragment"
             app:destination="@id/countdownVideoFragment" />

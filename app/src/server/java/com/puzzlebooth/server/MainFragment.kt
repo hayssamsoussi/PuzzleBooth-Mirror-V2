@@ -117,6 +117,12 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             findNavController().navigate(R.id.action_mainFragment_to_themeFragment)
         }
 
+        binding.multiTheme.setOnClickListener {
+            findNavController().navigate(R.id.action_mainFragment_to_themeFragment, Bundle().apply {
+                this.putBoolean("isFromMulti", true)
+            })
+        }
+
         binding.animations.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setMessage("Portrait or Landscape?")

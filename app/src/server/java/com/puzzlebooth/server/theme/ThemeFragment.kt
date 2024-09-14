@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.os.Environment
 import android.view.View
 import android.widget.Toast
+import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -35,6 +37,7 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
         var showLocal = false
     }
 
+    var isFromMulti = false
     private var designs = mutableListOf<Design>()
     private lateinit var adapter: DesignsAdapter
 
@@ -69,6 +72,8 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        isFromMulti = arguments?.getBoolean("isFromMulti", false) == true
 
         initViews()
         initData()
@@ -109,7 +114,8 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
     }
 
     private fun showLayout() {
-        val layoutName = sharedPreferences.getString("selectedLayout", "")
+        val keyName = if(isFromMulti) "selectMultiLayout" else "selectedLayout"
+        val layoutName = sharedPreferences.getString(keyName, "")
         if (layoutName?.isNotEmpty() == true) {
             val layoutFile = File("${requireContext().cacheDir}/layouts/${layoutName}")
             if (layoutFile.exists()) {
@@ -124,9 +130,9 @@ class ThemeFragment : BaseFragment<FragmentThemeBinding>(R.layout.fragment_theme
     }
 
     private  fun storeSelectedLayout(fileName: String) {
-        println("hhh storeSelectedLayout: ${fileName}")
+        val keyName = if(isFromMulti) "selectMultiLayout" else "selectedLayout"
         val edit = sharedPreferences.edit()
-        edit.putString("selectedLayout", fileName)
+        edit.putString(keyName, fileName)
         edit.apply()
     }
 
