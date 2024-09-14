@@ -90,6 +90,8 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
             bitmap?.let {
                 val newBitmap = Bitmap.createScaledBitmap(bitmap, (bitmap.width * 0.5).toInt(), (bitmap.height * 0.5).toInt(), true)
                 capturedPhoto = newBitmap
+            } ?: run {
+                capturedPhoto = null
             }
 
 
@@ -100,6 +102,8 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
             bitmap?.let {
                 val newBitmap = Bitmap.createScaledBitmap(bitmap, (bitmap.width * 0.5).toInt(), (bitmap.height * 0.5).toInt(), true)
                 capturedPhoto2 = newBitmap
+            } ?: run {
+                capturedPhoto2 = null
             }
             //saveBitmapToCache(context, bitmap, "capturedPhoto2.png")
         }
@@ -108,7 +112,10 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
             bitmap?.let {
                 val newBitmap = Bitmap.createScaledBitmap(bitmap, (bitmap.width * 0.5).toInt(), (bitmap.height * 0.5).toInt(), true)
                 capturedPhoto3 = newBitmap
+            } ?: run {
+                capturedPhoto3 = null
             }
+
             //saveBitmapToCache(context, bitmap, "capturedPhoto3.png")
         }
 

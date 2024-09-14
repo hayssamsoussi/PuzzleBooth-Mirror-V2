@@ -65,51 +65,51 @@ class CountdownMultiplePhotosFragment : BaseFragment<FragmentMultiplePhotosCount
 
     companion object {
         var multiplePhotos = false
-        var capturedPhoto1: Bitmap? = null
-        var capturedPhoto2: Bitmap? = null
-        var capturedPhoto3: Bitmap? = null
+//        var capturedPhoto1: Bitmap? = null
+//        var capturedPhoto2: Bitmap? = null
+//        var capturedPhoto3: Bitmap? = null
     }
 
     fun refreshPhotoThumbnails() {
-        Glide.with(requireContext())
-            .load(capturedPhoto1)
-            .into(binding.image1)
-        Glide.with(requireContext())
-            .load(capturedPhoto2)
-            .into(binding.image2)
-        Glide.with(requireContext())
-            .load(capturedPhoto3)
-            .into(binding.image3)
+//        Glide.with(requireContext())
+//            .load(capturedPhoto1)
+//            .into(binding.image1)
+//        Glide.with(requireContext())
+//            .load(capturedPhoto2)
+//            .into(binding.image2)
+//        Glide.with(requireContext())
+//            .load(capturedPhoto3)
+//            .into(binding.image3)
     }
 
     private inner class Listener : CameraListener() {
         override fun onPictureTaken(result: PictureResult) {
             super.onPictureTaken(result)
-            if(multiplePhotos == true) {
-                println("hhh multiplePhotos")
-                result.toBitmap { bitmap ->
-                    if(capturedPhoto1 == null) {
-                        println("hhh capturedPhoto1 != null")
-                        capturedPhoto1 = bitmap
-                    } else if(capturedPhoto2 == null) {
-                        println("hhh capturedPhoto2 != null")
-                        capturedPhoto2 = bitmap
-                    } else {
-                        capturedPhoto3 = bitmap
-                        findNavController().navigate(R.id.action_countdownMultiplePhotosFragment_to_previewFragment)
-                    }
-
-                    refreshPhotoThumbnails()
-                }
-            } else {
-                result.toBitmap() {
-                    if (it != null) {
-                        binding.camera.close()
-                        capturedPhoto1 = it
-                        findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
-                    }
-                }
-            }
+//            if(multiplePhotos == true) {
+//                println("hhh multiplePhotos")
+//                result.toBitmap { bitmap ->
+//                    if(capturedPhoto1 == null) {
+//                        println("hhh capturedPhoto1 != null")
+//                        capturedPhoto1 = bitmap
+//                    } else if(capturedPhoto2 == null) {
+//                        println("hhh capturedPhoto2 != null")
+//                        capturedPhoto2 = bitmap
+//                    } else {
+//                        capturedPhoto3 = bitmap
+//                        findNavController().navigate(R.id.action_countdownMultiplePhotosFragment_to_previewFragment)
+//                    }
+//
+//                    refreshPhotoThumbnails()
+//                }
+//            } else {
+//                result.toBitmap() {
+//                    if (it != null) {
+//                        binding.camera.close()
+//                        capturedPhoto1 = it
+//                        findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
+//                    }
+//                }
+//            }
 
         }
     }
@@ -121,9 +121,9 @@ class CountdownMultiplePhotosFragment : BaseFragment<FragmentMultiplePhotosCount
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        capturedPhoto1 = null
-        capturedPhoto2 = null
-        capturedPhoto3 = null
+//        capturedPhoto1 = null
+//        capturedPhoto2 = null
+//        capturedPhoto3 = null
 
         binding.camera.setLifecycleOwner(this)
         binding.camera.addCameraListener(Listener())
