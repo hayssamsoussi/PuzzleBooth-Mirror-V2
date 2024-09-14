@@ -29,6 +29,8 @@ import com.puzzlebooth.server.databinding.FragmentPreviewBinding
 import com.puzzlebooth.server.mosaic.MosaicManager
 import com.puzzlebooth.server.settings.PhotoQuality
 import io.paperdb.Paper
+import io.reactivex.Completable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -292,18 +294,8 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
         if(isMultiPhoto()) {
             // we show image and then we go back to coutndown unless 3 photos taken
-            if(isMultiLayoutDone()) {
-                resultBitmap = processPhoto(createBitmapBWithAlignedCopiesOfA(
-                    createBitmapPageWithImages(
-                        CountdownFragment.getCapturedPhoto(requireContext())!!,
-                        CountdownFragment.getCapturedPhoto2(requireContext())!!,
-                        CountdownFragment.getCapturedPhoto3(requireContext())!!
-                    )
-                ))
-            } else {
-                listOf(CountdownFragment.getCapturedPhoto(requireContext()), CountdownFragment.getCapturedPhoto2(requireContext()), CountdownFragment.getCapturedPhoto3(requireContext())).findLast { it != null }.let {
-                    resultBitmap = it
-                }
+            listOf(CountdownFragment.getCapturedPhoto(requireContext()), CountdownFragment.getCapturedPhoto2(requireContext()), CountdownFragment.getCapturedPhoto3(requireContext())).findLast { it != null }.let {
+                resultBitmap = it
             }
         } else {
             resultBitmap = CountdownFragment.getCapturedPhoto(requireContext())?.let { processPhoto(it) }
@@ -570,6 +562,14 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         if(isMultiPhoto() && !isMultiLayoutDone()) {
             findNavController().navigate(R.id.action_previewFragment_to_countdownFragment)
         } else {
+            resultBitmap = processPhoto(createBitmapBWithAlignedCopiesOfA(
+                createBitmapPageWithImages(
+                    CountdownFragment.getCapturedPhoto(requireContext())!!,
+                    CountdownFragment.getCapturedPhoto2(requireContext())!!,
+                    CountdownFragment.getCapturedPhoto3(requireContext())!!
+                )
+            ))
+
             CountdownFragment.setCapturedPhoto(requireContext(), null)
             CountdownFragment.setCapturedPhoto2(requireContext(), null)
             CountdownFragment.setCapturedPhoto3(requireContext(), null)
