@@ -85,10 +85,18 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
                 true
             )
         } else {
-            File("$normalPath$fileName").copyTo(
-                File("${requireContext().draftPath()}$fileName"),
-                true
-            )
+            if(sharedPreferences.getBoolean("settings:multiPhoto", false)) {
+                File("$normalPath$fileName").copyTo(
+                    File("${requireContext().draftPathCutIn2()}$fileName"),
+                    true
+                )
+            } else {
+                File("$normalPath$fileName").copyTo(
+                    File("${requireContext().draftPath()}$fileName"),
+                    true
+                )
+            }
+
 
             val secondCopy = sharedPreferences.getBoolean("settings:twoCopies", false)
             if(secondCopy) {
