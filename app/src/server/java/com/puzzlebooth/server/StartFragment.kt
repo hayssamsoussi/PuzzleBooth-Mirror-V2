@@ -13,6 +13,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
+import com.puzzlebooth.server.CountdownMultiplePhotosFragment.Companion.capturedPhoto1
+import com.puzzlebooth.server.CountdownMultiplePhotosFragment.Companion.capturedPhoto2
+import com.puzzlebooth.server.CountdownMultiplePhotosFragment.Companion.capturedPhoto3
 import com.puzzlebooth.server.databinding.FragmentStartBinding
 import com.puzzlebooth.server.mosaic.MosaicManager
 import com.puzzlebooth.server.utils.AnimationsManager
@@ -28,6 +31,10 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        capturedPhoto1 = null
+        capturedPhoto2 = null
+        capturedPhoto3 = null
 
         initViews()
     }
