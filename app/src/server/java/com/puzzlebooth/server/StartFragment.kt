@@ -23,17 +23,25 @@ import org.greenrobot.eventbus.ThreadMode
 
 class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start) {
 
+    companion object {
+        var isMultiPhoto = false
+    }
+
     override fun initViewBinding(view: View): FragmentStartBinding {
         return FragmentStartBinding.bind(view)
+    }
+
+    fun clearMultiPhoto() {
+        capturedPhoto = null
+        capturedPhoto2 = null
+        capturedPhoto3 = null
+        isMultiPhoto = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        capturedPhoto = null
-        capturedPhoto2 = null
-        capturedPhoto3 = null
-
+        clearMultiPhoto()
         initViews()
     }
 
@@ -96,6 +104,10 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
     fun onMessageEvent(event: MessageEvent?) {
         when {
             event?.text == "start" -> binding.clickable.performClick()
+            event?.text == "start2" -> {
+                isMultiPhoto = true
+                binding.clickable.performClick()
+            }
             event?.text == "showAlbum" -> findNavController().navigate(R.id.action_startFragment_to_albumFragment)
             event?.text == "showsecretmenu" -> findNavController().navigate(R.id.action_startFragment_to_cameraFragment)
             event?.text == "request_print_count" -> requireActivity().getMainActivity()?.sendStatus()

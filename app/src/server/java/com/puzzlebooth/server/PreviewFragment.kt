@@ -1,5 +1,7 @@
 package com.puzzlebooth.server
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -87,7 +89,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
                 true
             )
         } else {
-            if(sharedPreferences.getBoolean("settings:multiPhoto", false)) {
+            if(isMultiPhoto(sharedPreferences)) {
                 File("$normalPath$fileName").copyTo(
                     File("${requireContext().draftPathCutIn2()}$fileName"),
                     true
@@ -125,7 +127,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         }
 
         binding.btnRetake.setOnClickListener {
-            if(isMultiPhoto()) {
+            if(isMultiPhoto(sharedPreferences)) {
                 if(CountdownFragment.getCapturedPhoto3(requireContext()) != null) {
                     CountdownFragment.setCapturedPhoto3(requireContext(), null)
                 } else if(CountdownFragment.getCapturedPhoto2(requireContext()) != null) {
@@ -174,7 +176,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     }
 
     private fun saveFileToDrafts(): Pair<String, String> {
-        val keyName = if(sharedPreferences.getBoolean("settings:multiPhoto", false)) "selectMultiLayout" else "selectedLayout"
+        val keyName = if(isMultiPhoto(sharedPreferences)) "selectMultiLayout" else "selectedLayout"
         val selectedLayout = sharedPreferences.getString(keyName, "")
         val quality = PhotoQuality.getCurrentQualityInt(requireContext())
 
@@ -267,24 +269,26 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         return FragmentPreviewBinding.bind(view)
     }
 
-    fun isMultiPhoto(): Boolean {
-        return sharedPreferences.getBoolean("settings:multiPhoto", false)
-    }
+    companion object {
+        fun isMultiPhoto(sharedPreferences: SharedPreferences): Boolean {
+            return StartFragment.isMultiPhoto || sharedPreferences.getBoolean("settings:multiPhoto", false)
+        }
 
-    fun isMultiLayoutDone(): Boolean {
-        if(CountdownFragment.getCapturedPhoto(requireContext()) == null) {
-            println("hhh capturedPhoto is null")
-            return false
+        fun isMultiLayoutDone(context: Context): Boolean {
+            if(CountdownFragment.getCapturedPhoto(context) == null) {
+                println("hhh capturedPhoto is null")
+                return false
+            }
+            if(CountdownFragment.getCapturedPhoto2(context) == null) {
+                println("hhh capturedPhoto2 is null")
+                return false
+            }
+            if(CountdownFragment.getCapturedPhoto3(context) == null) {
+                println("hhh capturedPhoto3 is null")
+                return false
+            }
+            return true
         }
-        if(CountdownFragment.getCapturedPhoto2(requireContext()) == null) {
-            println("hhh capturedPhoto2 is null")
-            return false
-        }
-        if(CountdownFragment.getCapturedPhoto3(requireContext()) == null) {
-            println("hhh capturedPhoto3 is null")
-            return false
-        }
-        return true
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -292,7 +296,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
         initViews()
 
-        if(isMultiPhoto()) {
+        if(isMultiPhoto(sharedPreferences)) {
             // we show image and then we go back to coutndown unless 3 photos taken
             listOf(CountdownFragment.getCapturedPhoto(requireContext()), CountdownFragment.getCapturedPhoto2(requireContext()), CountdownFragment.getCapturedPhoto3(requireContext())).findLast { it != null }.let {
                 resultBitmap = it
@@ -511,13 +515,13 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
     private fun processPhoto(bitmap: Bitmap): Bitmap? {
         val baseBitmap = bitmap
-        val keyName = if(sharedPreferences.getBoolean("settings:multiPhoto", false)) "selectMultiLayout" else "selectedLayout"
+        val keyName = if(isMultiPhoto(sharedPreferences)) "selectMultiLayout" else "selectedLayout"
         val layoutName = sharedPreferences.getString(keyName, "")
         val layoutPath = "${requireContext().cacheDir}/layouts/${layoutName}"
 
         val overlayBitmap = when {
             layoutName.isNullOrEmpty() -> {
-                if(isMultiPhoto()) {
+                if(isMultiPhoto(sharedPreferences)) {
                     drawableToBitmap(ContextCompat.getDrawable(requireContext(), R.drawable.blankmultiple))
                 } else {
                     drawableToBitmap(ContextCompat.getDrawable(requireContext(), R.drawable.blank))
@@ -558,21 +562,24 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     }
 
     fun printAction(printEvent: String) {
-        println("hhh ${isMultiPhoto()} && ${isMultiLayoutDone()}")
-        if(isMultiPhoto() && !isMultiLayoutDone()) {
+        if(isMultiPhoto(sharedPreferences) && !isMultiLayoutDone(requireContext())) {
             findNavController().navigate(R.id.action_previewFragment_to_countdownFragment)
         } else {
-            resultBitmap = processPhoto(createBitmapBWithAlignedCopiesOfA(
-                createBitmapPageWithImages(
-                    CountdownFragment.getCapturedPhoto(requireContext())!!,
-                    CountdownFragment.getCapturedPhoto2(requireContext())!!,
-                    CountdownFragment.getCapturedPhoto3(requireContext())!!
-                )
-            ))
+            if(isMultiPhoto(sharedPreferences)) {
+                resultBitmap = processPhoto(createBitmapBWithAlignedCopiesOfA(
+                    createBitmapPageWithImages(
+                        CountdownFragment.getCapturedPhoto(requireContext())!!,
+                        CountdownFragment.getCapturedPhoto2(requireContext())!!,
+                        CountdownFragment.getCapturedPhoto3(requireContext())!!
+                    )
+                ))
 
-            CountdownFragment.setCapturedPhoto(requireContext(), null)
-            CountdownFragment.setCapturedPhoto2(requireContext(), null)
-            CountdownFragment.setCapturedPhoto3(requireContext(), null)
+                CountdownFragment.setCapturedPhoto(requireContext(), null)
+                CountdownFragment.setCapturedPhoto2(requireContext(), null)
+                CountdownFragment.setCapturedPhoto3(requireContext(), null)
+            } else {
+                resultBitmap = processPhoto(CountdownFragment.getCapturedPhoto(requireContext())!!)
+            }
 
             if(sharedPreferences.getBoolean("settings:showQR", false)) {
                 processPrintingAction("${printEvent}")

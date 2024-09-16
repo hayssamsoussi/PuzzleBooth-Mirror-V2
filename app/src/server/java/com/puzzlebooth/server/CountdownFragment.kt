@@ -32,6 +32,7 @@ import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
+import com.puzzlebooth.server.PreviewFragment.Companion.isMultiPhoto
 import com.puzzlebooth.server.databinding.FragmentCountdownBinding
 import com.puzzlebooth.server.utils.AnimationsManager
 import kotlinx.coroutines.delay
@@ -165,7 +166,7 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
     private inner class Listener : CameraListener() {
         override fun onPictureTaken(result: PictureResult) {
             super.onPictureTaken(result)
-            if(sharedPreferences.getBoolean("settings:multiPhoto", false)) {
+            if(isMultiPhoto(sharedPreferences)) {
                 println("hhh multiplePhotos")
                 result.toBitmap { bitmap ->
                     if(getCapturedPhoto(requireContext()) == null) {
@@ -184,7 +185,7 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
                 result.toBitmap() {
                     if (it != null) {
                         binding.camera.close()
-                        setCapturedPhoto(requireContext(), it)
+                        capturedPhoto = it
                         findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
                     }
                 }
