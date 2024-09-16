@@ -346,9 +346,7 @@ open class BaseNearbyActivity: ConnectionsActivity() {
     override fun getRequiredPermissions(): Array<String?>? {
         return join(
             super.getRequiredPermissions(),
-            Manifest.permission.RECORD_AUDIO,
-            android.Manifest.permission.CAMERA,
-            android.Manifest.permission.READ_MEDIA_IMAGES
+            Manifest.permission.RECORD_AUDIO
         )
     }
 
