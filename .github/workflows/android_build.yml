@@ -34,4 +34,4 @@ jobs:
 
       - name: Upload APK to Server
         run: |
-          curl -X POST -F "file=@app/build/outputs/apk/${{ matrix.flavor }}/debug/puzzlebooth-mirror-${{ matrix.flavor }}-v2.apk" https://puzzleslb.com/puzzlebooth/api_v2/apps/upload.php
+          curl -X POST -F "file=@app/build/outputs/apk/${{ matrix.flavor }}/debug/puzzlebooth-mirror-${{ matrix.flavor }}-v2.apk" https://puzzleslb.com/api/apps/upload.php
