@@ -16,8 +16,11 @@ import android.os.FileUtils
 import android.view.View
 import androidx.compose.ui.unit.Constraints
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.puzzlebooth.main.PHOTO_MODE
+import com.puzzlebooth.main.SharedViewModel
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.models.RemotePhoto
@@ -50,6 +53,7 @@ import java.util.Locale
 class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_preview) {
 
     private var resultBitmap: Bitmap? = null
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private fun processPrintingAction(event: String) {
         Constants.printerOne = !Constants.printerOne
@@ -127,16 +131,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         }
 
         binding.btnRetake.setOnClickListener {
-            if(isMultiPhoto(sharedPreferences)) {
-                if(CountdownFragment.getCapturedPhoto3(requireContext()) != null) {
-                    CountdownFragment.setCapturedPhoto3(requireContext(), null)
-                } else if(CountdownFragment.getCapturedPhoto2(requireContext()) != null) {
-                    CountdownFragment.setCapturedPhoto2(requireContext(), null)
-                } else if(CountdownFragment.getCapturedPhoto(requireContext()) != null) {
-                    CountdownFragment.setCapturedPhoto(requireContext(), null)
-                }
-            }
-
+            sharedViewModel.capturedPhotos.removeLast()
             findNavController().navigate(R.id.action_previewFragment_to_countdownFragment)
         }
 
@@ -167,9 +162,9 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
             .doOnNext {
                 val followQR = sharedPreferences.getBoolean("settings:followQR", false)
                 if(followQR) {
-                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image.php?link=${fileName}")
+                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/api/mirror/show_image.php?link=${fileName}")
                 } else {
-                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image_unlocked.php?link=${fileName}")
+                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/api/mirror/show_image_unlocked.php?link=${fileName}")
                 }
             }
             .subscribe()
@@ -245,9 +240,9 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
                     .doOnNext {
                         val followQR = sharedPreferences.getBoolean("settings:followQR", false)
                         if(followQR) {
-                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image.php?link=${fileName}")
+                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/api/mirror/show_image.php?link=${fileName}")
                         } else {
-                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image_unlocked.php?link=${fileName}")
+                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/api/mirror/show_image_unlocked.php?link=${fileName}")
                         }
                     }
                     .subscribe()
@@ -271,22 +266,22 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
     companion object {
         fun isMultiPhoto(sharedPreferences: SharedPreferences): Boolean {
-            return StartFragment.isMultiPhoto || sharedPreferences.getBoolean("settings:multiPhoto", false)
+            return sharedPreferences.getBoolean("settings:multiPhoto", false)
         }
 
         fun isMultiLayoutDone(context: Context): Boolean {
-            if(CountdownFragment.getCapturedPhoto(context) == null) {
-                println("hhh capturedPhoto is null")
-                return false
-            }
-            if(CountdownFragment.getCapturedPhoto2(context) == null) {
-                println("hhh capturedPhoto2 is null")
-                return false
-            }
-            if(CountdownFragment.getCapturedPhoto3(context) == null) {
-                println("hhh capturedPhoto3 is null")
-                return false
-            }
+//            if(CountdownFragment.getCapturedPhoto(context) == null) {
+//                println("hhh capturedPhoto is null")
+//                return false
+//            }
+//            if(CountdownFragment.getCapturedPhoto2(context) == null) {
+//                println("hhh capturedPhoto2 is null")
+//                return false
+//            }
+//            if(CountdownFragment.getCapturedPhoto3(context) == null) {
+//                println("hhh capturedPhoto3 is null")
+//                return false
+//            }
             return true
         }
     }
@@ -295,23 +290,31 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
-
+        showPhoto()
         if(isMultiPhoto(sharedPreferences)) {
             // we show image and then we go back to coutndown unless 3 photos taken
-            listOf(CountdownFragment.getCapturedPhoto(requireContext()), CountdownFragment.getCapturedPhoto2(requireContext()), CountdownFragment.getCapturedPhoto3(requireContext())).findLast { it != null }.let {
-                resultBitmap = it
-            }
+//            listOf(CountdownFragment.getCapturedPhoto(requireContext()), CountdownFragment.getCapturedPhoto2(requireContext()), CountdownFragment.getCapturedPhoto3(requireContext())).findLast { it != null }.let {
+//                resultBitmap = it
+//            }
         } else {
-            resultBitmap = CountdownFragment.getCapturedPhoto(requireContext())?.let { processPhoto(it) }
+            //resultBitmap = CountdownFragment.getCapturedPhoto(requireContext())?.let { processPhoto(it) }
         }
 
-        displayBitmap()
+        //displayBitmap()
     }
 
-    private fun displayBitmap() {
-        Glide.with(requireContext())
-            .load(resultBitmap)
-            .into(binding.imageView)
+    fun showPhoto() {
+        val lastPhoto = sharedViewModel.capturedPhotos.lastOrNull()
+        if(lastPhoto != null) {
+            resultBitmap = when(sharedViewModel.currentCaptureMode) {
+                PHOTO_MODE.SINGLE -> processPhoto(BitmapFactory.decodeFile(lastPhoto.absolutePath))
+                PHOTO_MODE.MULTIPLE -> BitmapFactory.decodeFile(lastPhoto.absolutePath)
+            }
+
+            Glide.with(requireContext())
+                .load(resultBitmap)
+                .into(binding.imageView)
+        }
     }
 
     private fun drawableToBitmap(drawable: Drawable?): Bitmap? {
@@ -378,11 +381,15 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     }
 
     fun createBitmapPageWithImages(
-        bitmap1: Bitmap,
-        bitmap2: Bitmap,
-        bitmap3: Bitmap,
+        file1: File,
+        file2: File,
+        file3: File,
         dpi: Int = 300 // Default DPI for print resolution
     ): Bitmap {
+        val bitmap1 = BitmapFactory.decodeFile(file1.absolutePath)
+        val bitmap2 = BitmapFactory.decodeFile(file2.absolutePath)
+        val bitmap3 = BitmapFactory.decodeFile(file3.absolutePath)
+
         // Convert page dimensions from cm to pixels
         val pageWidthPx = cmToPixels(5f, dpi)
         val pageHeightPx = cmToPixels(15f, dpi)
@@ -515,7 +522,7 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
 
     private fun processPhoto(bitmap: Bitmap): Bitmap? {
         val baseBitmap = bitmap
-        val keyName = if(isMultiPhoto(sharedPreferences)) "selectMultiLayout" else "selectedLayout"
+        val keyName = if(sharedViewModel.currentCaptureMode == PHOTO_MODE.MULTIPLE) "selectMultiLayout" else "selectedLayout"
         val layoutName = sharedPreferences.getString(keyName, "")
         val layoutPath = "${requireContext().cacheDir}/layouts/${layoutName}"
 
@@ -532,7 +539,6 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
             }
         }
 
-        println("hhh overlayBitmap = ${overlayBitmap?.height}:${overlayBitmap?.width}")
         if(overlayBitmap != null) {
             // Scale the overlay bitmap to fit the height of the base bitmap
             val scaledOverlayWidth = baseBitmap.height * overlayBitmap.width / overlayBitmap.height
@@ -562,30 +568,33 @@ class PreviewFragment : BaseFragment<FragmentPreviewBinding>(R.layout.fragment_p
     }
 
     fun printAction(printEvent: String) {
-        if(isMultiPhoto(sharedPreferences) && !isMultiLayoutDone(requireContext())) {
-            findNavController().navigate(R.id.action_previewFragment_to_countdownFragment)
+        when(sharedViewModel.currentCaptureMode) {
+            PHOTO_MODE.SINGLE -> {
+                val file = sharedViewModel.capturedPhotos[0]
+                val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                resultBitmap = processPhoto(bitmap)
+            }
+
+            PHOTO_MODE.MULTIPLE -> {
+                if(sharedViewModel.capturedPhotos.size < sharedViewModel.currentCaptureMode.photos) {
+                    findNavController().navigate(R.id.action_previewFragment_to_countdownFragment)
+                    return
+                } else {
+                    resultBitmap = processPhoto(createBitmapBWithAlignedCopiesOfA(
+                        createBitmapPageWithImages(
+                            sharedViewModel.capturedPhotos[0],
+                            sharedViewModel.capturedPhotos[1],
+                            sharedViewModel.capturedPhotos[2]
+                        )
+                    ))
+                }
+            }
+        }
+
+        if(sharedPreferences.getBoolean("settings:showQR", false)) {
+            processPrintingAction("${printEvent}")
         } else {
-            if(isMultiPhoto(sharedPreferences)) {
-                resultBitmap = processPhoto(createBitmapBWithAlignedCopiesOfA(
-                    createBitmapPageWithImages(
-                        CountdownFragment.getCapturedPhoto(requireContext())!!,
-                        CountdownFragment.getCapturedPhoto2(requireContext())!!,
-                        CountdownFragment.getCapturedPhoto3(requireContext())!!
-                    )
-                ))
-
-                CountdownFragment.setCapturedPhoto(requireContext(), null)
-                CountdownFragment.setCapturedPhoto2(requireContext(), null)
-                CountdownFragment.setCapturedPhoto3(requireContext(), null)
-            } else {
-                resultBitmap = processPhoto(CountdownFragment.getCapturedPhoto(requireContext())!!)
-            }
-
-            if(sharedPreferences.getBoolean("settings:showQR", false)) {
-                processPrintingAction("${printEvent}")
-            } else {
-                processPrintingAction("print")
-            }
+            processPrintingAction("print")
         }
     }
 

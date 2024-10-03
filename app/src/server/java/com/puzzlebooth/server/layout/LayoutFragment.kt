@@ -23,7 +23,7 @@ import java.nio.file.Files
 class LayoutFragment : BaseFragment<FragmentLayoutBinding>(R.layout.fragment_layout) {
 
     private val remoteFiles = mutableListOf<FileServer>()
-    private val REMOTE_LAYOUTS = "https://puzzleslb.com/puzzlebooth/uploads/mirror_booth_uploads/layouts1/"
+    private val REMOTE_LAYOUTS = "https://puzzleslb.com/api/designs/designs/"
 
     private fun getRemoteLayouts() {
         "${REMOTE_LAYOUTS}/list.php".httpGet()

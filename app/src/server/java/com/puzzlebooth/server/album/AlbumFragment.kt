@@ -195,9 +195,9 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
                     .doOnNext {
                         val followQR = sharedPreferences.getBoolean("settings:followQR", false)
                         if(followQR) {
-                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image.php?link=${fileName}")
+                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/api/mirror/show_image.php?link=${fileName}")
                         } else {
-                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image_unlocked.php?link=${fileName}")
+                            (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/api/mirror/show_image_unlocked.php?link=${fileName}")
                         }
                     }
                     .subscribe()
@@ -247,9 +247,9 @@ class AlbumFragment : BaseFragment<FragmentAlbumBinding>(R.layout.fragment_album
                             .doOnNext {
                                 val followQR = sharedPreferences.getBoolean("settings:followQR", false)
                                 if(followQR) {
-                                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image.php?link=${fileName}")
+                                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/api/mirror/show_image.php?link=${fileName}")
                                 } else {
-                                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/puzzlebooth/show_image_unlocked.php?link=${fileName}")
+                                    (requireActivity() as? MainActivity)?.showQRCode("https://puzzleslb.com/api/mirror/show_image_unlocked.php?link=${fileName}")
                                 }
                             }
                             .subscribe()

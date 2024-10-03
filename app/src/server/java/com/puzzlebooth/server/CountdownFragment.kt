@@ -3,6 +3,10 @@ package com.puzzlebooth.server
 import android.R.attr
 import android.R.attr.duration
 import android.R.attr.resource
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -12,10 +16,16 @@ import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.ScaleAnimation
 import android.widget.TextView
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
@@ -28,6 +38,7 @@ import com.bumptech.glide.request.target.Target
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.PictureResult
 import com.otaliastudios.cameraview.controls.Mode
+import com.puzzlebooth.main.SharedViewModel
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
@@ -35,6 +46,8 @@ import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.PreviewFragment.Companion.isMultiPhoto
 import com.puzzlebooth.server.databinding.FragmentCountdownBinding
 import com.puzzlebooth.server.utils.AnimationsManager
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -47,6 +60,11 @@ import java.io.FileOutputStream
 class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragment_countdown) {
 
     var countdownRunning = true
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val countdownValues = arrayOf("3", "2", "1", "Preparing Photo...")
+    private var countdownIndex = 0
+    private var countdownValues2 = listOf(3, 2, 1)
+    private var currentIndex = 0
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent?) {
@@ -67,58 +85,8 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
     }
 
     companion object {
-        var capturedPhoto: Bitmap? = null
-        var capturedPhoto2: Bitmap? = null
-        var capturedPhoto3: Bitmap? = null
-//
-//
-        fun getCapturedPhoto(context: Context): Bitmap? {
-            return capturedPhoto
-            //return getBitmapFromCache(context, "capturedPhoto.png")
-        }
-
-        fun getCapturedPhoto2(context: Context): Bitmap? {
-            return capturedPhoto2
-            //return getBitmapFromCache(context, "capturedPhoto2.png")
-        }
-
-        fun getCapturedPhoto3(context: Context): Bitmap? {
-            return capturedPhoto3
-            //return getBitmapFromCache(context, "capturedPhoto3.png")
-        }
-
-        fun setCapturedPhoto(context: Context, bitmap: Bitmap?) {
-            bitmap?.let {
-                val newBitmap = Bitmap.createScaledBitmap(bitmap, (bitmap.width * 0.5).toInt(), (bitmap.height * 0.5).toInt(), true)
-                capturedPhoto = newBitmap
-            } ?: run {
-                capturedPhoto = null
-            }
 
 
-        //saveBitmapToCache(context, bitmap, "capturedPhoto.png")
-        }
-
-        fun setCapturedPhoto2(context: Context, bitmap: Bitmap?) {
-            bitmap?.let {
-                val newBitmap = Bitmap.createScaledBitmap(bitmap, (bitmap.width * 0.5).toInt(), (bitmap.height * 0.5).toInt(), true)
-                capturedPhoto2 = newBitmap
-            } ?: run {
-                capturedPhoto2 = null
-            }
-            //saveBitmapToCache(context, bitmap, "capturedPhoto2.png")
-        }
-
-        fun setCapturedPhoto3(context: Context, bitmap: Bitmap?) {
-            bitmap?.let {
-                val newBitmap = Bitmap.createScaledBitmap(bitmap, (bitmap.width * 0.5).toInt(), (bitmap.height * 0.5).toInt(), true)
-                capturedPhoto3 = newBitmap
-            } ?: run {
-                capturedPhoto3 = null
-            }
-
-            //saveBitmapToCache(context, bitmap, "capturedPhoto3.png")
-        }
 
         // Function to save Bitmap to cache directory
         fun saveBitmapToCache(context: Context, bitmap: Bitmap?, fileName: String): File? {
@@ -166,30 +134,49 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
     private inner class Listener : CameraListener() {
         override fun onPictureTaken(result: PictureResult) {
             super.onPictureTaken(result)
-            if(isMultiPhoto(sharedPreferences)) {
-                println("hhh multiplePhotos")
-                result.toBitmap { bitmap ->
-                    if(getCapturedPhoto(requireContext()) == null) {
-                        setCapturedPhoto(requireContext(), bitmap)
-                    } else if(getCapturedPhoto2(requireContext()) == null) {
-                        setCapturedPhoto2(requireContext(), bitmap)
-                    } else {
-                        setCapturedPhoto3(requireContext(), bitmap)
-                    }
-
-                    findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
-
-                    //refreshPhotoThumbnails()
-                }
-            } else {
-                result.toBitmap() {
-                    if (it != null) {
-                        binding.camera.close()
-                        capturedPhoto = it
-                        findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
+            sharedViewModel.createOriginalFile(requireContext(), sharedPreferences).let {
+                result.toBitmap { fileCallback ->
+                    if (fileCallback != null) {
+                        sharedViewModel
+                            .saveBitmapToOriginals(requireContext(), sharedPreferences, fileCallback)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnSuccess { fileSuccess ->
+                                sharedViewModel.capturedPhotos.add(fileSuccess)
+                                requireActivity().runOnUiThread {
+                                    findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
+                                }
+                            }.subscribe()
                     }
                 }
             }
+
+
+
+//            if(isMultiPhoto(sharedPreferences)) {
+//                println("hhh multiplePhotos")
+//                result.toBitmap { bitmap ->
+//                    if(getCapturedPhoto(requireContext()) == null) {
+//                        setCapturedPhoto(requireContext(), bitmap)
+//                    } else if(getCapturedPhoto2(requireContext()) == null) {
+//                        setCapturedPhoto2(requireContext(), bitmap)
+//                    } else {
+//                        setCapturedPhoto3(requireContext(), bitmap)
+//                    }
+//
+//                    findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
+//
+//                    //refreshPhotoThumbnails()
+//                }
+//            } else {
+//                result.toBitmap() {
+//                    if (it != null) {
+//                        binding.camera.close()
+//                        capturedPhoto = it
+//                        findNavController().navigate(R.id.action_countdownFragment_to_previewFragment)
+//                    }
+//                }
+//            }
 //            result.toBitmap() {
 //                if (it != null) {
 //                    println("hhh picture taken!")
@@ -246,9 +233,10 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
         val animation = if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             AnimationsManager.countdownLandscape
         } else {
-            AnimationsManager.countdown
+            AnimationsManager.countdownLandscape
         }
 
+        //startCountdown4()
         Glide
             .with(this)
             .asGif()
@@ -295,30 +283,56 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
             })
             .into(binding.overlayAnimation)
     }
-
-    private fun startCountdown() {
-        countdownRunning = true
-
-        lifecycleScope.launch {
-            //binding.camera.mode = Mode.VIDEO
-            binding.camera.open()
-            val exposure = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
-            binding.camera.exposureCorrection = exposure
-            //binding.camera.exposureCorrection = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
-
-            val zoom = sharedPreferences.getFloat("camera:zoom", binding.camera.exposureCorrection)
-            binding.camera.zoom = zoom
-
-
-            val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", true)
-
-
-
-            if(currentAutoPhoto) {
-                println("hhh capture photo")
-                //binding.btnStart2.performClick()
-                //binding.camera.takePicture()
-            }
-        }
-    }
+//    private fun startCountdown4() {
+//        if (currentIndex < countdownValues.size) {
+//            val currentValue = countdownValues[currentIndex]
+//            binding.countdownTextView?.text = currentValue.toString()
+//
+//            // Create an ObjectAnimator to animate scaleX and scaleY
+//            val animator = ObjectAnimator.ofFloat(binding.countdownTextView, "scaleX", 5f, 1f)
+//            animator.duration = 1000 // 1 second
+//            animator.repeatCount = 0
+//
+//            val animatorY = ObjectAnimator.ofFloat(binding.countdownTextView, "scaleY", 5f, 1f)
+//            animatorY.duration = 1000
+//
+//            // Start both animations together
+//            animator.start()
+//            animatorY.start()
+//
+//            animator.addListener(object : AnimatorListenerAdapter() {
+//                override fun onAnimationEnd(animation: Animator) {
+//                    currentIndex++
+//                    startCountdown4() // Start the next countdown number after animation ends
+//                }
+//            })
+//        }
+//    }
+//
+//
+//    private fun startCountdown() {
+//        countdownRunning = true
+//
+//        lifecycleScope.launch {
+//            //binding.camera.mode = Mode.VIDEO
+//            binding.camera.open()
+//            val exposure = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
+//            binding.camera.exposureCorrection = exposure
+//            //binding.camera.exposureCorrection = sharedPreferences.getFloat("camera:exposure", binding.camera.exposureCorrection)
+//
+//            val zoom = sharedPreferences.getFloat("camera:zoom", binding.camera.exposureCorrection)
+//            binding.camera.zoom = zoom
+//
+//
+//            val currentAutoPhoto = sharedPreferences.getBoolean("settings:autoPhoto", true)
+//
+//
+//
+//            if(currentAutoPhoto) {
+//                println("hhh capture photo")
+//                //binding.btnStart2.performClick()
+//                //binding.camera.takePicture()
+//            }
+//        }
+//    }
 }

@@ -1,112 +1,109 @@
 package com.puzzlebooth.server
 
 import android.app.Activity
+import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.puzzlebooth.main.PHOTO_MODE
+import com.puzzlebooth.main.SharedViewModel
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
-import com.puzzlebooth.server.CountdownFragment.Companion.capturedPhoto
-import com.puzzlebooth.server.CountdownFragment.Companion.capturedPhoto2
-import com.puzzlebooth.server.CountdownFragment.Companion.capturedPhoto3
+import com.puzzlebooth.main.utils.draftPath
+import com.puzzlebooth.main.utils.draftPathCutIn2
+import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
+import com.puzzlebooth.server.PreviewFragment.Companion.isMultiPhoto
 import com.puzzlebooth.server.databinding.FragmentStartBinding
 import com.puzzlebooth.server.mosaic.MosaicManager
+import com.puzzlebooth.server.settings.PhotoQuality
 import com.puzzlebooth.server.utils.AnimationsManager
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start) {
 
-    companion object {
-        var isMultiPhoto = false
-    }
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun initViewBinding(view: View): FragmentStartBinding {
         return FragmentStartBinding.bind(view)
     }
 
-    fun clearMultiPhoto() {
-        capturedPhoto = null
-        capturedPhoto2 = null
-        capturedPhoto3 = null
-        isMultiPhoto = false
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        clearMultiPhoto()
         initViews()
+    }
+
+    fun setAnimation() {
+        val layoutName = if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            sharedPreferences.getString("selectedAnimationLand", "")
+        } else {
+            sharedPreferences.getString("selectedAnimation", "")
+        }
+
+        if(layoutName.isNullOrEmpty()) {
+            Glide.with(this)
+                .load(AnimationsManager.start)
+                .transform(RotateTransformation(requireContext(), 0f))
+                .into(binding.startAnimation)
+        } else {
+            val layoutPath = "${requireContext().cacheDir}/animations/${layoutName}"
+            Glide.with(this)
+                .load(layoutPath)
+                .transform(RotateTransformation(requireContext(),
+                    0f
+                ))
+                .into(binding.startAnimation)
+        }
     }
 
     private fun initViews() {
 
-        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            val layoutName = sharedPreferences.getString("selectedAnimationLand", "")
-            if(layoutName.isNullOrEmpty()) {
-                Glide.with(this)
-                    .load(AnimationsManager.startLandscape)
-                    .transform(RotateTransformation(requireContext(), 0f))
-                    .into(binding.startAnimation)
-            } else {
-                val layoutPath = "${requireContext().cacheDir}/animations/${layoutName}"
-                Glide.with(this)
-                    .load(layoutPath)
-                    .transform(RotateTransformation(requireContext(),
-                        0f
-                    ))
-                    .into(binding.startAnimation)
-            }
-        } else {
-            val layoutName = sharedPreferences.getString("selectedAnimation", "")
-            println("hhh animation for portrait is ${layoutName}")
-            if(layoutName.isNullOrEmpty()) {
-                Glide.with(this)
-                    .load(AnimationsManager.start)
-                    .transform(RotateTransformation(requireContext(), 0f))
-                    .into(binding.startAnimation)
-            } else {
-                val layoutPath = "${requireContext().cacheDir}/animations/${layoutName}"
-                Glide.with(this)
-                    .load(layoutPath)
-                    .transform(RotateTransformation(requireContext(),
-                        0f
-                    ))
-                    .into(binding.startAnimation)
-            }
-        }
+        setAnimation()
 
         binding.backButton?.setOnClickListener {
             requireActivity().onBackPressed()
         }
 
         binding.clickable.setOnClickListener {
-            val isVideoMessage = sharedPreferences.getBoolean("settings:isVideoMessage", false)
-            val isMultiplePhotos = CountdownMultiplePhotosFragment.multiplePhotos
-            CountdownFragment.setCapturedPhoto(requireContext(), null)
-            CountdownFragment.setCapturedPhoto2(requireContext(), null)
-            CountdownFragment.setCapturedPhoto3(requireContext(), null)
-            when {
-                isVideoMessage -> findNavController().navigate(R.id.action_startFragment_to_countdownVideoFragment)
-                isMultiplePhotos -> findNavController().navigate(R.id.action_startFragment_to_countdownMultiplePhotosFragment)
-                else -> findNavController().navigate(R.id.action_startFragment_to_countdownFragment)
-            }
+            startSession()
+            findNavController().navigate(R.id.action_startFragment_to_countdownFragment)
+//            val isVideoMessage = sharedPreferences.getBoolean("settings:isVideoMessage", false)
+//            val isMultiplePhotos = CountdownMultiplePhotosFragment.multiplePhotos
+//            when {
+//                isVideoMessage -> findNavController().navigate(R.id.action_startFragment_to_countdownVideoFragment)
+//                isMultiplePhotos -> findNavController().navigate(R.id.action_startFragment_to_countdownMultiplePhotosFragment)
+//                else -> findNavController().navigate(R.id.action_startFragment_to_countdownFragment)
+//            }
         }
+    }
+
+    private fun startSession() {
+        sharedViewModel.capturedPhotos.clear()
+        sharedViewModel.currentCaptureMode = PHOTO_MODE.SINGLE
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent?) {
         when {
-            event?.text == "start" -> binding.clickable.performClick()
+            event?.text == "start" -> startSession()
             event?.text == "start2" -> {
-                isMultiPhoto = true
-                binding.clickable.performClick()
+                // is multiphoto = true
+                startSession()
             }
             event?.text == "showAlbum" -> findNavController().navigate(R.id.action_startFragment_to_albumFragment)
             event?.text == "showsecretmenu" -> findNavController().navigate(R.id.action_startFragment_to_cameraFragment)

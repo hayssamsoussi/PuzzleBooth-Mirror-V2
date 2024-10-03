@@ -26,7 +26,7 @@
         android:layout_height="match_parent"
         android:translationZ="10dp"
         android:scaleType="centerCrop"
-        android:alpha="0.2" />
+        android:alpha="0.5" />
 
     <com.otaliastudios.cameraview.CameraView
         android:id="@+id/camera"
@@ -35,8 +35,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:cameraGestureTap="autoFocus"
-        app:cameraGesturePinch="zoom"
         app:cameraGestureScrollVertical="exposureCorrection"
         app:cameraEngine="camera2"
         app:cameraPreview="surface"
@@ -57,16 +55,5 @@
         app:cameraRequestPermissions="true"
         app:cameraExperimental="false"/>
 
-
-    <TextView
-        android:id="@+id/textDisplay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:visibility="gone"
-        android:textSize="20sp"
-        android:textColor="@color/white"
-        android:text="Countdown animation" />
 
 </RelativeLayout>

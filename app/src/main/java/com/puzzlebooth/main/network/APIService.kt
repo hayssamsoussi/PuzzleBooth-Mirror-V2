@@ -69,22 +69,22 @@ interface APIService {
     @GET("admin/public/api/events/{eventId}")
     fun getEvent(@Path("eventId") id: Int): Observable<Event>
 
-    @GET("puzzlebooth/api_v2/rest/list-designs.php")
+    @GET("api/designs/list.php?type=designs")
     fun listDesigns(): Observable<List<Design>>
 
-    @GET("puzzlebooth/api_v2/rest/list-animations.php")
+    @GET("api/designs/list.php?type=animations")
     fun listAnimations(): Observable<List<Design>>
 
-    @GET("puzzlebooth/api_v2/rest/list-mosaic.php")
+    @GET("api/designs/list.php?type=mosaic")
     fun listMosaic(): Observable<List<Design>>
 
-    @GET("puzzlebooth/uploads/mirror_booth_uploads/uploads/list.php")
+    @GET("api/mirror/uploads/list.php")
     fun listPhotos(): Observable<RemoteFilesResponse>
 
-    @POST("puzzlebooth/api_v2/photos.php")
+    @POST("api/mirror/photos.php")
     fun uploadPhotoNumber(@Body photoRequest: RemotePhotoRequest): Observable<ResponseBody>
 
-    @POST("puzzlebooth/uploads/mirror_booth_uploads/upload.php")
+    @POST("api/mirror/upload.php")
     fun uploadPhotoFile(@Body body: RequestBody): Observable<ResponseBody>
 }
 

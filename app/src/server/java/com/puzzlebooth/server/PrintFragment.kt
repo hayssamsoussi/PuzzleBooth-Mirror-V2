@@ -13,10 +13,10 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.utils.RotateTransformation
-import com.puzzlebooth.server.CountdownFragment.Companion.capturedPhoto
-import com.puzzlebooth.server.CountdownFragment.Companion.capturedPhoto2
-import com.puzzlebooth.server.CountdownFragment.Companion.capturedPhoto3
-import com.puzzlebooth.server.StartFragment.Companion.isMultiPhoto
+//import com.puzzlebooth.server.CountdownFragment.Companion.capturedPhoto
+//import com.puzzlebooth.server.CountdownFragment.Companion.capturedPhoto2
+//import com.puzzlebooth.server.CountdownFragment.Companion.capturedPhoto3
+//import com.puzzlebooth.server.StartFragment.Companion.isMultiPhoto
 import com.puzzlebooth.server.databinding.FragmentPrintBinding
 import com.puzzlebooth.server.utils.AnimationsManager
 import kotlinx.coroutines.CoroutineScope
@@ -33,10 +33,10 @@ class PrintFragment : BaseFragment<FragmentPrintBinding>(R.layout.fragment_print
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     fun clearMultiPhoto() {
-        capturedPhoto = null
-        capturedPhoto2 = null
-        capturedPhoto3 = null
-        isMultiPhoto = false
+//        capturedPhoto = null
+//        capturedPhoto2 = null
+//        capturedPhoto3 = null
+//        isMultiPhoto = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

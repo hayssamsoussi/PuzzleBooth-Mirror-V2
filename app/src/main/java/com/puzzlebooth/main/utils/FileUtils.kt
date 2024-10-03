@@ -20,7 +20,7 @@ fun Context.getCurrentEventPhotosPath(): String {
     val timeStampDate: String = timeFormatDate.format(Date())
     val sharedPreferences = this.getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
     val selectedLayout = sharedPreferences.getString("selectedLayout", "")
-    return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/${timeStampDate}-${selectedLayout}/"
+    return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/new/${timeStampDate}-${selectedLayout}/"
 }
 
 fun Context.getCurrentEventName(): String {
