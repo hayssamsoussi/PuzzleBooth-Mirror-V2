@@ -1,4 +1,4 @@
-package com.puzzlebooth.main
+package com.puzzlebooth.server
 
 import android.content.Context
 import android.content.SharedPreferences

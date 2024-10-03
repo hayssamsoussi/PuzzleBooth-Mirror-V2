@@ -1,38 +1,22 @@
 package com.puzzlebooth.server
 
 import android.app.Activity
-import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.puzzlebooth.main.PHOTO_MODE
-import com.puzzlebooth.main.SharedViewModel
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.utils.RotateTransformation
-import com.puzzlebooth.main.utils.draftPath
-import com.puzzlebooth.main.utils.draftPathCutIn2
-import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
-import com.puzzlebooth.server.PreviewFragment.Companion.isMultiPhoto
 import com.puzzlebooth.server.databinding.FragmentStartBinding
 import com.puzzlebooth.server.mosaic.MosaicManager
-import com.puzzlebooth.server.settings.PhotoQuality
 import com.puzzlebooth.server.utils.AnimationsManager
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.File
-import java.io.FileOutputStream
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start) {
 

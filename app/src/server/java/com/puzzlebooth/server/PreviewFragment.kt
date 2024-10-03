@@ -12,15 +12,11 @@ import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.FileUtils
 import android.view.View
-import androidx.compose.ui.unit.Constraints
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.puzzlebooth.main.PHOTO_MODE
-import com.puzzlebooth.main.SharedViewModel
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.models.RemotePhoto
@@ -34,8 +30,6 @@ import com.puzzlebooth.server.databinding.FragmentPreviewBinding
 import com.puzzlebooth.server.mosaic.MosaicManager
 import com.puzzlebooth.server.settings.PhotoQuality
 import io.paperdb.Paper
-import io.reactivex.Completable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
