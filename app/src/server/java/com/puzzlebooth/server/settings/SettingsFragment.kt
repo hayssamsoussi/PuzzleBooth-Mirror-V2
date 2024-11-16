@@ -150,6 +150,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             requireActivity().onBackPressed()
         }
 
+        binding.btnSaveOriginal?.setOnClickListener {
+            toggleSaveOriginal()
+            updateViews()
+        }
+
         val version = "Version: " + getAppVersionName()
         binding.tvVersion.text = version
 
@@ -265,6 +270,14 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         edit.apply()
     }
 
+    fun toggleSaveOriginal() {
+        val current = sharedPreferences.getBoolean("settings:saveOriginal", false)
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("settings:saveOriginal", !current)
+        edit.apply()
+    }
+
     fun toggleTwoCopies() {
         val current = sharedPreferences.getBoolean("settings:twoCopies", false)
 
@@ -337,6 +350,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         binding.btnCanon.setStatus(sharedPreferences.getBoolean("settings:canonPrinting", false), "Canon printing")
         binding.btnCanonTwoPrinters.setStatus(sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false), "Canon two printers")
         binding.btnTwoCopies?.setStatus(sharedPreferences.getBoolean("settings:twoCopies", false), "2 copies")
+        binding.btnSaveOriginal?.setStatus(sharedPreferences.getBoolean("settings:saveOriginal", false), "Save original")
         binding.btnVideoMessage.setStatus(sharedPreferences.getBoolean("settings:isVideoMessage", false), "Video message")
         binding.btnFollowQR.setStatus(sharedPreferences.getBoolean("settings:followQR", false), "Follow QR")
         binding.btnMultiPhoto?.setStatus(sharedPreferences.getBoolean("settings:multiPhoto", false), "Multi Photo")

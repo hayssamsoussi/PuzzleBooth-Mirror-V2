@@ -101,6 +101,12 @@ class MainActivity : BaseNearbyActivity() {
         }
     }
 
+    fun hideQRCode() {
+        runOnUiThread {
+            showQRFragment?.dismissAllowingStateLoss()
+        }
+    }
+
     fun showQRCode(text: String) {
         runOnUiThread {
             showQRFragment = QRCodeFragment.newInstance(text)

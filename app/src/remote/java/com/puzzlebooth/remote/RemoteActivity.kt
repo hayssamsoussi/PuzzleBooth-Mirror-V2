@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.text.method.ScrollingMovementMethod
+import android.view.KeyEvent
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -133,6 +134,31 @@ class RemoteActivity : BaseNearbyActivity() {
         }
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_master_bottom_navigation) as NavHostFragment
+        val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
+
+        if (currentFragment is VolumeKeyListener) {
+            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                return currentFragment.onVolumeKeyPressed(keyCode)
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_master_bottom_navigation) as NavHostFragment
+        val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
+
+        if (currentFragment is VolumeKeyListener) {
+            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                return currentFragment.onVolumeKeyReleased(keyCode)
+            }
+        }
+        return super.onKeyUp(keyCode, event)
+    }
+
+
     fun send(msgText: String){
 
         send(Payload.fromBytes(msgText.toByteArray()))
@@ -143,4 +169,9 @@ class RemoteActivity : BaseNearbyActivity() {
 //        startService(intent)
     }
 
+}
+
+interface VolumeKeyListener {
+    fun onVolumeKeyPressed(keyCode: Int): Boolean
+    fun onVolumeKeyReleased(keyCode: Int): Boolean
 }

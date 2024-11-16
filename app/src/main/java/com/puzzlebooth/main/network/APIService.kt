@@ -66,7 +66,7 @@ interface APIService {
         const val REMOTE_BASE_URL = "https://www.puzzleslb.com/"
     }
 
-    @GET("admin/public/api/events/{eventId}")
+    @GET("api/admin/public/api/events/{eventId}")
     fun getEvent(@Path("eventId") id: Int): Observable<Event>
 
     @GET("api/designs/list.php?type=designs")

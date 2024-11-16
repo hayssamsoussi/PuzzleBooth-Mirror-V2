@@ -49,10 +49,13 @@ class QRCodeFragment: DialogFragment() {
             val display = window!!.windowManager.defaultDisplay
             display.getSize(size)
 
+            // Adjust other attributes if needed
+            dialog.window?.setDimAmount(0f)
+
             val width: Int = size.x
 
-            window.setLayout((width * 0.90).toInt(), WindowManager.LayoutParams.WRAP_CONTENT)
-            window.setGravity(Gravity.CENTER)
+            //window.setLayout((width * 1).toInt(), WindowManager.LayoutParams.WRAP_CONTENT)
+            window.setGravity(Gravity.TOP or Gravity.END)
         }
     }
 
@@ -91,9 +94,7 @@ class QRCodeFragment: DialogFragment() {
     }
 
     private fun setUpViews() {
-        val buttonSkip = requireView().findViewById<Button>(R.id.btn_skip)
-
-        buttonSkip.setOnClickListener {
+        requireView().findViewById<ImageView>(R.id.ivQrCode).rootView.setOnClickListener {
             dismiss()
         }
     }

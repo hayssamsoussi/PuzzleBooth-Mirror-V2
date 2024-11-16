@@ -64,7 +64,6 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
         }
 
         binding.clickable.setOnClickListener {
-            startSession()
             findNavController().navigate(R.id.action_startFragment_to_countdownFragment)
 //            val isVideoMessage = sharedPreferences.getBoolean("settings:isVideoMessage", false)
 //            val isMultiplePhotos = CountdownMultiplePhotosFragment.multiplePhotos
@@ -79,10 +78,13 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
     private fun startSession() {
         sharedViewModel.capturedPhotos.clear()
         sharedViewModel.currentCaptureMode = PHOTO_MODE.SINGLE
+        binding.clickable.performClick()
+        (requireActivity() as? MainActivity)?.hideQRCode()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent?) {
+        println("hhh event.text: ${event?.text}")
         when {
             event?.text == "start" -> startSession()
             event?.text == "start2" -> {

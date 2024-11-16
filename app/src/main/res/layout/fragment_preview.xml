@@ -107,6 +107,7 @@
             android:textColor="@color/white"
             app:layout_constraintTop_toTopOf="parent"
             android:textStyle="bold"
+            android:visibility="gone"
             android:layout_marginTop="30dp"
             android:textSize="40dp"
             android:text="Do you like it?"/>
