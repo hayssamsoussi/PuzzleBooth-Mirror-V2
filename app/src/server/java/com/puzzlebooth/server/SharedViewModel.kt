@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.puzzlebooth.main.utils.getCurrentEventOriginalPhotosPath
 import com.puzzlebooth.main.utils.getCurrentEventPhotosPath
 import com.puzzlebooth.server.PreviewFragment.Companion.isMultiPhoto
 import com.puzzlebooth.server.settings.PhotoQuality
@@ -51,7 +52,7 @@ class SharedViewModel() : ViewModel() {
         val fileName = "${timeStamp}_$selectedLayout.jpeg"
 
 
-        val originalsPath = context.getCurrentEventPhotosPath() + "originals/"
+        val originalsPath = context.getCurrentEventOriginalPhotosPath()
         File(originalsPath).mkdirs()
 
         val file = File("$originalsPath$fileName")
