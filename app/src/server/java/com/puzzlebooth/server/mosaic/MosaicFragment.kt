@@ -61,7 +61,6 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
 
     var currentDesign: Design? = null
     private var designs = mutableListOf<Design>()
-    private lateinit var adapterDownload: DesignsAdapter
 
     val timer = Timer()
     override fun onStart() {
@@ -114,39 +113,14 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
-        initData()
-        updateViews()
+        updateMosaicInfo(true)
 
-    }
-
-    fun initData() {
-        service
-            .listMosaic()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnError {
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Error")
-                    .setMessage(it.message)
-                    .show()
-            }
-            .doOnNext {
-                designs.clear()
-                designs.addAll(it)
-                adapterDownload.notifyDataSetChanged()
-            }.subscribe()
-    }
-
-    fun startTimer() {
-        timer.schedule(timerTask {
-            if(isVisible) {
-                updateViews()
-            }
-        }, 0, 2000)
     }
 
     fun fetchMosaicViews(): Completable {
+        println("hhh fetchMosaicViews")
         return Completable.create { emitter ->
+            val startTime = System.currentTimeMillis() // Record the start time
             MosaicManager
                 .generateMosaicViews()
                 .subscribeOn(Schedulers.io())
@@ -157,6 +131,10 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
                     }
                 }
                 .doOnSuccess {
+                    val endTime = System.currentTimeMillis() // Record the end time
+                    val duration = endTime - startTime // Calculate the duration
+                    println("hhh:MosaicFragment:fetchMosaicViews:Time taken: $duration ms")
+
                     activity?.runOnUiThread {
                         hideProgress()
                     }
@@ -165,7 +143,6 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
                     mosaicViews.addAll(it)
                     emitter.onComplete()
                 }
-
                 .subscribe()
         }
     }
@@ -210,13 +187,13 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
                 when (index) {
                     0 -> {
                         MosaicManager.autoFill(requireContext())
-                        updateViews()
+                        updateMosaicInfo()
                     }
                     1 -> {
                         val edit = sharedPreferences.edit()
                         edit.putBoolean("settings:showMosaicImages", !showMosaicImages)
                         edit.apply()
-                        updateViews()
+                        updateMosaicInfo()
                     }
                     2 -> { /* Action for Item 3 */ }
                 }
@@ -227,11 +204,15 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
             println("hhh clicked!!!")
             binding.btnSendToPrint.fadeOutAndDisable(2000)
             MosaicManager.moveToPrintsToMerge(requireContext())
-            updateViews()
+            updateMosaicInfo()
         }
 
         binding.refreshButton.setOnClickListener {
-            updateViews()
+            initViews()
+        }
+
+        binding.downloadContainer.setOnClickListener {
+            findNavController().navigate(R.id.action_mosaicFragment_to_mosaicDownloadFragment)
         }
 
         binding.backButton.setOnClickListener {
@@ -251,80 +232,6 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
 //        binding.btn.setOnClickListener {
 //            findNavController().navigate(R.id.action_mosaicFragment_to_mosaicDownloadFragment)
 //        }
-
-        adapterDownload = DesignsAdapter(designs) {
-            currentDesign = it
-            showProgress()
-            Glide.with(requireContext()).load(it.url)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: com.bumptech.glide.request.target.Target<Drawable>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        println("hhh failed loading! ${e?.message}")
-                        requireActivity().runOnUiThread {
-                            AlertDialog.Builder(requireContext())
-                                .setMessage("Error ${e?.message}")
-                                .show()
-                        }
-                        hideProgress()
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        model: Any,
-                        target: com.bumptech.glide.request.target.Target<Drawable>?,
-                        dataSource: com.bumptech.glide.load.DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        hideProgress()
-                        return false
-                    }
-                })
-                .into(binding.ivLayout)
-        }
-
-        binding.updateButton.setOnClickListener {
-//            val eventId = binding.editText.text.toString().toIntOrNull() ?: return@setOnClickListener
-//            fetchEventInfo(eventId).map {
-//                val event = it ?: return@map
-//                updateEvent(event)
-//            }.subscribe()
-        }
-
-        binding.exitButton.setOnClickListener {
-            requireContext().showInputDialog("Alert", "Delete?") {
-                if(it == "taysir123") {
-                    MosaicManager.deleteAll()
-                }
-            }
-        }
-
-        binding.downloadButton.setOnClickListener {
-            currentDesign?.let { it1 -> downloadMosaic(it1) }
-        }
-
-        binding.deleteButton.setOnClickListener {
-            AlertDialog.Builder(requireContext())
-                .setMessage("Are you sure?")
-                .setPositiveButton("Yes", object: DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        MosaicManager.deleteAll()
-                    }
-                })
-                .setNegativeButton("No", object: DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        dialog?.dismiss()
-                    }
-
-                }).show()
-        }
-
-        binding.rvList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-        binding.rvList.adapter = adapterDownload
     }
 
     fun openPictureChooser() {
@@ -338,9 +245,9 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
         fragment.show(parentFragmentManager, "")
     }
 
-    fun updateViews() {
-
-        initViews()
+    fun updateMosaicInfo(isFirstTime: Boolean? = false) {
+        //initViews()
+        if(isFirstTime == false) fetchMosaicViews()
 
         val stringBuilder = StringBuilder()
         stringBuilder.appendLine("Originals: ${MosaicManager.mosaic_originals.listFiles()?.size}")
@@ -355,108 +262,10 @@ class MosaicFragment : BaseFragment<FragmentMosaicBinding>(R.layout.fragment_mos
 
         binding.btnSendToPrint.text = "${MosaicManager.mosaic_toPrint.list()?.size}/${MosaicManager.countMosaic}"
 
-        fetchMosaicViews()
-        println("hhh mosaicViews ${mosaicViews.size}")
 
-        val showMosaicImages = sharedPreferences.getBoolean("settings:showMosaicImages", false)
-        adapter?.notify(showMosaicImages)
-    }
 
-    fun downloadMosaic(design: Design) {
-        println("hhh downloading ${design.toString()}")
-        val url = design.url
-        if (!File("${requireContext().cacheDir}/mosaics/").exists()) {
-            File("${requireContext().cacheDir}/mosaics/").mkdirs()
-        }
-
-        val file = File("${requireContext().cacheDir}/mosaics/${design.filename}")
-        if (file.exists()) {
-            file.delete()
-        }
-
-        val outputStream = FileOutputStream(file)
-
-        Fuel.download(url)
-            .streamDestination { response, _ ->
-                Pair(
-                    outputStream
-                ) { response.body().toStream() }
-            }
-            .fileDestination { _, _ ->
-                file
-            }
-            .progress { readBytes, totalBytes ->
-                val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
-                requireActivity().runOnUiThread {
-                    binding.downloadButton.text = "Download ${progress}%" }
-            }
-            .response { result ->
-                result.fold(
-                    success = {
-
-                        requireActivity().runOnUiThread {
-                            binding.downloadButton.text = "Download"
-                            val pair = design.filename.substringAfter(":").substringBefore(".").split(":")
-                            val columns = pair[0].toIntOrNull()
-                            val rows = pair[1].toIntOrNull()
-
-                            if(rows != null && columns != null) {
-                                println("hhh fileName:${"${requireContext().cacheDir}/mosaics/${design.filename}"}")
-                                MosaicManager.splitBitmap("${requireContext().cacheDir}/mosaics/${design.filename}", columns, rows)
-                                Paper.book().write("${requireContext().getCurrentEventName()}:columns:rows", "$columns:$rows")
-                                MosaicManager.startMosaic(requireContext()) {}
-                            }
-
-                            //findNavController().popBackStack()
-                        }
-                    },
-                    failure = {
-                        println("hhh failure! ${it.message}")
-                        requireActivity().runOnUiThread {
-                            AlertDialog.Builder(requireContext())
-                                .setMessage("Error ${it.message}")
-                                .show()
-                        }
-//                        it.printStackTrace()
-//                        Toast.makeText(requireContext(), "Error downloading file!", Toast.LENGTH_SHORT)
-//                            .show()
-                    }
-                )
-            }
-
-    }
-
-    private fun fetchEventInfo(eventId: Int): Observable<Event> {
-        return service
-            .getEvent(eventId)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe {
-                Glide.with(requireContext()).clear(binding.ivLayout)
-                //binding.tvEventDescription.text = ""
-                binding.progressBar.show()
-            }
-            .doOnError {
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Error!")
-                    .setMessage(it.message)
-                    .show()
-                binding.progressBar.hide()
-            }
-            .doOnComplete {
-                binding.progressBar.hide()
-            }
-    }
-
-    private fun updateEvent(event: Event) {
-        if(!event.mosaic_url.isNullOrEmpty()) {
-            currentDesign = Design("", event.mosaic_url!!.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url!!)
-            println("hhh currentDesign ${currentDesign.toString()}")
-            currentDesign?.let {
-                Glide.with(requireContext()).load(it.url).into(binding.ivLayout)
-            }
-            //downloadMosaic(Design("", event.mosaic_url.substringAfterLast("/").removeSuffix(".jpg"), event.mosaic_url))
-        }
+        //val showMosaicImages = sharedPreferences.getBoolean("settings:showMosaicImages", false)
+        //adapter?.notify(showMosaicImages)
     }
 }
 

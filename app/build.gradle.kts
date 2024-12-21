@@ -47,7 +47,7 @@ android {
             dimension = "version"
             applicationId = "com.puzzlebooth.remote"
             versionCode = 21
-            versionName = "3.2"
+            versionName = "3.3"
         }
 
         create("server") {

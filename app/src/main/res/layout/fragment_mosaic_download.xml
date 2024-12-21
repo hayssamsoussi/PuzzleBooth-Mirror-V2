@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    android:background="@color/black"
-    tools:context="com.puzzlebooth.main.CountdownFragment">
+    android:background="@color/black">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp"
+        android:orientation="vertical"
         tools:context=".MainActivity">
 
         <LinearLayout
@@ -88,6 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="gone"
                 android:layout_marginEnd="10dp"
                 android:text="Update" />
 
@@ -121,6 +122,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     android:layout_marginEnd="10dp"
                     android:text="Delete" />
 
@@ -133,11 +135,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginBottom="100dp"
                 android:layout_marginEnd="10dp"
-                android:text="Exit" />
+                android:text="DELETE MOSAIC!" />
 
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

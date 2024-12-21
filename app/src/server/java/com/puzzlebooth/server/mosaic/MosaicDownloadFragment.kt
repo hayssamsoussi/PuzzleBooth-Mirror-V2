@@ -3,6 +3,7 @@ package com.puzzlebooth.server.mosaic
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +13,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.github.kittinunf.fuel.Fuel
 import com.puzzlebooth.main.base.BaseFragment
+import com.puzzlebooth.main.utils.getCurrentEventName
+import com.puzzlebooth.main.utils.showInputDialog
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.animations.hide
 import com.puzzlebooth.server.animations.show
@@ -21,6 +26,7 @@ import com.puzzlebooth.server.databinding.FragmentMosaicDownloadBinding
 import com.puzzlebooth.server.network.Design
 import com.puzzlebooth.server.network.Event
 import com.puzzlebooth.server.theme.listing.DesignsAdapter
+import io.paperdb.Paper
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -33,6 +39,7 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
     var currentDesign: Design? = null
     private var designs = mutableListOf<Design>()
     private lateinit var adapter: DesignsAdapter
+    private lateinit var adapterDownload: DesignsAdapter
 
     override fun initViewBinding(view: View): FragmentMosaicDownloadBinding {
         return FragmentMosaicDownloadBinding.bind(view)
@@ -52,9 +59,10 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
             .doOnNext {
                 designs.clear()
                 designs.addAll(it)
-                adapter.notifyDataSetChanged()
+                adapterDownload.notifyDataSetChanged()
             }.subscribe()
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -63,6 +71,7 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
         //MosaicManager.startMosaic(requireContext())
         return super.onCreateView(inflater, container, savedInstanceState)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -96,7 +105,7 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
             .progress { readBytes, totalBytes ->
                 val progress = readBytes.toFloat() / totalBytes.toFloat() * 100
                 requireActivity().runOnUiThread {
-                binding.downloadButton.text = "Download ${progress}%" }
+                    binding.downloadButton.text = "Download ${progress}%" }
             }
             .response { result ->
                 result.fold(
@@ -111,16 +120,23 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
                             if(rows != null && columns != null) {
                                 println("hhh fileName:${"${requireContext().cacheDir}/mosaics/${design.filename}"}")
                                 MosaicManager.splitBitmap("${requireContext().cacheDir}/mosaics/${design.filename}", columns, rows)
+                                Paper.book().write("${requireContext().getCurrentEventName()}:columns:rows", "$columns:$rows")
                                 MosaicManager.startMosaic(requireContext()) {}
                             }
 
-                            findNavController().popBackStack()
+                            //findNavController().popBackStack()
                         }
                     },
                     failure = {
-                        it.printStackTrace()
-                        Toast.makeText(requireContext(), "Error downloading file!", Toast.LENGTH_SHORT)
-                            .show()
+                        println("hhh failure! ${it.message}")
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setMessage("Error ${it.message}")
+                                .show()
+                        }
+//                        it.printStackTrace()
+//                        Toast.makeText(requireContext(), "Error downloading file!", Toast.LENGTH_SHORT)
+//                            .show()
                     }
                 )
             }
@@ -161,21 +177,55 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
     }
 
     fun initViews() {
-        adapter = DesignsAdapter(designs) {
+        adapterDownload = DesignsAdapter(designs) {
             currentDesign = it
-            Glide.with(requireContext()).load(it.url).into(binding.ivLayout)
+            showProgress()
+            Glide.with(requireContext()).load(it.url)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        println("hhh failed loading! ${e?.message}")
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setMessage("Error ${e?.message}")
+                                .show()
+                        }
+                        hideProgress()
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: com.bumptech.glide.request.target.Target<Drawable>?,
+                        dataSource: com.bumptech.glide.load.DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        hideProgress()
+                        return false
+                    }
+                })
+                .into(binding.ivLayout)
         }
 
         binding.updateButton.setOnClickListener {
-            val eventId = binding.editText.text.toString().toIntOrNull() ?: return@setOnClickListener
-            fetchEventInfo(eventId).map {
-                val event = it ?: return@map
-                updateEvent(event)
-            }.subscribe()
+//            val eventId = binding.editText.text.toString().toIntOrNull() ?: return@setOnClickListener
+//            fetchEventInfo(eventId).map {
+//                val event = it ?: return@map
+//                updateEvent(event)
+//            }.subscribe()
         }
 
         binding.exitButton.setOnClickListener {
-            findNavController().popBackStack()
+            requireContext().showInputDialog("Alert", "Delete?") {
+                if(it == "taysir123") {
+                    MosaicManager.deleteAll()
+                }
+            }
         }
 
         binding.downloadButton.setOnClickListener {
@@ -185,12 +235,12 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
         binding.deleteButton.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setMessage("Are you sure?")
-                .setPositiveButton("Yes", object: OnClickListener {
+                .setPositiveButton("Yes", object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                         MosaicManager.deleteAll()
                     }
                 })
-                .setNegativeButton("No", object: OnClickListener {
+                .setNegativeButton("No", object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                         dialog?.dismiss()
                     }
@@ -199,7 +249,7 @@ class MosaicDownloadFragment : BaseFragment<FragmentMosaicDownloadBinding>(R.lay
         }
 
         binding.rvList.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-        binding.rvList.adapter = adapter
+        binding.rvList.adapter = adapterDownload
 
     }
 }

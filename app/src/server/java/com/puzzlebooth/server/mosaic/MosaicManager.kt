@@ -556,24 +556,25 @@ object MosaicManager {
     fun generateMosaicViews(): Single<List<MosaicItem>> {
         return Single.create { emitter ->
             val map = mutableListOf<MosaicItem>()
-            if(mosaic_originals.exists()) {
-                val size = mosaic_originals.listFiles().size
-                if(size > 0) {
-                    (1..size).forEach {
-                        val image = "$it".padStart(3, '0') + ".jpg"
-                        val doesImageExist = mosaic_images.list { dir, name -> name == image }?.isNotEmpty() == true
 
-                        if(doesImageExist) {
-                            map.add(MosaicItem(it, File(mosaic_images.path + "/" + image), false))
+            if (mosaic_originals.exists()) {
+                val originalFiles = mosaic_originals.listFiles()?.map { it.name } ?: emptyList()
+                val imageSet = mosaic_images.listFiles()?.map { it.name }?.toSet() ?: emptySet()
+
+                if (originalFiles.isNotEmpty()) {
+                    originalFiles.sorted().forEachIndexed { index, fileName ->
+                        val doesImageExist = imageSet.contains(fileName)
+                        val imagePath = if (doesImageExist) {
+                            File(mosaic_images, fileName)
                         } else {
-                            map.add(MosaicItem(it, File(mosaic_originals.path + "/" + image), true))
+                            File(mosaic_originals, fileName)
                         }
+                        map.add(MosaicItem(index + 1, imagePath, !doesImageExist))
                     }
                 }
-                emitter.onSuccess(map)
-            } else {
-                emitter.onSuccess(map)
             }
+
+            emitter.onSuccess(map)
         }
     }
 
