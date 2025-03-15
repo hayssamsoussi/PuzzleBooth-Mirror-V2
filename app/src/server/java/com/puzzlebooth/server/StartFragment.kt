@@ -64,6 +64,9 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
         }
 
         binding.clickable.setOnClickListener {
+            sharedViewModel.capturedPhotos.clear()
+            sharedViewModel.currentCaptureMode = PHOTO_MODE.SINGLE
+            (requireActivity() as? MainActivity)?.hideQRCode()
             findNavController().navigate(R.id.action_startFragment_to_countdownFragment)
 //            val isVideoMessage = sharedPreferences.getBoolean("settings:isVideoMessage", false)
 //            val isMultiplePhotos = CountdownMultiplePhotosFragment.multiplePhotos

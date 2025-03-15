@@ -36,6 +36,7 @@ class SharedViewModel() : ViewModel() {
             val fileName = "${timeStamp}_$selectedLayout.jpeg"
 
             val originalsPath = context.getCurrentEventPhotosPath() + "originals/"
+            File(originalsPath).mkdirs()
             val file = FileOutputStream("$originalsPath$fileName")
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, file)
 

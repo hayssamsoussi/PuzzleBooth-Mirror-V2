@@ -117,6 +117,9 @@ class CountdownFragment : BaseFragment<FragmentCountdownBinding>(R.layout.fragme
                             .saveBitmapToOriginals(requireContext(), sharedPreferences, fileCallback)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
+                            .doOnError {
+                                it.printStackTrace()
+                            }
                             .doOnSuccess { fileSuccess ->
                                 sharedViewModel.capturedPhotos.add(fileSuccess)
                                 requireActivity().runOnUiThread {
