@@ -237,6 +237,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:visibility="gone"
         android:layout_margin="10dp"
         app:cardCornerRadius="10dp"
         app:cardBackgroundColor="#202020"
@@ -244,6 +245,7 @@
 
         <EditText
             android:id="@+id/etNumber"
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 

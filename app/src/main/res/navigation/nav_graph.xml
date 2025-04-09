@@ -184,7 +184,7 @@
 
     <fragment
         android:id="@+id/albumFragment"
-        android:name="com.puzzlebooth.server.album.AlbumFragment"
+        android:name="com.puzzlebooth.server.album.AlbumFragmentV2"
         android:label="Album Fragment"
         tools:layout="@layout/fragment_album" >
     </fragment>

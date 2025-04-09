@@ -8,6 +8,7 @@ import android.os.BatteryManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.google.android.gms.nearby.connection.Payload
+import com.google.firebase.firestore.FirebaseFirestore
 import com.puzzlebooth.main.BaseNearbyActivity
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.main.models.ServerStatus
@@ -31,10 +33,13 @@ import io.paperdb.Paper
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import org.greenrobot.eventbus.EventBus
+import org.json.JSONObject
 import java.io.File
 
 class MainActivity : BaseNearbyActivity() {
+    private lateinit var db: FirebaseFirestore
 
     //var udpBroadcastListener: UdpBroadcastListener? = null
     var sharedPreferences: SharedPreferences? = null
@@ -58,13 +63,72 @@ class MainActivity : BaseNearbyActivity() {
         }, 1000)
     }
 
+    fun getCurrentSettings() {
+        db = FirebaseFirestore.getInstance()
+
+        // Reference to the document "configuration/a"
+        val docRef = db.collection("configuration").document("a")
+
+        // Listen for real-time updates using a snapshot listener
+        docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.d("MainActivity", "hhh Listen failed.", e)
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                // Successfully got a snapshot, handle your data
+                val designValue = snapshot.getString("design") // "design" is the field name
+                Log.d("MainActivity", "hhh Current design value: $designValue")
+
+                // TODO: Update your UI or handle the design value as needed
+            } else {
+                // The document doesn't exist or snapshot is null
+                Log.d("MainActivity", "hhh No current data")
+            }
+        }
+
+//        sharedPreferences?.let { sharedPreferences ->
+//            val settingsMap = mapOf(
+//                "showQR" to sharedPreferences.getBoolean("settings:showQR", false),
+//                "flash" to sharedPreferences.getBoolean("settings:flash", false),
+//                "autoPhoto" to sharedPreferences.getBoolean("settings:autoPhoto", true),
+//                "printingSlow" to sharedPreferences.getBoolean("settings:printingSlow", true),
+//                "touchMode" to sharedPreferences.getBoolean("settings:touchMode", true),
+//                "canonPrinting" to sharedPreferences.getBoolean("settings:canonPrinting", false),
+//                "canonPrintingTwoPrinters" to sharedPreferences.getBoolean("settings:canonPrintingTwoPrinters", false),
+//                "twoCopies" to sharedPreferences.getBoolean("settings:twoCopies", false),
+//                "saveOriginal" to sharedPreferences.getBoolean("settings:saveOriginal", false),
+//                "isVideoMessage" to sharedPreferences.getBoolean("settings:isVideoMessage", false),
+//                "followQR" to sharedPreferences.getBoolean("settings:followQR", false),
+//                "multiPhoto" to sharedPreferences.getBoolean("settings:multiPhoto", false),
+//                // And so on for any additional Boolean or other types of settings
+//
+//                // For the non-boolean fields (e.g., printingQuality, landscape, etc.)
+//                "printingQuality" to sharedPreferences.getInt("settings:printingQuality", 300),
+//                "landscape" to sharedPreferences.getString("settings:landscape", "portrait")
+//            )
+//
+//            // Update the entire "settings" field in the document with the map
+//            docRef.update("settings", settingsMap)
+//                .addOnSuccessListener {
+//                    Log.d("Firestore", "Settings updated successfully!")
+//                }
+//                .addOnFailureListener { e ->
+//                    Log.w("Firestore", "Error updating settings", e)
+//                }
+//        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Paper.init(this);
+        Paper.init(this)
+
+        sharedPreferences = getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
+        getCurrentSettings()
 
         mName = "PBS"
 
-        sharedPreferences = getSharedPreferences("MySharedPref", AppCompatActivity.MODE_PRIVATE)
         val isLandscape = false
 
         if((isLandscape == true) && requestedOrientation != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {

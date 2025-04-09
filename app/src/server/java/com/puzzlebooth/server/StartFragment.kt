@@ -80,7 +80,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(R.layout.fragment_start
 
     private fun startSession() {
         sharedViewModel.capturedPhotos.clear()
-        sharedViewModel.currentCaptureMode = PHOTO_MODE.SINGLE
+        sharedViewModel.currentCaptureMode = PHOTO_MODE.MULTIPLE
         binding.clickable.performClick()
         (requireActivity() as? MainActivity)?.hideQRCode()
     }

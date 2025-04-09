@@ -19,8 +19,14 @@ import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.main.base.MessageEvent
 import com.puzzlebooth.server.databinding.FragmentMainBinding
 import com.puzzlebooth.server.mosaic.MosaicManager
+import com.puzzlebooth.server.network.SyncRequest
+import com.puzzlebooth.server.network.SyncResponse
+import com.puzzlebooth.server.settings.PhotoQuality.Companion.getAppVersionName
 import com.puzzlebooth.server.utils.Status
 import com.puzzlebooth.server.utils.SyncManager
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.serialization.json.JsonElement
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -123,6 +129,11 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             })
         }
 
+        binding.hayssam.setOnClickListener {
+            //syncDeviceStatus("hayssam", "default", "online")
+            fetchConfiguration("A")
+        }
+
         binding.animations.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setMessage("Portrait or Landscape?")
@@ -165,10 +176,49 @@ class MainFragment: BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             sync()
         }
 
+
+        val version = "Version: " + getAppVersionName(requireContext())
+        binding.tvVersion.text = version
+
 //        binding.audio.setOnClickListener {
 //            startActivity(Intent(requireContext(), AudioActivity::class.java))
 //        }
     }
+
+    fun syncDeviceStatus(deviceId: String, eventId: String, status: String) {
+        val request = SyncRequest(
+            device_id = deviceId,
+            event_id = eventId,
+            status = status
+        )
+
+        service.syncStatus(request)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ syncResponse: SyncResponse ->
+                // Handle successful sync response
+                println("hhh Sync successful: ${syncResponse.message}")
+            }, { error ->
+                // Handle errors here
+                println("hhh Error syncing status: ${error.localizedMessage}")
+            })
+    }
+
+
+    fun fetchConfiguration(deviceType: String, eventId: String = "default") {
+        service.fetchConfig(deviceType, eventId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ configJson: JsonElement ->
+                // Handle the JSON configuration response
+                println("hhh  Fetched configuration: $configJson")
+                // Process the JSON as needed
+            }, { error ->
+                // Handle errors here
+                println("hhh Error fetching config: ${error.localizedMessage}")
+            })
+    }
+
 
     fun sync() {
         val progressDialog: ProgressDialog = ProgressDialog(requireContext())

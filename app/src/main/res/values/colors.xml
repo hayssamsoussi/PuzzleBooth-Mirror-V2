@@ -5,4 +5,14 @@
     <color name="red">#9F0000</color>
     <color name="grey">#7D7D7D</color>
 
+    <color name="selection_color">#2196F3</color>
+    <color name="selection_overlay">#332196F3</color>
+    <color name="selected_border">#2196F3</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- If you need additional theme-specific colors -->
+    <color name="photo_background_light">#FFFFFF</color>
+    <color name="photo_background_dark">#121212</color>
+
+
 </resources>

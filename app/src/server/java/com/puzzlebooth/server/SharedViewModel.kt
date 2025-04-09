@@ -23,7 +23,7 @@ enum class PHOTO_MODE(val photos: Int) {
 
 class SharedViewModel() : ViewModel() {
     val capturedPhotos = mutableListOf<File>()
-    var currentCaptureMode: PHOTO_MODE = PHOTO_MODE.SINGLE
+    var currentCaptureMode: PHOTO_MODE = PHOTO_MODE.MULTIPLE
 
     fun saveBitmapToOriginals(context: Context, sharedPreferences: SharedPreferences, bitmap: Bitmap): Single<File> {
         return Single.fromCallable {

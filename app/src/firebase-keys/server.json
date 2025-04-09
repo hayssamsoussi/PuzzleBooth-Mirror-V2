@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "puzzlebooth-mirror",
+  "private_key_id": "0ccaab8c4319e2f5e8bd59a49c8ac6b3a738025e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCdPzeDkG/Teiam\noDqiVJQh0aEEOGhU5YkmqrzStYpbkKUnN7jzUydUb1epENYU3yuANQ28Iij9J611\n8KRslI5tLvsalaSAXUKjFePPo7wpXJeKPVmMuM5xPrROA7CPP9qnpuLjIpU+XSpa\n0fz6x83R3JckijxlOPqx7zU82Hh4LB4w/0bBgAUUPovNrUgydy0dT3J3Kh2p0ZBN\nampq6WQLvWP+lolGSZfLKizrXLodJuEyn0FQ9QFTWbUek4+DBLrZ9rA/rZqUsV+k\n2qOSqc8ZomxiByhXkSzKFJNFFF7EIixDAuvWiygBGaoLMjv1bjMq6Nm0dQ9s8QXZ\nM14CLbnhAgMBAAECggEABE5ZiX4dvH95KibzyW43gEBAAIrq5dLt++PBDU7GCIE1\nhJVqDdUWcUwl7Q32TtatrPJxpdfpohpsDZwWue0iLqs9Wm+unt/u6zhg51a8gwVz\na5MH2MABfJMTAkU87dn5yuLZuQ6Wt6vQH8c6/kMVHSIaoXgySd39lNHQIL0Xeh2a\n0T/ZxagpkwPyRNW7TV8tGbYrqXKWVGch5sLP8Dj2wgDz6EXJ0hTgmdhmRUciZqf3\nkb0jFn3O3OI/j802tLsO8G7IsCOfzOU6OemPua9hUs31oL2CyCZYsVG/FaGSBiRx\nTkCjlncx1KMw26nZMf7KIOO+KdkI1EnEk1uJCPcC4QKBgQC6VFtjfvfscEXIyhAe\noYK6GPHhdvjhsJ97NBF1ymuowR/Dc4whGuaJ9aKTBgmBQZ1+7jP1KYJ+Q7v56OdJ\nWDkreG5TPVl7EWU28pCU/SntxUw3OCWdm/Ddzn8Ydui4qYX1jcnVC68I+RNbp7tG\nNaM/+8MKLhWNLosZqEcOuHioQwKBgQDYCwwQHuE3YP88PvRAU71SLVxrZZ/1XZlo\ntEDL34GuUL5CCFOF27EH7hyyMQMBoubU5o2awcGhG6FICmNz6qN59jVHew6FYd34\n4/XCCyqf+MQT4ATLu3cbTEIeFHLUjVNCHY1FtSlMIY4Uu7VpN/88Q5ygUf6CPsnX\nTKzrXXsVCwKBgBSPADJfLP2yeZCo8tReX60m2XFWDingsggG+7IybmSFQnrvQdPZ\nQvyP1KtCLERNuBHsOGFhfhtuX8w4LWTDTjOEqy+WAkx44+EHLHqz4C9y6HDjSgs0\nzIO8p/tMC2tskPJB/bX6/woPaVpgjGI3wtZpceCqqwgTzZc8IPL32aA/AoGBAJ+N\n4RXSyIAOydGjqN4NOkgDqjrC7hTXUKIsZaJr6ilkBm9cGNtGOgNiTp0nZ1IBDjt0\nHmaJ7Efg0QcUbQjB5IQBWq306u+FLNtQ+EKb3poQrjcDfmc8hyWI91ehwIDL8w5k\nJt6xgdNxAK69Rqhzq7PFN1qL08w7NPQl85tMCcerAoGBAIGgrSS/ksvQriSCJZWp\nIuL15RjYyVqLGa+Cb7qhSegJW4pB3uxReNgffChOFgR3Q6JFTvaTbmgIKELIimFF\nluNv5/w5e76/eU/kz1eXf2aIoAIQiUX1/Xa0JMYIzwKEevR9/lqR7FAH1hpJQnum\nBJYNu1hSGKiyEhn812w9HXlH\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-ds0v9@puzzlebooth-mirror.iam.gserviceaccount.com",
+  "client_id": "114870499800475548102",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ds0v9%40puzzlebooth-mirror.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

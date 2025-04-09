@@ -139,6 +139,31 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/hayssam"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="HAYSSAM"
+            android:visibility="visible"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/tvVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="Version:"
+            android:visibility="visible"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="italic" />
+
+        <TextView
             android:id="@+id/audio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

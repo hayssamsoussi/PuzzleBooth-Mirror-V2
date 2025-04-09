@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.storage.CacheResetOnProcessCanceled.enabled
+import com.google.firebase.appdistribution.gradle.FirebaseAppDistributionUpload
 
 plugins {
     id("com.android.application")
@@ -6,6 +7,28 @@ plugins {
     kotlin("plugin.serialization")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("com.google.firebase.appdistribution")
+}
+
+tasks.register("uploadBothFlavorsToFirebase") {
+    group = "distribution"
+    description = "Build and upload both remote and server flavors to Firebase App Distribution"
+
+    doLast {
+        println("Building and uploading remote flavor...")
+        exec {
+            commandLine = listOf(
+                "bash", "-c", "${project.rootDir}/gradlew assembleRemoteRelease appDistributionUploadRemoteRelease"
+            )
+        }
+
+        println("Building and uploading server flavor...")
+        exec {
+            commandLine = listOf(
+                "bash", "-c", "${project.rootDir}/gradlew assembleServerRelease appDistributionUploadServerRelease"
+            )
+        }
+    }
 }
 
 android {
@@ -46,15 +69,15 @@ android {
         create("remote") {
             dimension = "version"
             applicationId = "com.puzzlebooth.remote"
-            versionCode = 21
-            versionName = "3.3"
+            versionCode = 25
+            versionName = "3.6-remote"
         }
 
         create("server") {
             dimension = "version"
             applicationId = "com.puzzlebooth.server"
-            versionCode = 22
-            versionName = "3.3"
+            versionCode = 25
+            versionName = "3.6-server"
         }
 
         getByName("remote") {
@@ -72,6 +95,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     implementation("androidx.activity:activity:1.8.0")
     implementation("com.google.firebase:firebase-crashlytics:19.0.3")
+    implementation("com.google.firebase:firebase-firestore-ktx:25.1.3")
     val nav_version = "2.7.4"
 
     // Java language implementation
@@ -95,7 +119,7 @@ dependencies {
 
     implementation("io.github.pilgr:paperdb:2.7.2")
     implementation("com.github.kenglxn.QRGen:android:3.0.1")
-
+    implementation("com.google.firebase:firebase-firestore-ktx:24.6.1")
     // Testing Navigation
     androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
     implementation("com.github.kittinunf.fuel:fuel:2.3.1")

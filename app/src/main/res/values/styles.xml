@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="RoundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <!-- Album grid item style -->
+    <style name="AlbumGridItem">
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <!-- Navigation button style -->
+    <style name="AlbumNavigationButton" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">56dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:background">@drawable/circular_button_background</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+</resources>

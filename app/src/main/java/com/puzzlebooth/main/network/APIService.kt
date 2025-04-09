@@ -8,6 +8,7 @@ import com.puzzlebooth.main.utils.RemoteFilesResponse
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.plugins.RxJavaPlugins
+import kotlinx.serialization.json.JsonElement
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
@@ -25,6 +26,17 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
+
+
+data class SyncRequest(
+    val device_id: String,
+    val event_id: String,
+    val status: String
+)
+
+data class SyncResponse(
+    val message: String?
+)
 
 data class Design(
     val creation_date: String,
@@ -86,6 +98,20 @@ interface APIService {
 
     @POST("api/mirror/upload.php")
     fun uploadPhotoFile(@Body body: RequestBody): Observable<ResponseBody>
+
+    // Fetch configuration; event_id is optional (defaults to "default")
+    @GET("api/devicemanager/api/fetch-config.php")
+    fun fetchConfig(
+        @Query("device_type") deviceType: String,
+        @Query("event_id") eventId: String = "default"
+    ): Observable<JsonElement>
+
+    // Sync status endpoint (POST)
+    @POST("api/devicemanager/api/sync-status.php")
+    fun syncStatus(
+        @Body syncRequest: SyncRequest
+    ): Observable<SyncResponse>
+
 }
 
 object RetrofitInstance {

@@ -16,6 +16,7 @@ import com.google.android.gms.nearby.connection.Strategy
 import com.puzzlebooth.main.base.BaseFragment
 import com.puzzlebooth.server.R
 import com.puzzlebooth.server.databinding.FragmentSettingsBinding
+import com.puzzlebooth.server.settings.PhotoQuality.Companion.getAppVersionName
 import com.puzzlebooth.server.settings.listing.SettingsAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -155,7 +156,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
             updateViews()
         }
 
-        val version = "Version: " + getAppVersionName()
+        val version = "Version: " + getAppVersionName(requireContext())
         binding.tvVersion.text = version
 
     }
@@ -164,16 +165,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(R.layout.fragment
         GlobalScope.launch(Dispatchers.IO) {
             // Call your function here
             Glide.get(requireContext()).clearDiskCache()
-        }
-    }
-
-    private fun getAppVersionName(): String {
-        return try {
-            val packageInfo: PackageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
-            packageInfo.versionName
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-            "Version not found"
         }
     }
 
@@ -377,6 +368,16 @@ enum class PhotoQuality(val quality: Int) {
     }
 
     companion object {
+        fun getAppVersionName(context: Context): String {
+            return try {
+                val packageInfo: PackageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                packageInfo.versionName
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+                "Version not found"
+            }
+        }
+
         fun getCurrentQualityInt(context: Context): Int {
             return getCurrentQuality(context).quality
         }

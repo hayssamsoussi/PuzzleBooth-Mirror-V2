@@ -89,7 +89,7 @@ class PrintFragment : BaseFragment<FragmentPrintBinding>(R.layout.fragment_print
             var countdownSeconds = 5
             val isSlow = sharedPreferences.getBoolean("settings:printingSlow", true)
 
-            delay(if(isSlow) 15000 else 9000)
+            delay(if(isSlow) 10000 else 5000)
 
             if(isVisible) {
                 findNavController().navigate(R.id.action_printFragment_to_startFragment)
